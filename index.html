@@ -1,0 +1,697 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CID Terminal</title>
+
+  <!-- Chart.js + REQUIRED time adapter (fixes JS crash that prevented typing) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3"></script>
+
+  <style>
+    :root{
+      --bg:#050607; --fg:#d7fbe6; --muted:#8fb3a3; --accent:#6ee7b7; --danger:#ff6b6b;
+      --border:rgba(215,251,230,0.14);
+    }
+    html,body{height:100%}
+    body{
+      margin:0; background:var(--bg); color:var(--fg);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    .wrap{height:100%; display:flex; align-items:center; justify-content:center; padding:18px; box-sizing:border-box;}
+    .terminal{
+      width:min(1100px, 100%); height:min(780px, 100%);
+      border:1px solid var(--border); border-radius:12px; overflow:hidden;
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.00));
+      box-shadow: 0 0 0 1px rgba(110,231,183,0.08), 0 30px 80px rgba(0,0,0,0.55);
+      position:relative;
+    }
+    .bar{
+      display:flex; align-items:center; gap:10px; padding:10px 12px;
+      border-bottom:1px solid rgba(215,251,230,0.12);
+      background: rgba(0,0,0,0.35);
+    }
+    .dots{display:flex; gap:6px;}
+    .dot{width:10px;height:10px;border-radius:999px;opacity:.75}
+    .dot.red{background:#ff5f57}.dot.yellow{background:#febc2e}.dot.green{background:#28c840}
+    .title{color:var(--muted); font-size:13px;}
+    .content{
+      height: calc(100% - 44px);
+      display:grid;
+      grid-template-columns: 1fr 460px;
+      gap: 12px;
+      padding: 12px;
+      box-sizing: border-box;
+    }
+    .screen{
+      background: rgba(0,0,0,0.30);
+      border:1px solid rgba(215,251,230,0.10);
+      border-radius: 10px;
+      padding: 12px;
+      overflow:auto;
+      white-space: pre-wrap;
+      line-height:1.35;
+      font-size:14px;
+      user-select:text;
+    }
+    .right{display:flex; flex-direction:column; gap:12px; min-width:0;}
+    .panel{
+      background: rgba(0,0,0,0.30);
+      border:1px solid rgba(215,251,230,0.10);
+      border-radius: 10px;
+      overflow:hidden;
+      min-width:0;
+    }
+    .panel .hd{
+      padding:10px 12px;
+      border-bottom:1px solid rgba(215,251,230,0.10);
+      color:var(--muted);
+      font-size:13px;
+      background: rgba(0,0,0,0.18);
+      display:flex; justify-content:space-between; align-items:center;
+    }
+    .panel .bd{ padding: 10px 12px; overflow:auto; max-height: 280px; }
+    .watermark{
+      position:absolute; right:10px; bottom:10px;
+      color: rgba(215,251,230,0.18);
+      font-weight: 800;
+      pointer-events:none;
+      user-select:none;
+    }
+    .promptline{display:flex; gap:10px; align-items:baseline;}
+    .prompt{color:var(--accent);}
+    input.term{
+      flex:1;
+      background:transparent;
+      border:none; outline:none;
+      color:var(--fg); font:inherit;
+      padding:0;margin:0;
+      caret-color: var(--accent);
+    }
+    .danger{color:var(--danger)}
+    .muted{color:var(--muted)}
+    .chip{
+      display:inline-block;
+      padding:2px 8px;
+      border:1px solid rgba(215,251,230,0.18);
+      border-radius:999px;
+      font-size:12px;
+      color: var(--muted);
+    }
+    .kv{display:flex; gap:10px; flex-wrap:wrap; margin-top:8px;}
+    .list{margin:0; padding-left:18px;}
+  </style>
+</head>
+
+<body>
+<div class="wrap">
+  <div class="terminal">
+    <div class="bar">
+      <div class="dots">
+        <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+      </div>
+      <div class="title">Criminal Investigation Division — Terminal</div>
+    </div>
+
+    <div class="content">
+      <div id="screen" class="screen"></div>
+
+      <div class="right">
+        <div class="panel">
+          <div class="hd">
+            <span>Badge Chart</span>
+            <span id="chartStatus" class="chip">idle</span>
+          </div>
+          <div class="bd">
+            <canvas id="chart" height="240"></canvas>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="hd">
+            <span>Blacklist Status</span>
+            <span id="blStatus" class="chip">—</span>
+          </div>
+          <div class="bd" id="blacklistsBox" class="muted">
+            Run <span class="chip">check &lt;username&gt;</span>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="hd">
+            <span>Inventory (No Prices)</span>
+            <span id="invStatus" class="chip">—</span>
+          </div>
+          <div class="bd" id="inventoryBox">
+            Run <span class="chip">check &lt;username&gt;</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="watermark">Criminal Investigation Division</div>
+  </div>
+</div>
+
+<script>
+/** =========================
+ *  CONFIG
+ *  ========================= */
+
+// Client-side login (NOT secure). Anyone can view-source. For real security you need a backend.
+const LOGIN_USER = "admin";
+const LOGIN_PASS = "changeme";
+
+// Trello blacklists
+const TRELLO_SOURCES = [
+  { key: "USAR WIDE", json: "https://trello.com/b/zVRnrvhb/usar-management-mainframe.json", list_name: "USAR Blacklists" },
+  { key: "FORSCOM",   json: "https://trello.com/b/YncjLEbF/forces-command-information-trello.json", list_name: "Blacklists" },
+  { key: "ASOC",      json: "https://trello.com/b/TwIxsGvt/army-special-operations-information.json", list_name: "ASOC Blacklists" },
+  { key: "MPC",       json: "https://trello.com/b/IeGd7MBr/military-police-corps-information-board.json", list_name: "Unit Blacklists" },
+  { key: "TRADOC",    json: "https://trello.com/b/fUwjef3b/training-and-doctrine-command-information.json", list_name: "PERMANENT TRADOC BLACKLISTS" },
+];
+const DISPLAY_ORDER = ["USAR WIDE", "FORSCOM", "ASOC", "MPC", "TRADOC"];
+
+// Inventory categories (no prices). Uses roproxy inventory v2 assetTypes strings.
+const INVENTORY_CATEGORIES = {
+  "T-Shirts": "TShirt",
+  "Classic Shirts": "Shirt",
+  "Classic Pants": "Pants",
+  "Hats": "Hat",
+  "Face": "Face",
+  "Gear": "Gear",
+  "Hair Accessories": "HairAccessory",
+  "Face Accessories": "FaceAccessory",
+  "Neck Accessories": "NeckAccessory",
+  "Shoulder Accessories": "ShoulderAccessory",
+  "Front Accessories": "FrontAccessory",
+  "Back Accessories": "BackAccessory",
+  "Waist Accessories": "WaistAccessory",
+};
+
+// Rate limiting / backoff
+const BASE_DELAY_MS = 250;
+const JITTER_MS = 200;
+const BATCH_DELAY_MS = 600;
+const PHASE_DELAY_MS = 800;
+const MAX_RETRIES_429 = 6;
+
+function sleep(ms){ return new Promise(r=>setTimeout(r, ms)); }
+async function nap(base=BASE_DELAY_MS){ await sleep(base + Math.random()*JITTER_MS); }
+
+async function fetchRL(url, opts={}){
+  await nap();
+  let res = await fetch(url, opts);
+  if (res.status !== 429) return res;
+
+  let backoff = 2000;
+  for (let i=0; i<MAX_RETRIES_429; i++){
+    termPrint(`Rate limited. Sleeping ${(backoff/1000).toFixed(1)}s...`, "muted");
+    await sleep(backoff);
+    backoff = Math.floor(backoff * 1.6);
+    await nap(50);
+    res = await fetch(url, opts);
+    if (res.status !== 429) return res;
+  }
+  return res;
+}
+
+/** =========================
+ *  TERMINAL UI
+ *  ========================= */
+const screen = document.getElementById("screen");
+
+function termPrint(text="", cls=null){
+  const div = document.createElement("div");
+  if (cls) div.className = cls;
+  div.textContent = text;
+  screen.appendChild(div);
+  screen.scrollTop = screen.scrollHeight;
+}
+
+function getActiveInput(){
+  const inputs = screen.querySelectorAll("input.term");
+  return inputs.length ? inputs[inputs.length - 1] : null;
+}
+
+// Click anywhere in the terminal area -> focus the active input (fixes "can't type" feeling)
+screen.addEventListener("mousedown", () => {
+  const inp = getActiveInput();
+  if (inp) inp.focus();
+});
+
+// Also focus input when page regains focus
+window.addEventListener("focus", () => {
+  const inp = getActiveInput();
+  if (inp) inp.focus();
+});
+
+function promptLine(label, isPassword=false){
+  const row = document.createElement("div");
+  row.className = "promptline";
+
+  const p = document.createElement("span");
+  p.className = "prompt";
+  p.textContent = label;
+  row.appendChild(p);
+
+  const input = document.createElement("input");
+  input.className = "term";
+  input.autocomplete = "off";
+  input.spellcheck = false;
+  input.type = isPassword ? "password" : "text";
+  row.appendChild(input);
+
+  screen.appendChild(row);
+  input.focus();
+  screen.scrollTop = screen.scrollHeight;
+
+  return new Promise((resolve)=>{
+    input.addEventListener("keydown", (e)=>{
+      if (e.key === "Enter"){
+        const val = input.value;
+        row.removeChild(input);
+        const shown = document.createElement("span");
+        shown.textContent = isPassword ? "•".repeat(Math.min(16, val.length)) : val;
+        row.appendChild(shown);
+        resolve(val);
+      }
+    });
+  });
+}
+
+/** =========================
+ *  HELPERS (matching)
+ *  ========================= */
+function normalize(s){ return (s ?? "").toString().trim().toLowerCase(); }
+
+function usernameInCardName(username, cardName){
+  const u = (username ?? "").trim();
+  if (!u) return false;
+  const cn = (cardName ?? "").trim();
+  if (normalize(cn) === "[username]") return false;
+
+  // Boundary-aware match for Roblox username chars [A-Za-z0-9_]
+  const escaped = u.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  // Prefer lookbehind if supported, else fallback boundary check
+  try {
+    const re = new RegExp(`(?<![A-Za-z0-9_])${escaped}(?![A-Za-z0-9_])`, "i");
+    return re.test(cn);
+  } catch {
+    const low = cn.toLowerCase();
+    const uu = u.toLowerCase();
+    const idx = low.indexOf(uu);
+    if (idx === -1) return false;
+    const before = low[idx-1] || "";
+    const after = low[idx+uu.length] || "";
+    const word = /[a-z0-9_]/i;
+    return !word.test(before) && !word.test(after);
+  }
+}
+
+/** =========================
+ *  TRELL0 BLACKLIST CHECK
+ *  ========================= */
+async function trelloBlacklistStatus(username){
+  const results = {};
+  for (const src of TRELLO_SOURCES) results[src.key] = false;
+
+  for (const src of TRELLO_SOURCES){
+    try{
+      const res = await fetchRL(src.json, { method:"GET" });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const board = await res.json();
+
+      const lists = board.lists || [];
+      const cards = board.cards || [];
+
+      const listIds = lists
+        .filter(lst => normalize(lst.name) === normalize(src.list_name))
+        .map(lst => lst.id);
+
+      if (!listIds.length){
+        await nap(350);
+        continue;
+      }
+
+      let found = false;
+      for (const card of cards){
+        if (listIds.includes(card.idList)){
+          if (usernameInCardName(username, card.name || "")){
+            found = true;
+            break;
+          }
+        }
+      }
+      results[src.key] = found;
+    } catch(e){
+      termPrint(`Trello check failed for ${src.key}: ${e.message}`, "muted");
+      results[src.key] = false;
+    }
+    await nap(350);
+  }
+
+  return results;
+}
+
+/** =========================
+ *  ROBLOX: userId, badges, inventory
+ *  ========================= */
+async function getUserIdFromUsername(username){
+  const url = "https://users.roblox.com/v1/usernames/users";
+  const res = await fetchRL(url, {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({ usernames:[username] })
+  });
+  if (!res.ok) throw new Error(`Roblox user lookup failed (HTTP ${res.status})`);
+  const data = await res.json();
+  if (data?.data?.length) return String(data.data[0].id);
+  throw new Error("User not found");
+}
+
+async function fetchBadges(userId){
+  const base = `https://badges.roproxy.com/v1/users/${userId}/badges?limit=100&sortOrder=Desc`;
+  const out = [];
+  let cursor = null;
+
+  while(true){
+    const u = new URL(base);
+    if (cursor) u.searchParams.set("cursor", cursor);
+
+    const res = await fetchRL(u.toString());
+    if (!res.ok) throw new Error(`Badges fetch failed (HTTP ${res.status})`);
+    const data = await res.json();
+
+    out.push(...(data.data || []));
+    cursor = data.nextPageCursor;
+    if (!cursor) break;
+
+    await sleep(BATCH_DELAY_MS);
+  }
+  return out;
+}
+
+async function fetchAwardDates(userId, badges){
+  const badgeIds = (badges||[]).map(b=>b.id).filter(Boolean);
+  const base = `https://badges.roproxy.com/v1/users/${userId}/badges/awarded-dates`;
+  const STEP = 100;
+  const dates = [];
+
+  for (let i=0; i<badgeIds.length; i+=STEP){
+    const batch = badgeIds.slice(i, i+STEP);
+    const u = new URL(base);
+    batch.forEach(id => u.searchParams.append("badgeIds", id));
+
+    const res = await fetchRL(u.toString());
+    if (!res.ok) throw new Error(`Award dates failed (HTTP ${res.status})`);
+    const data = await res.json();
+
+    (data.data || []).forEach(x => dates.push(x.awardedDate));
+    await sleep(BATCH_DELAY_MS);
+  }
+  return dates;
+}
+
+async function canViewInventory(userId){
+  const url = `https://inventory.roproxy.com/v1/users/${userId}/can-view-inventory`;
+  const res = await fetchRL(url);
+  if (!res.ok) throw new Error(`Inventory privacy check failed (HTTP ${res.status})`);
+  const data = await res.json();
+  return !!data.canView;
+}
+
+async function fetchInventoryItems(userId, assetTypeName, limit=null){
+  const base = `https://inventory.roproxy.com/v2/users/${userId}/inventory`;
+  const items = [];
+  let cursor = null;
+
+  while(true){
+    const u = new URL(base);
+    u.searchParams.set("assetTypes", assetTypeName);
+    u.searchParams.set("limit", "100");
+    u.searchParams.set("sortOrder", "Desc");
+    if (cursor) u.searchParams.set("cursor", cursor);
+
+    const res = await fetchRL(u.toString());
+    if (!res.ok) throw new Error(`Inventory fetch failed (${assetTypeName}) HTTP ${res.status}`);
+    const data = await res.json();
+
+    items.push(...(data.data || []));
+    if (limit !== null && items.length >= limit) return items.slice(0, limit);
+
+    cursor = data.nextPageCursor;
+    if (!cursor) break;
+
+    await sleep(BATCH_DELAY_MS);
+  }
+  return items;
+}
+
+/** =========================
+ *  CHART
+ *  ========================= */
+const chartStatus = document.getElementById("chartStatus");
+const blStatus = document.getElementById("blStatus");
+const invStatus = document.getElementById("invStatus");
+const blacklistsBox = document.getElementById("blacklistsBox");
+const inventoryBox = document.getElementById("inventoryBox");
+
+let chart;
+function initChart(){
+  const ctx = document.getElementById("chart").getContext("2d");
+  chart = new Chart(ctx, {
+    type: "scatter",
+    data: {
+      datasets: [{
+        label: "Badges over Time",
+        data: [],
+        pointRadius: 2,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: {
+          type: "time",
+          time: { unit: "year" },
+          ticks: { color: "#8fb3a3" },
+          grid: { color: "rgba(215,251,230,0.08)" }
+        },
+        y: {
+          ticks: { color: "#8fb3a3" },
+          grid: { color: "rgba(215,251,230,0.08)" }
+        }
+      },
+      plugins: {
+        legend: { labels: { color: "#8fb3a3" } }
+      }
+    }
+  });
+}
+initChart();
+
+/** =========================
+ *  RENDERERS
+ *  ========================= */
+function renderBlacklists(statusMap){
+  const lines = DISPLAY_ORDER.map(k => `${k} BLACKLIST - ${statusMap[k] ? "YES" : "NO"}`);
+  blacklistsBox.textContent = lines.join("\n");
+  const anyYes = DISPLAY_ORDER.some(k => statusMap[k]);
+  blStatus.textContent = anyYes ? "flags" : "clear";
+}
+
+function renderInventory(report){
+  const frag = document.createDocumentFragment();
+
+  const wrap = document.createElement("div");
+  wrap.className = "muted";
+  wrap.textContent = "Inventory listed below (no prices).";
+  frag.appendChild(wrap);
+
+  const kv = document.createElement("div");
+  kv.className = "kv";
+  const total = Object.values(report).reduce((a, arr)=>a + (arr?.length||0), 0);
+  kv.innerHTML = `<span class="chip">categories: ${Object.keys(report).length}</span>
+                  <span class="chip">items: ${total}</span>`;
+  frag.appendChild(kv);
+
+  Object.entries(report).forEach(([cat, items])=>{
+    const h = document.createElement("div");
+    h.style.marginTop = "10px";
+    h.innerHTML = `<span class="chip">${cat}</span> <span class="muted">(${items.length})</span>`;
+    frag.appendChild(h);
+
+    const ul = document.createElement("ul");
+    ul.className = "list";
+    items.slice(0, 60).forEach(it=>{
+      const li = document.createElement("li");
+      li.textContent = `${it.name ?? "Unknown"} (AssetId: ${it.assetId ?? "?"})`;
+      ul.appendChild(li);
+    });
+    if (items.length > 60){
+      const li = document.createElement("li");
+      li.className = "muted";
+      li.textContent = `…and ${items.length - 60} more`;
+      ul.appendChild(li);
+    }
+    frag.appendChild(ul);
+  });
+
+  inventoryBox.innerHTML = "";
+  inventoryBox.appendChild(frag);
+}
+
+/** =========================
+ *  MAIN CHECK
+ *  ========================= */
+async function runCheck(username){
+  termPrint("");
+  termPrint(`Checking user: ${username}`);
+
+  chartStatus.textContent = "running";
+  blStatus.textContent = "…";
+  invStatus.textContent = "…";
+  blacklistsBox.textContent = "Running…";
+  inventoryBox.textContent = "Running…";
+
+  // 1) Trello blacklists
+  termPrint("Fetching Trello blacklists…");
+  const bl = await trelloBlacklistStatus(username);
+  DISPLAY_ORDER.forEach(k => termPrint(`${k} BLACKLIST - ${bl[k] ? "YES" : "NO"}`));
+  renderBlacklists(bl);
+
+  await sleep(PHASE_DELAY_MS);
+
+  // 2) Roblox user id
+  termPrint("");
+  termPrint("Resolving Roblox user ID…");
+  const userId = await getUserIdFromUsername(username);
+  termPrint(`UserId: ${userId}`);
+
+  await sleep(PHASE_DELAY_MS);
+
+  // 3) Inventory (no prices)
+  termPrint("");
+  termPrint("Checking inventory visibility…");
+  const canView = await canViewInventory(userId);
+  if (!canView){
+    termPrint("Inventory: PRIVATE (cannot scan items).");
+    invStatus.textContent = "private";
+    inventoryBox.textContent = "Inventory is private.";
+  } else {
+    termPrint("Inventory: PUBLIC. Scanning categories (no prices)…");
+    const report = {};
+    for (const [cat, typeName] of Object.entries(INVENTORY_CATEGORIES)){
+      termPrint(`- Fetching ${cat}…`, "muted");
+      try{
+        const items = await fetchInventoryItems(userId, typeName, null);
+        report[cat] = items.map(x => ({ name: x.name, assetId: x.assetId }));
+      } catch(e){
+        termPrint(`  Inventory category failed (${cat}): ${e.message}`, "muted");
+        report[cat] = [];
+      }
+      await sleep(300);
+    }
+    invStatus.textContent = "done";
+    renderInventory(report);
+  }
+
+  await sleep(PHASE_DELAY_MS);
+
+  // 4) Badges & chart
+  termPrint("");
+  termPrint("Fetching badges…");
+  const badges = await fetchBadges(userId);
+  termPrint(`Badges found: ${badges.length}`);
+
+  termPrint("Fetching awarded dates…");
+  const dates = await fetchAwardDates(userId, badges);
+
+  const parsed = dates.map(s => new Date(s)).filter(d => !isNaN(d.getTime())).sort((a,b)=>a-b);
+  const points = parsed.map((d, idx)=>({ x: d, y: idx+1 }));
+
+  chart.data.datasets[0].data = points;
+  chart.update();
+
+  chartStatus.textContent = "done";
+  termPrint("Chart updated.");
+  termPrint("");
+}
+
+/** =========================
+ *  BOOT + LOGIN FLOW
+ *  ========================= */
+let authed = false;
+
+async function boot(){
+  termPrint("CID Secure Console v1.0");
+  termPrint("Authorized personnel only.");
+  termPrint("");
+
+  while(!authed){
+    termPrint("Login required.");
+    const u = await promptLine("login> ");
+    const p = await promptLine("password> ", true);
+
+    if (u === LOGIN_USER && p === LOGIN_PASS){
+      authed = true;
+      termPrint("");
+      termPrint("ACCESS GRANTED");
+      termPrint("");
+      break;
+    } else {
+      termPrint("");
+      termPrint("ACCESS DENIED", "danger");
+      termPrint("");
+    }
+  }
+
+  termPrint("Commands:");
+  termPrint("  check <roblox_username>    Run background check");
+  termPrint("  help                       Show commands");
+  termPrint("");
+
+  while(true){
+    const cmd = await promptLine("cid> ");
+    const parts = cmd.trim().split(/\s+/).filter(Boolean);
+    if (!parts.length) continue;
+
+    const base = parts[0].toLowerCase();
+    if (base === "help"){
+      termPrint("Commands: check <username>, help");
+      continue;
+    }
+    if (base === "check"){
+      const user = parts.slice(1).join(" ");
+      if (!user){
+        termPrint("Usage: check <roblox_username>");
+        continue;
+      }
+      try{
+        await runCheck(user);
+      } catch(e){
+        termPrint(`ERROR: ${e.message}`, "danger");
+        chartStatus.textContent = "error";
+        blStatus.textContent = "error";
+        invStatus.textContent = "error";
+      }
+      continue;
+    }
+    termPrint(`Unknown command: ${base}`, "danger");
+  }
+}
+
+// Start once DOM is ready (ensures input can focus reliably)
+window.addEventListener("DOMContentLoaded", () => {
+  boot().catch(err => {
+    termPrint("Fatal error: " + (err?.message || String(err)), "danger");
+    termPrint("Open DevTools Console for details.", "muted");
+    console.error(err);
+  });
+});
+</script>
+</body>
+</html>
