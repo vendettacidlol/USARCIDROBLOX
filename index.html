@@ -73,11 +73,11 @@
       justify-content:center;
       padding: 10px;
     }
+    /* ✅ Put USACIDC_SSI.png in the same folder as index.html */
     .ssiLogo{
       width: min(240px, 60vw);
       aspect-ratio: 1 / 1;
       object-fit: contain;
-      /* Green filter to match terminal */
       filter:
         grayscale(1)
         sepia(1)
@@ -270,7 +270,6 @@
 
     <div class="introBody">
       <div class="logoWrap">
-        <!-- Put USACIDC_SSI.png next to index.html -->
         <img class="ssiLogo" src="USACIDC_SSI.png" alt="CID SSI">
       </div>
 
@@ -289,7 +288,7 @@
     </div>
 
     <div class="introFooter">
-      <span>Do what has to be done.</span>
+      <span>SSI authenticated interface</span>
       <span class="muted" id="bootPct">0%</span>
     </div>
   </div>
@@ -330,7 +329,7 @@
 
 <script>
 /* =========================
- * Intro boot animation
+ * Intro boot animation (TYPEWRITER)
  * ========================= */
 const introEl = document.getElementById("intro");
 const bootLinesEl = document.getElementById("bootLines");
@@ -338,31 +337,26 @@ const bootBarEl = document.getElementById("bootBar");
 const bootPctEl = document.getElementById("bootPct");
 
 const BOOT_LINES = [
-  "Initializing CID secure console…",
-  "Loading interface modules…",
-  "Verifying credential gateway…",
-  "Mounting Trello intelligence feeds…",
-  "Preparing Roblox proxy services…",
-  "Establishing audit logging pipeline…",
-  "Finalizing secure environment…",
-  "READY."
+  { t: "CID Secure Console v1.0", cls: "accent" },
+  { t: "Authorized personnel only.", cls: "muted" },
+  { t: "", cls: "muted" },
+  { t: "Initializing CID secure console…", cls: "muted" },
+  { t: "Loading interface modules…", cls: "muted" },
+  { t: "Verifying credential gateway…", cls: "muted" },
+  { t: "Mounting Trello intelligence feeds…", cls: "muted" },
+  { t: "Preparing Roblox proxy services…", cls: "muted" },
+  { t: "Establishing audit logging pipeline…", cls: "muted" },
+  { t: "Finalizing secure environment…", cls: "muted" },
+  { t: "READY.", cls: "accent" }
 ];
 
-let bootIndex = 0;
-let bootPct = 0;
 let bootDone = false;
-
-function appendBootLine(text, cls="muted"){
-  const line = document.createElement("div");
-  line.className = cls;
-  line.textContent = text;
-  bootLinesEl.appendChild(line);
-}
+let skipIntro = false;
 
 function setBootPct(p){
-  bootPct = Math.max(0, Math.min(100, p));
-  bootBarEl.style.width = bootPct + "%";
-  bootPctEl.textContent = bootPct + "%";
+  const pct = Math.max(0, Math.min(100, p));
+  bootBarEl.style.width = pct + "%";
+  bootPctEl.textContent = pct + "%";
 }
 
 function finishIntro(){
@@ -370,50 +364,61 @@ function finishIntro(){
   bootDone = true;
   introEl.classList.add("hide");
   setTimeout(() => introEl.remove(), 520);
-  // Start the main terminal once intro is gone
-  boot(); // main app boot
+  boot(); // ✅ start main app only after intro ends
 }
 
-function runIntro(){
-  // initial lines
-  appendBootLine("CID Secure Console v1.0", "accent");
-  appendBootLine("Authorized personnel only.", "muted");
-  appendBootLine("", "muted");
+function makeLine(cls){
+  const line = document.createElement("div");
+  line.className = cls || "muted";
+  line.textContent = "";
+  bootLinesEl.appendChild(line);
+  return line;
+}
 
+async function typeLine(lineEl, text, speedMs){
+  if (skipIntro) { lineEl.textContent = text; return; }
+  for (let i = 0; i < text.length; i++){
+    lineEl.textContent += text[i];
+    const jitter = Math.floor(Math.random()*18);
+    await new Promise(r => setTimeout(r, speedMs + jitter));
+    if (skipIntro) { lineEl.textContent = text; return; }
+  }
+}
+
+async function runIntro(){
   setBootPct(0);
 
-  const timer = setInterval(() => {
-    if (bootDone){ clearInterval(timer); return; }
-
-    // pct increments
-    const bump = 6 + Math.floor(Math.random()*8);
-    setBootPct(Math.min(100, bootPct + bump));
-
-    // print next line occasionally
-    if (bootIndex < BOOT_LINES.length && (bootPct >= (bootIndex+1) * (100/BOOT_LINES.length) || Math.random() > 0.55)){
-      const isReady = (BOOT_LINES[bootIndex] === "READY.");
-      appendBootLine(BOOT_LINES[bootIndex], isReady ? "accent" : "muted");
-      bootIndex++;
-    }
-
-    if (bootPct >= 100){
-      setBootPct(100);
-      appendBootLine("Launching terminal…", "muted");
-      clearInterval(timer);
-      setTimeout(finishIntro, 650);
-    }
-  }, 180);
-
-  // allow skipping
+  // Skip on Enter
   window.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") finishIntro();
+    if (e.key === "Enter") {
+      skipIntro = true;
+      finishIntro();
+    }
   }, { once: true });
+
+  let pct = 0;
+  for (let i = 0; i < BOOT_LINES.length; i++){
+    const { t, cls } = BOOT_LINES[i];
+    const lineEl = makeLine(cls);
+
+    const speed = t.length === 0 ? 0 : 16;
+    await typeLine(lineEl, t, speed);
+
+    pct = Math.min(100, Math.round(((i + 1) / BOOT_LINES.length) * 100));
+    setBootPct(pct);
+
+    if (!skipIntro) await new Promise(r => setTimeout(r, 120));
+    if (skipIntro) return;
+  }
+
+  if (!skipIntro) await new Promise(r => setTimeout(r, 450));
+  if (!skipIntro) finishIntro();
 }
 
 runIntro();
 
 /* =========================
- * App code (your existing app)
+ * App code
  * ========================= */
 const API_BASE = "https://the.chastiefola.workers.dev";
 
@@ -854,7 +859,5 @@ async function boot(){
   }
 }
 </script>
-
 </body>
 </html>
-
