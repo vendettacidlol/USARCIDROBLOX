@@ -21,6 +21,116 @@
       overflow:auto;
     }
 
+    /* ===== Intro overlay ===== */
+    .intro {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(1200px 800px at 50% 35%, rgba(110,231,183,0.10), rgba(0,0,0,0.95) 60%),
+                  linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.85));
+      display: grid;
+      place-items: center;
+      z-index: 9999;
+      transition: opacity 450ms ease, transform 450ms ease;
+      opacity: 1;
+    }
+    .intro.hide {
+      opacity: 0;
+      transform: scale(1.01);
+      pointer-events: none;
+    }
+    .introCard{
+      width: min(780px, calc(100vw - 40px));
+      border: 1px solid rgba(215,251,230,0.14);
+      border-radius: 14px;
+      background: rgba(0,0,0,0.38);
+      box-shadow: 0 0 0 1px rgba(110,231,183,0.08), 0 30px 80px rgba(0,0,0,0.55);
+      overflow: hidden;
+    }
+    .introTop{
+      display:flex;align-items:center;gap:10px;
+      padding:10px 12px;
+      border-bottom:1px solid rgba(215,251,230,0.12);
+      background:rgba(0,0,0,0.35);
+    }
+    .dots{display:flex;gap:6px;}
+    .dot{width:10px;height:10px;border-radius:999px;opacity:.75}
+    .dot.red{background:#ff5f57}.dot.yellow{background:#febc2e}.dot.green{background:#28c840}
+    .introTitle{color:var(--muted);font-size:13px;}
+
+    .introBody{
+      padding: 18px 16px 16px;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 720px){
+      .introBody{grid-template-columns:1fr;}
+    }
+
+    .logoWrap{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 10px;
+    }
+    .ssiLogo{
+      width: min(240px, 60vw);
+      aspect-ratio: 1 / 1;
+      object-fit: contain;
+      /* Green filter to match terminal */
+      filter:
+        grayscale(1)
+        sepia(1)
+        hue-rotate(85deg)
+        saturate(4.5)
+        brightness(1.10)
+        contrast(1.05)
+        drop-shadow(0 0 14px rgba(110,231,183,0.18));
+      opacity: 0.98;
+    }
+
+    .bootText{
+      font-size: 14px;
+      line-height: 1.35;
+      white-space: pre-wrap;
+      user-select: none;
+    }
+    .bootHeader{
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: 0.4px;
+      margin-bottom: 8px;
+    }
+    .muted{color:var(--muted)}
+    .accent{color:var(--accent)}
+    .danger{color:var(--danger)}
+
+    .progressOuter{
+      margin-top: 12px;
+      border: 1px solid rgba(215,251,230,0.16);
+      border-radius: 999px;
+      height: 10px;
+      overflow: hidden;
+      background: rgba(0,0,0,0.35);
+    }
+    .progressInner{
+      height: 100%;
+      width: 0%;
+      background: rgba(110,231,183,0.85);
+      box-shadow: 0 0 18px rgba(110,231,183,0.20);
+      transition: width 180ms ease;
+    }
+    .introFooter{
+      padding: 12px 16px 14px;
+      border-top: 1px solid rgba(215,251,230,0.10);
+      display:flex;
+      justify-content: space-between;
+      gap: 10px;
+      color: rgba(215,251,230,0.45);
+      font-size: 12px;
+    }
+
+    /* ===== Main app layout ===== */
     .wrap{
       min-height:100vh;
       display:flex;
@@ -50,15 +160,11 @@
       background:rgba(0,0,0,0.35);
       flex: 0 0 auto;
     }
-    .dots{display:flex;gap:6px;}
-    .dot{width:10px;height:10px;border-radius:999px;opacity:.75}
-    .dot.red{background:#ff5f57}.dot.yellow{background:#febc2e}.dot.green{background:#28c840}
     .title{color:var(--muted);font-size:13px;}
 
-    /* KEY: make main area a flex child that can shrink and scroll inside */
     .content{
       flex:1 1 auto;
-      min-height:0;           /* critical for scroll */
+      min-height:0;
       display:grid;
       grid-template-columns:1fr 460px;
       gap:12px;
@@ -66,7 +172,6 @@
       box-sizing:border-box;
     }
 
-    /* Left terminal output scrolls */
     .screen{
       background:rgba(0,0,0,0.30);
       border:1px solid rgba(215,251,230,0.10);
@@ -77,18 +182,17 @@
       line-height:1.35;
       font-size:14px;
       user-select:text;
-      min-height:0;           /* critical */
+      min-height:0;
     }
 
-    /* Right column scrolls as a whole */
     .right{
       display:flex;
       flex-direction:column;
       gap:12px;
       min-width:0;
-      min-height:0;           /* critical */
-      overflow:auto;          /* scroll RIGHT SIDE */
-      padding-right:4px;      /* small space for scrollbar */
+      min-height:0;
+      overflow:auto;
+      padding-right:4px;
     }
 
     .panel{
@@ -100,7 +204,7 @@
       display:flex;
       flex-direction:column;
       min-height:0;
-      flex: 0 0 auto;         /* panels keep natural height */
+      flex: 0 0 auto;
     }
 
     .panel .hd{
@@ -112,16 +216,12 @@
       display:flex;justify-content:space-between;align-items:center;
       flex: 0 0 auto;
     }
-
-    /* Each body scrolls too (if content long) */
     .panel .bd{
       padding:10px 12px;
       overflow:auto;
-      min-height: 120px;      /* so it’s readable */
-      max-height: 240px;      /* prevents clumping; gives its own scrollbar */
+      min-height: 120px;
+      max-height: 240px;
     }
-
-    /* Let chart panel be larger */
     .panel.chart .bd{
       min-height: 260px;
       max-height: 320px;
@@ -141,8 +241,6 @@
       flex:1;background:transparent;border:none;outline:none;color:var(--fg);font:inherit;
       padding:0;margin:0;caret-color:var(--accent);
     }
-    .danger{color:var(--danger)}
-    .muted{color:var(--muted)}
     .chip{
       display:inline-block;padding:2px 8px;border:1px solid rgba(215,251,230,0.18);
       border-radius:999px;font-size:12px;color:var(--muted);
@@ -161,6 +259,43 @@
 </head>
 
 <body>
+
+<!-- ===== Intro Overlay ===== -->
+<div id="intro" class="intro">
+  <div class="introCard">
+    <div class="introTop">
+      <div class="dots"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
+      <div class="introTitle">Criminal Investigation Division — System Boot</div>
+    </div>
+
+    <div class="introBody">
+      <div class="logoWrap">
+        <!-- Put USACIDC_SSI.png next to index.html -->
+        <img class="ssiLogo" src="USACIDC_SSI.png" alt="CID SSI">
+      </div>
+
+      <div class="bootText">
+        <div class="bootHeader">Criminal Investigation Division</div>
+        <div id="bootLines" class="muted"></div>
+
+        <div class="progressOuter" aria-label="boot progress">
+          <div id="bootBar" class="progressInner"></div>
+        </div>
+
+        <div style="margin-top:10px" class="muted">
+          Press <span class="accent">Enter</span> to skip…
+        </div>
+      </div>
+    </div>
+
+    <div class="introFooter">
+      <span>SSI authenticated interface</span>
+      <span class="muted" id="bootPct">0%</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Main App ===== -->
 <div class="wrap">
   <div class="terminal">
     <div class="bar">
@@ -194,8 +329,91 @@
 </div>
 
 <script>
-/** =========================
- * CONFIG
+/* =========================
+ * Intro boot animation
+ * ========================= */
+const introEl = document.getElementById("intro");
+const bootLinesEl = document.getElementById("bootLines");
+const bootBarEl = document.getElementById("bootBar");
+const bootPctEl = document.getElementById("bootPct");
+
+const BOOT_LINES = [
+  "Initializing CID secure console…",
+  "Loading interface modules…",
+  "Verifying credential gateway…",
+  "Mounting Trello intelligence feeds…",
+  "Preparing Roblox proxy services…",
+  "Establishing audit logging pipeline…",
+  "Finalizing secure environment…",
+  "READY."
+];
+
+let bootIndex = 0;
+let bootPct = 0;
+let bootDone = false;
+
+function appendBootLine(text, cls="muted"){
+  const line = document.createElement("div");
+  line.className = cls;
+  line.textContent = text;
+  bootLinesEl.appendChild(line);
+}
+
+function setBootPct(p){
+  bootPct = Math.max(0, Math.min(100, p));
+  bootBarEl.style.width = bootPct + "%";
+  bootPctEl.textContent = bootPct + "%";
+}
+
+function finishIntro(){
+  if (bootDone) return;
+  bootDone = true;
+  introEl.classList.add("hide");
+  setTimeout(() => introEl.remove(), 520);
+  // Start the main terminal once intro is gone
+  boot(); // main app boot
+}
+
+function runIntro(){
+  // initial lines
+  appendBootLine("CID Secure Console v1.0", "accent");
+  appendBootLine("Authorized personnel only.", "muted");
+  appendBootLine("", "muted");
+
+  setBootPct(0);
+
+  const timer = setInterval(() => {
+    if (bootDone){ clearInterval(timer); return; }
+
+    // pct increments
+    const bump = 6 + Math.floor(Math.random()*8);
+    setBootPct(Math.min(100, bootPct + bump));
+
+    // print next line occasionally
+    if (bootIndex < BOOT_LINES.length && (bootPct >= (bootIndex+1) * (100/BOOT_LINES.length) || Math.random() > 0.55)){
+      const isReady = (BOOT_LINES[bootIndex] === "READY.");
+      appendBootLine(BOOT_LINES[bootIndex], isReady ? "accent" : "muted");
+      bootIndex++;
+    }
+
+    if (bootPct >= 100){
+      setBootPct(100);
+      appendBootLine("Launching terminal…", "muted");
+      clearInterval(timer);
+      setTimeout(finishIntro, 650);
+    }
+  }, 180);
+
+  // allow skipping
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") finishIntro();
+  }, { once: true });
+}
+
+runIntro();
+
+/* =========================
+ * App code (your existing app)
  * ========================= */
 const API_BASE = "https://the.chastiefola.workers.dev";
 
@@ -233,9 +451,7 @@ const MAX_RETRIES_429 = 6;
 function sleep(ms){ return new Promise(r=>setTimeout(r, ms)); }
 async function nap(base=BASE_DELAY_MS){ await sleep(base + Math.random()*JITTER_MS); }
 
-/** =========================
- * TERMINAL UI
- * ========================= */
+/* Terminal UI */
 const screen = document.getElementById("screen");
 function termPrint(text="", cls=null){
   const div = document.createElement("div");
@@ -285,9 +501,7 @@ function promptLine(label, isPassword=false){
   });
 }
 
-/** =========================
- * AUTH
- * ========================= */
+/* Auth */
 let TOKEN = null;
 function authHeaders(extra={}) {
   return {
@@ -295,7 +509,6 @@ function authHeaders(extra={}) {
     ...extra
   };
 }
-
 async function fetchRL(url, opts={}){
   await nap();
   let res = await fetch(url, opts);
@@ -312,7 +525,6 @@ async function fetchRL(url, opts={}){
   }
   return res;
 }
-
 async function workerLogin(username, password) {
   const res = await fetchRL(`${API_BASE}/auth/login`, {
     method: "POST",
@@ -324,9 +536,7 @@ async function workerLogin(username, password) {
   TOKEN = data.token;
 }
 
-/** =========================
- * HELPERS
- * ========================= */
+/* Helpers */
 function normalize(s){ return (s ?? "").toString().trim().toLowerCase(); }
 function usernameInCardName(username, cardName){
   const u = (username ?? "").trim();
@@ -350,9 +560,7 @@ function usernameInCardName(username, cardName){
   }
 }
 
-/** =========================
- * PANELS + CHART
- * ========================= */
+/* Panels + chart */
 const chartStatus = document.getElementById("chartStatus");
 const blStatus = document.getElementById("blStatus");
 const invStatus = document.getElementById("invStatus");
@@ -382,7 +590,6 @@ function renderBlacklists(statusMap){
   blacklistsBox.textContent = lines.join("\n");
   blStatus.textContent = DISPLAY_ORDER.some(k => statusMap[k]) ? "flags" : "clear";
 }
-
 function renderInventory(report){
   const frag = document.createDocumentFragment();
   const kv = document.createElement("div");
@@ -418,16 +625,13 @@ function renderInventory(report){
   inventoryBox.appendChild(frag);
 }
 
-/** =========================
- * WORKER PROXIES
- * ========================= */
+/* Worker proxies */
 async function trelloFetchBoardJson(trelloJsonUrl){
   const u = `${API_BASE}/trello?url=${encodeURIComponent(trelloJsonUrl)}`;
   const res = await fetchRL(u, { headers: authHeaders() });
   if (!res.ok) throw new Error(`Trello HTTP ${res.status}`);
   return await res.json();
 }
-
 async function robloxUserId(username){
   const res = await fetchRL(`${API_BASE}/roblox/userid`, {
     method:"POST",
@@ -439,7 +643,6 @@ async function robloxUserId(username){
   if (data?.data?.length) return String(data.data[0].id);
   throw new Error("User not found");
 }
-
 async function robloxBadges(userId){
   const base = `${API_BASE}/roblox/badges?userId=${encodeURIComponent(userId)}`;
   const out = [];
@@ -456,7 +659,6 @@ async function robloxBadges(userId){
   }
   return out;
 }
-
 async function robloxAwardedDates(userId, badgeIds){
   const STEP = 100;
   const dates = [];
@@ -474,7 +676,6 @@ async function robloxAwardedDates(userId, badgeIds){
   }
   return dates;
 }
-
 async function canViewInventory(userId){
   const url = `${API_BASE}/roblox/canViewInventory?userId=${encodeURIComponent(userId)}`;
   const res = await fetchRL(url, { headers: authHeaders() });
@@ -482,7 +683,6 @@ async function canViewInventory(userId){
   const data = await res.json();
   return !!data.canView;
 }
-
 async function inventoryItems(userId, assetTypeName){
   const out = [];
   let cursor = "";
@@ -501,9 +701,7 @@ async function inventoryItems(userId, assetTypeName){
   return out;
 }
 
-/** =========================
- * BLACKLISTS
- * ========================= */
+/* Blacklists */
 async function trelloBlacklistStatus(username){
   const results = {};
   TRELLO_SOURCES.forEach(s => results[s.key] = false);
@@ -530,9 +728,7 @@ async function trelloBlacklistStatus(username){
   return results;
 }
 
-/** =========================
- * RUN CHECK
- * ========================= */
+/* Run check */
 async function runCheck(username){
   termPrint("");
   termPrint(`Checking user: ${username}`);
@@ -603,9 +799,7 @@ async function runCheck(username){
   termPrint("");
 }
 
-/** =========================
- * BOOT
- * ========================= */
+/* Boot */
 async function boot(){
   termPrint("CID Secure Console v1.0");
   termPrint("Authorized personnel only.");
@@ -659,8 +853,14 @@ async function boot(){
     termPrint(`Unknown command: ${base}`, "danger");
   }
 }
+</script>
+
+</body>
+</html>
+
 
 window.addEventListener("DOMContentLoaded", ()=> boot());
 </script>
 </body>
 </html>
+
