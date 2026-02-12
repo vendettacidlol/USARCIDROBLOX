@@ -14,25 +14,25 @@
       --border:rgba(215,251,230,0.14);
     }
 
-    /* ✅ SCROLL FIXES */
-    html, body { min-height: 100vh; }
+    html, body { height: 100%; }
     body{
       margin:0; background:var(--bg); color:var(--fg);
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       overflow:auto;
     }
+
     .wrap{
       min-height:100vh;
-      height:auto;
       display:flex;
       align-items:center;
       justify-content:center;
       padding:18px;
       box-sizing:border-box;
     }
+
     .terminal{
       width:min(1100px,100%);
-      height:min(780px, calc(100vh - 36px));
+      height:min(820px, calc(100vh - 36px));
       border:1px solid var(--border);
       border-radius:12px;
       overflow:hidden;
@@ -42,20 +42,23 @@
       display:flex;
       flex-direction:column;
     }
+
     .bar{
       display:flex;align-items:center;gap:10px;
       padding:10px 12px;
       border-bottom:1px solid rgba(215,251,230,0.12);
       background:rgba(0,0,0,0.35);
+      flex: 0 0 auto;
     }
     .dots{display:flex;gap:6px;}
     .dot{width:10px;height:10px;border-radius:999px;opacity:.75}
     .dot.red{background:#ff5f57}.dot.yellow{background:#febc2e}.dot.green{background:#28c840}
     .title{color:var(--muted);font-size:13px;}
 
+    /* KEY: make main area a flex child that can shrink and scroll inside */
     .content{
-      flex:1;
-      min-height:0;
+      flex:1 1 auto;
+      min-height:0;           /* critical for scroll */
       display:grid;
       grid-template-columns:1fr 460px;
       gap:12px;
@@ -63,28 +66,29 @@
       box-sizing:border-box;
     }
 
-    /* Left terminal scroll */
+    /* Left terminal output scrolls */
     .screen{
       background:rgba(0,0,0,0.30);
       border:1px solid rgba(215,251,230,0.10);
       border-radius:10px;
       padding:12px;
-      overflow-y:auto;
+      overflow:auto;
       white-space:pre-wrap;
       line-height:1.35;
       font-size:14px;
       user-select:text;
-      min-height:0;
+      min-height:0;           /* critical */
     }
 
-    /* Right column scroll */
+    /* Right column scrolls as a whole */
     .right{
       display:flex;
       flex-direction:column;
       gap:12px;
       min-width:0;
-      min-height:0;
-      overflow-y:auto;
+      min-height:0;           /* critical */
+      overflow:auto;          /* scroll RIGHT SIDE */
+      padding-right:4px;      /* small space for scrollbar */
     }
 
     .panel{
@@ -96,7 +100,9 @@
       display:flex;
       flex-direction:column;
       min-height:0;
+      flex: 0 0 auto;         /* panels keep natural height */
     }
+
     .panel .hd{
       padding:10px 12px;
       border-bottom:1px solid rgba(215,251,230,0.10);
@@ -104,12 +110,21 @@
       font-size:13px;
       background:rgba(0,0,0,0.18);
       display:flex;justify-content:space-between;align-items:center;
+      flex: 0 0 auto;
     }
+
+    /* Each body scrolls too (if content long) */
     .panel .bd{
       padding:10px 12px;
       overflow:auto;
-      flex:1;
-      min-height:0;
+      min-height: 120px;      /* so it’s readable */
+      max-height: 240px;      /* prevents clumping; gives its own scrollbar */
+    }
+
+    /* Let chart panel be larger */
+    .panel.chart .bd{
+      min-height: 260px;
+      max-height: 320px;
     }
 
     .watermark{
@@ -119,6 +134,7 @@
       pointer-events:none;
       user-select:none;
     }
+
     .promptline{display:flex;gap:10px;align-items:baseline;}
     .prompt{color:var(--accent);}
     input.term{
@@ -130,15 +146,16 @@
     .chip{
       display:inline-block;padding:2px 8px;border:1px solid rgba(215,251,230,0.18);
       border-radius:999px;font-size:12px;color:var(--muted);
+      white-space:nowrap;
     }
     .kv{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;}
     .list{margin:0;padding-left:18px;}
 
-    /* ✅ Mobile layout */
     @media (max-width:980px){
-      .content{grid-template-columns:1fr;}
       .terminal{height:auto; min-height: calc(100vh - 36px);}
+      .content{grid-template-columns:1fr;}
       .right{max-height:none;}
+      .panel .bd{max-height:none;}
     }
   </style>
 </head>
@@ -155,7 +172,7 @@
       <div id="screen" class="screen"></div>
 
       <div class="right">
-        <div class="panel">
+        <div class="panel chart">
           <div class="hd"><span>Badge Chart</span><span id="chartStatus" class="chip">idle</span></div>
           <div class="bd"><canvas id="chart" height="240"></canvas></div>
         </div>
@@ -180,9 +197,8 @@
 /** =========================
  * CONFIG
  * ========================= */
-const API_BASE = "https://the.chastiefola.workers.dev"; // your Worker (with token auth + discord logging)
+const API_BASE = "https://the.chastiefola.workers.dev";
 
-/** Trello sources */
 const TRELLO_SOURCES = [
   { key: "USAR WIDE", json: "https://trello.com/b/zVRnrvhb/usar-management-mainframe.json", list_name: "USAR Blacklists" },
   { key: "FORSCOM",   json: "https://trello.com/b/YncjLEbF/forces-command-information-trello.json", list_name: "Blacklists" },
@@ -192,7 +208,6 @@ const TRELLO_SOURCES = [
 ];
 const DISPLAY_ORDER = ["USAR WIDE", "FORSCOM", "ASOC", "MPC", "TRADOC"];
 
-/** Inventory categories */
 const INVENTORY_CATEGORIES = {
   "T-Shirts": "TShirt",
   "Classic Shirts": "Shirt",
@@ -209,7 +224,6 @@ const INVENTORY_CATEGORIES = {
   "Waist Accessories": "WaistAccessory",
 };
 
-// pacing / backoff
 const BASE_DELAY_MS = 250;
 const JITTER_MS = 200;
 const BATCH_DELAY_MS = 600;
@@ -223,17 +237,6 @@ async function nap(base=BASE_DELAY_MS){ await sleep(base + Math.random()*JITTER_
  * TERMINAL UI
  * ========================= */
 const screen = document.getElementById("screen");
-
-// Always keep latest input focusable
-document.addEventListener("mousedown", ()=>{
-  const inp = getActiveInput();
-  if (inp) inp.focus();
-});
-window.addEventListener("focus", ()=>{
-  const inp = getActiveInput();
-  if (inp) inp.focus();
-});
-
 function termPrint(text="", cls=null){
   const div = document.createElement("div");
   if (cls) div.className = cls;
@@ -245,6 +248,9 @@ function getActiveInput(){
   const inputs = screen.querySelectorAll("input.term");
   return inputs.length ? inputs[inputs.length - 1] : null;
 }
+document.addEventListener("mousedown", ()=>{ const i=getActiveInput(); if(i) i.focus(); });
+window.addEventListener("focus", ()=>{ const i=getActiveInput(); if(i) i.focus(); });
+
 function promptLine(label, isPassword=false){
   const row = document.createElement("div");
   row.className = "promptline";
@@ -280,7 +286,7 @@ function promptLine(label, isPassword=false){
 }
 
 /** =========================
- * AUTH (Worker-side)
+ * AUTH
  * ========================= */
 let TOKEN = null;
 function authHeaders(extra={}) {
@@ -345,7 +351,7 @@ function usernameInCardName(username, cardName){
 }
 
 /** =========================
- * SIDE PANELS + CHART
+ * PANELS + CHART
  * ========================= */
 const chartStatus = document.getElementById("chartStatus");
 const blStatus = document.getElementById("blStatus");
@@ -354,7 +360,7 @@ const blacklistsBox = document.getElementById("blacklistsBox");
 const inventoryBox = document.getElementById("inventoryBox");
 
 let chart;
-function initChart(){
+(function initChart(){
   const ctx = document.getElementById("chart").getContext("2d");
   chart = new Chart(ctx, {
     type: "scatter",
@@ -369,8 +375,7 @@ function initChart(){
       plugins: { legend: { labels: { color: "#8fb3a3" } } }
     }
   });
-}
-initChart();
+})();
 
 function renderBlacklists(statusMap){
   const lines = DISPLAY_ORDER.map(k => `${k} BLACKLIST - ${statusMap[k] ? "YES" : "NO"}`);
@@ -414,7 +419,7 @@ function renderInventory(report){
 }
 
 /** =========================
- * WORKER PROXIED CALLS
+ * WORKER PROXIES
  * ========================= */
 async function trelloFetchBoardJson(trelloJsonUrl){
   const u = `${API_BASE}/trello?url=${encodeURIComponent(trelloJsonUrl)}`;
@@ -497,7 +502,7 @@ async function inventoryItems(userId, assetTypeName){
 }
 
 /** =========================
- * BLACKLIST CHECK
+ * BLACKLISTS
  * ========================= */
 async function trelloBlacklistStatus(username){
   const results = {};
@@ -513,9 +518,7 @@ async function trelloBlacklistStatus(username){
 
       let found = false;
       for (const c of cards){
-        if (listIds.includes(c.idList) && usernameInCardName(username, c.name || "")) {
-          found = true; break;
-        }
+        if (listIds.includes(c.idList) && usernameInCardName(username, c.name || "")) { found = true; break; }
       }
       results[src.key] = found;
     } catch(e){
@@ -608,7 +611,6 @@ async function boot(){
   termPrint("Authorized personnel only.");
   termPrint("");
 
-  // login loop
   while(true){
     termPrint("Login required.");
     const u = await promptLine("login> ");
@@ -640,24 +642,13 @@ async function boot(){
     if (!parts.length) continue;
 
     const base = parts[0].toLowerCase();
-    if (base === "help"){
-      termPrint("Commands: check <username>, logout, help");
-      continue;
-    }
-    if (base === "logout"){
-      TOKEN = null;
-      termPrint("Logged out. Refresh the page to log in again.");
-      continue;
-    }
+    if (base === "help"){ termPrint("Commands: check <username>, logout, help"); continue; }
+    if (base === "logout"){ TOKEN = null; termPrint("Logged out. Refresh the page to log in again."); continue; }
     if (base === "check"){
       const user = parts.slice(1).join(" ");
-      if (!user){
-        termPrint("Usage: check <roblox_username>");
-        continue;
-      }
-      try{
-        await runCheck(user);
-      } catch(e){
+      if (!user){ termPrint("Usage: check <roblox_username>"); continue; }
+      try{ await runCheck(user); }
+      catch(e){
         termPrint(`ERROR: ${e.message}`, "danger");
         chartStatus.textContent = "error";
         blStatus.textContent = "error";
