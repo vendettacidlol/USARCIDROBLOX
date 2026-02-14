@@ -168,50 +168,46 @@
 </div>
 
 <script>
-/** =========================
- * CONFIG
- * ========================= */
 const API_BASE = "https://the.chastiefola.workers.dev";
 
-/** YOUR EXACT Trello board JSON URLs + list names */
+/** Trello blacklists */
 const TRELLO_SOURCES = [
   { key: "USAR WIDE", json: "https://trello.com/b/zVRnrvhb/usar-management-mainframe.json", list_name: "USAR Blacklists" },
-  { key: "MPC",      json: "https://trello.com/b/IeGd7MBr/military-police-corps-information-board.json", list_name: "Unit Blacklists" },
-  { key: "TRADOC",   json: "https://trello.com/b/fUwjef3b/training-and-doctrine-command-information.json", list_name: "PERMANENT TRADOC BLACKLISTS" },
-  { key: "FORSCOM",  json: "https://trello.com/b/YncjLEbF/forces-command-information-trello.json", list_name: "Blacklists" },
-  { key: "ASOC",     json: "https://trello.com/b/TwIxsGvt/army-special-operations-information.json", list_name: "ASOC Blacklists" },
+  { key: "FORSCOM",   json: "https://trello.com/b/YncjLEbF/forces-command-information-trello.json", list_name: "Blacklists" },
+  { key: "ASOC",      json: "https://trello.com/b/TwIxsGvt/army-special-operations-information.json", list_name: "ASOC Blacklists" },
+  { key: "MPC",       json: "https://trello.com/b/IeGd7MBr/military-police-corps-information-board.json", list_name: "Unit Blacklists" },
+  { key: "TRADOC",    json: "https://trello.com/b/fUwjef3b/training-and-doctrine-command-information.json", list_name: "PERMANENT TRADOC BLACKLISTS" },
 ];
 const DISPLAY_ORDER = ["USAR WIDE", "FORSCOM", "ASOC", "MPC", "TRADOC"];
 
+/** ✅ FIX: numeric assetTypeId */
 const INVENTORY_CATEGORIES = {
-  "T-Shirts": "TShirt",
-  "Classic Shirts": "Shirt",
-  "Classic Pants": "Pants",
-  "Hats": "Hat",
-  "Face": "Face",
-  "Gear": "Gear",
-  "Hair Accessories": "HairAccessory",
-  "Face Accessories": "FaceAccessory",
-  "Neck Accessories": "NeckAccessory",
-  "Shoulder Accessories": "ShoulderAccessory",
-  "Front Accessories": "FrontAccessory",
-  "Back Accessories": "BackAccessory",
-  "Waist Accessories": "WaistAccessory",
+  "T-Shirts": 2,
+  "Classic Shirts": 11,
+  "Classic Pants": 12,
+  "Hats": 8,
+  "Face": 18,
+  "Gear": 19,
+  "Hair Accessories": 41,
+  "Face Accessories": 42,
+  "Neck Accessories": 43,
+  "Shoulder Accessories": 44,
+  "Front Accessories": 45,
+  "Back Accessories": 46,
+  "Waist Accessories": 47,
 };
 
 // pacing / backoff
 const BASE_DELAY_MS = 250;
 const JITTER_MS = 200;
-const BATCH_DELAY_MS = 600;
+const BATCH_DELAY_MS = 700;
 const PHASE_DELAY_MS = 800;
-const MAX_RETRIES_429 = 6;
+const MAX_RETRIES_429 = 7;
 
 function sleep(ms){ return new Promise(r=>setTimeout(r, ms)); }
 async function nap(base=BASE_DELAY_MS){ await sleep(base + Math.random()*JITTER_MS); }
 
-/** =========================
- * TERMINAL UI
- * ========================= */
+/** Terminal UI */
 const screen = document.getElementById("screen");
 function termPrint(text="", cls=null){
   const div = document.createElement("div");
@@ -254,10 +250,9 @@ function promptLine(label, isPassword=false){
   });
 }
 
-/** =========================
- * AUTH + API helpers
- * ========================= */
+/** Auth + API */
 let TOKEN = null;
+let IS_ADMIN = false;
 
 function authHeaders(extra={}) {
   return { ...(TOKEN ? { "Authorization": `Bearer ${TOKEN}` } : {}), ...extra };
@@ -272,7 +267,7 @@ async function fetchRL(url, opts={}){
   for (let i=0; i<MAX_RETRIES_429; i++){
     termPrint(`Rate limited. Sleeping ${(backoff/1000).toFixed(1)}s...`, "muted");
     await sleep(backoff);
-    backoff = Math.floor(backoff * 1.6);
+    backoff = Math.floor(backoff * 1.55);
     await nap(50);
     res = await fetch(url, opts);
     if (res.status !== 429) return res;
@@ -295,6 +290,7 @@ async function workerLogin(username, password) {
     body: JSON.stringify({ username, password })
   });
   TOKEN = data.token;
+  IS_ADMIN = !!data.isAdmin;
 }
 
 async function logCommand(cmdString){
@@ -307,9 +303,7 @@ async function logCommand(cmdString){
   } catch {}
 }
 
-/** =========================
- * Panels + Chart
- * ========================= */
+/** Panels + Chart */
 const chartStatus = document.getElementById("chartStatus");
 const blStatus = document.getElementById("blStatus");
 const invStatus = document.getElementById("invStatus");
@@ -399,15 +393,12 @@ function renderInventory(report){
   inventoryBox.appendChild(frag);
 }
 
-/** =========================
- * Worker proxied calls
- * ========================= */
+/** Worker proxied calls */
 async function trelloFetchBoardJson(trelloUrl){
-  // IMPORTANT: Worker accepts .json and also auto-appends if missing
   const res = await fetchRL(`${API_BASE}/trello?url=${encodeURIComponent(trelloUrl)}`, { headers: authHeaders() });
   const data = await res.json().catch(()=> ({}));
   if (!res.ok) throw new Error(data.error || `Trello HTTP ${res.status}`);
-  return data; // raw board JSON with lists/cards
+  return data;
 }
 
 async function robloxUserId(username){
@@ -456,12 +447,13 @@ async function canViewInventory(userId){
   return !!data.canView;
 }
 
-async function inventoryItems(userId, assetTypeName){
+/** ✅ FIXED: inventory calls numeric assetTypeId */
+async function inventoryItems(userId, assetTypeId){
   const out = [];
   let cursor = "";
   while(true){
     const path =
-      `/roblox/inventory?userId=${encodeURIComponent(userId)}&assetTypes=${encodeURIComponent(assetTypeName)}` +
+      `/roblox/inventory?userId=${encodeURIComponent(userId)}&assetTypeId=${encodeURIComponent(assetTypeId)}` +
       (cursor ? `&cursor=${encodeURIComponent(cursor)}` : "");
     const data = await api(path, { headers: authHeaders() });
     out.push(...(data.data || []));
@@ -472,9 +464,7 @@ async function inventoryItems(userId, assetTypeName){
   return out;
 }
 
-/** =========================
- * Blacklist check
- * ========================= */
+/** Blacklist check */
 async function trelloBlacklistStatus(username){
   const results = {};
   TRELLO_SOURCES.forEach(s => results[s.key] = false);
@@ -501,9 +491,47 @@ async function trelloBlacklistStatus(username){
   return results;
 }
 
-/** =========================
- * RUN CHECK
- * ========================= */
+/** Admin doc commands */
+async function cmdDocs(){
+  const data = await api(`/google/docs`, { headers: authHeaders() });
+  termPrint("Documents available:");
+  for (const d of data.docs) termPrint(`- ID ${d.id}: ${d.name}`);
+}
+async function cmdWhoHas(id){
+  const data = await api(`/google/docs/permissions?id=${encodeURIComponent(id)}`, { headers: authHeaders() });
+  termPrint(`Access list for ID ${data.id} — ${data.name}`);
+  if (!data.permissions.length){ termPrint("(No user permissions found)"); return; }
+  for (const p of data.permissions) termPrint(`- ${p.email} (${p.role})`);
+}
+async function cmdGrant(email, id){
+  const data = await api(`/google/grant`, {
+    method:"POST",
+    headers: authHeaders({ "Content-Type":"application/json" }),
+    body: JSON.stringify({ email, id })
+  });
+  termPrint(`GRANTED: ${data.email} → ${data.name} (ID ${data.docId})`);
+}
+async function cmdRevoke(email, id){
+  const data = await api(`/google/revoke`, {
+    method:"POST",
+    headers: authHeaders({ "Content-Type":"application/json" }),
+    body: JSON.stringify({ email, id })
+  });
+  termPrint(data.removed
+    ? `REVOKED: ${email} from ${data.name} (ID ${data.docId})`
+    : `REVOKE: ${email} had no access to ${data.name} (ID ${data.docId})`);
+}
+async function cmdRevokeAll(email){
+  const data = await api(`/google/revoke_all`, {
+    method:"POST",
+    headers: authHeaders({ "Content-Type":"application/json" }),
+    body: JSON.stringify({ email })
+  });
+  termPrint(`REVOKE ALL for ${email}:`);
+  for (const r of data.results) termPrint(`- ${r.id} ${r.name}: ${r.removed ? "REMOVED" : "NO CHANGE"}`);
+}
+
+/** Run check */
 async function runCheck(username){
   termPrint("");
   termPrint(`Checking user: ${username}`);
@@ -538,10 +566,10 @@ async function runCheck(username){
   } else {
     termPrint("Inventory: PUBLIC. Scanning categories (no prices)…");
     const report = {};
-    for (const [cat, typeName] of Object.entries(INVENTORY_CATEGORIES)){
+    for (const [cat, typeId] of Object.entries(INVENTORY_CATEGORIES)){
       termPrint(`- Fetching ${cat}…`, "muted");
       try{
-        const items = await inventoryItems(userId, typeName);
+        const items = await inventoryItems(userId, typeId);
         report[cat] = items.map(x => ({ name: x.name, assetId: x.assetId }));
       } catch(e){
         termPrint(`  Inventory category failed (${cat}): ${e.message}`, "muted");
@@ -574,9 +602,58 @@ async function runCheck(username){
   termPrint("");
 }
 
-/** =========================
- * BOOT
- * ========================= */
+function printHelp(){
+  termPrint("Commands:");
+  termPrint("  check <roblox_username>       Run background check");
+  termPrint("  trainingstatus <USERNAME>     Show CID training status");
+  termPrint("  sictrainingstatus <USERNAME>  Show SIC training status");
+  termPrint("  logout");
+  termPrint("  help");
+  if (IS_ADMIN){
+    termPrint("");
+    termPrint("Admin Commands:");
+    termPrint("  docs");
+    termPrint("  whohas <ID>");
+    termPrint("  grant <email> <ID>");
+    termPrint("  revoke <email> <ID>");
+    termPrint("  revoke all <email>");
+  }
+}
+
+async function cmdTrainingStatus(user){
+  const data = await api(`/sheet/trainingstatus`, {
+    method:"POST",
+    headers: authHeaders({ "Content-Type":"application/json" }),
+    body: JSON.stringify({ username: user })
+  });
+  if (!data.found){ termPrint(`trainingstatus: ${user} not found.`); return; }
+  termPrint(`TRAINING STATUS — ${user}`);
+  termPrint(`Rank: ${data.rank}`);
+  termPrint(`Position: ${data.position}`);
+  termPrint(`Timezone: ${data.timezone}`);
+  termPrint(`Current Phase: ${data.currentPhase}`);
+  termPrint(`Entry Date: ${data.entryDate}`);
+  termPrint(`Date of Expiry: ${data.dateOfExpiry}`);
+  termPrint(`Designated Unit: ${data.designatedUnit}`);
+  termPrint(`Notes: ${data.notes}`);
+}
+async function cmdSicTrainingStatus(user){
+  const data = await api(`/sheet/sictrainingstatus`, {
+    method:"POST",
+    headers: authHeaders({ "Content-Type":"application/json" }),
+    body: JSON.stringify({ username: user })
+  });
+  if (!data.found){ termPrint(`sictrainingstatus: ${user} not found.`); return; }
+  termPrint(`SIC TRAINING STATUS — ${user}`);
+  termPrint(`Rank: ${data.rank}`);
+  termPrint(`Position: ${data.position}`);
+  termPrint(`Timezone: ${data.timezone}`);
+  termPrint(`Training Status: ${data.trainingStatus}`);
+  termPrint(`Entry Date: ${data.entryDate}`);
+  termPrint(`Designated Unit: ${data.designatedUnit}`);
+}
+
+/** Boot */
 async function boot(){
   termPrint("CID Secure Console v1.0");
   termPrint("Authorized personnel only.");
@@ -590,7 +667,7 @@ async function boot(){
     try{
       await workerLogin(u, p);
       termPrint("");
-      termPrint("ACCESS GRANTED");
+      termPrint(`ACCESS GRANTED${IS_ADMIN ? " (ADMIN)" : ""}`);
       termPrint("");
       break;
     } catch(e){
@@ -601,10 +678,7 @@ async function boot(){
     }
   }
 
-  termPrint("Commands:");
-  termPrint("  check <roblox_username>    Run background check");
-  termPrint("  logout                     Clear session token");
-  termPrint("  help                       Show commands");
+  printHelp();
   termPrint("");
 
   while(true){
@@ -615,37 +689,61 @@ async function boot(){
     if (!parts.length) continue;
 
     const base = parts[0].toLowerCase();
-    if (base === "help"){
-      termPrint("Commands: check <username>, logout, help");
-      continue;
-    }
-    if (base === "logout"){
-      TOKEN = null;
-      termPrint("Logged out. Refresh the page to log in again.");
-      continue;
-    }
-    if (base === "check"){
-      const user = parts.slice(1).join(" ");
-      if (!user){
-        termPrint("Usage: check <roblox_username>");
-        continue;
+
+    try{
+      if (base === "help"){ printHelp(); continue; }
+      if (base === "logout"){ TOKEN = null; IS_ADMIN = false; termPrint("Logged out. Refresh to log in again."); continue; }
+
+      if (base === "check"){
+        const user = parts.slice(1).join(" ");
+        if (!user){ termPrint("Usage: check <roblox_username>"); continue; }
+        await runCheck(user); continue;
       }
-      try{
-        await runCheck(user);
-      } catch(e){
-        termPrint(`ERROR: ${e.message}`, "danger");
-        chartStatus.textContent = "error";
-        blStatus.textContent = "error";
-        invStatus.textContent = "error";
+
+      if (base === "trainingstatus"){
+        const user = parts.slice(1).join(" ");
+        if (!user){ termPrint("Usage: trainingstatus <USERNAME>"); continue; }
+        await cmdTrainingStatus(user); continue;
       }
-      continue;
+
+      if (base === "sictrainingstatus"){
+        const user = parts.slice(1).join(" ");
+        if (!user){ termPrint("Usage: sictrainingstatus <USERNAME>"); continue; }
+        await cmdSicTrainingStatus(user); continue;
+      }
+
+      // Admin-only
+      if (base === "docs"){ if (!IS_ADMIN) { termPrint("Unknown command.", "danger"); continue; } await cmdDocs(); continue; }
+      if (base === "whohas"){
+        if (!IS_ADMIN) { termPrint("Unknown command.", "danger"); continue; }
+        const id = parts[1]; if (!id){ termPrint("Usage: whohas <ID>"); continue; }
+        await cmdWhoHas(id); continue;
+      }
+      if (base === "grant"){
+        if (!IS_ADMIN) { termPrint("Unknown command.", "danger"); continue; }
+        const email = parts[1], id = parts[2];
+        if (!email || !id){ termPrint("Usage: grant <email> <ID>"); continue; }
+        await cmdGrant(email, id); continue;
+      }
+      if (base === "revoke"){
+        if (!IS_ADMIN) { termPrint("Unknown command.", "danger"); continue; }
+        if ((parts[1]||"").toLowerCase() === "all"){
+          const email = parts[2]; if (!email){ termPrint("Usage: revoke all <email>"); continue; }
+          await cmdRevokeAll(email); continue;
+        }
+        const email = parts[1], id = parts[2];
+        if (!email || !id){ termPrint("Usage: revoke <email> <ID>"); continue; }
+        await cmdRevoke(email, id); continue;
+      }
+
+      termPrint(`Unknown command: ${base}`, "danger");
+    } catch(e){
+      termPrint(`ERROR: ${e.message}`, "danger");
+      chartStatus.textContent = "error";
     }
-    termPrint(`Unknown command: ${base}`, "danger");
   }
 }
-
 boot();
 </script>
 </body>
 </html>
-
