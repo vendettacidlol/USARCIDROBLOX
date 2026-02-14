@@ -170,7 +170,6 @@
 <script>
 const API_BASE = "https://the.chastiefola.workers.dev";
 
-/** Trello blacklists */
 const TRELLO_SOURCES = [
   { key: "USAR WIDE", json: "https://trello.com/b/zVRnrvhb/usar-management-mainframe.json", list_name: "USAR Blacklists" },
   { key: "FORSCOM",   json: "https://trello.com/b/YncjLEbF/forces-command-information-trello.json", list_name: "Blacklists" },
@@ -180,7 +179,7 @@ const TRELLO_SOURCES = [
 ];
 const DISPLAY_ORDER = ["USAR WIDE", "FORSCOM", "ASOC", "MPC", "TRADOC"];
 
-/** ✅ FIX: numeric assetTypeId */
+// numeric asset type IDs
 const INVENTORY_CATEGORIES = {
   "T-Shirts": 2,
   "Classic Shirts": 11,
@@ -197,17 +196,17 @@ const INVENTORY_CATEGORIES = {
   "Waist Accessories": 47,
 };
 
-// pacing / backoff
+// pacing
 const BASE_DELAY_MS = 250;
 const JITTER_MS = 200;
-const BATCH_DELAY_MS = 700;
-const PHASE_DELAY_MS = 800;
+const BATCH_DELAY_MS = 900;
+const PHASE_DELAY_MS = 900;
 const MAX_RETRIES_429 = 7;
 
 function sleep(ms){ return new Promise(r=>setTimeout(r, ms)); }
 async function nap(base=BASE_DELAY_MS){ await sleep(base + Math.random()*JITTER_MS); }
 
-/** Terminal UI */
+// Terminal
 const screen = document.getElementById("screen");
 function termPrint(text="", cls=null){
   const div = document.createElement("div");
@@ -250,7 +249,7 @@ function promptLine(label, isPassword=false){
   });
 }
 
-/** Auth + API */
+// Auth
 let TOKEN = null;
 let IS_ADMIN = false;
 
@@ -303,7 +302,7 @@ async function logCommand(cmdString){
   } catch {}
 }
 
-/** Panels + Chart */
+// Panels + chart
 const chartStatus = document.getElementById("chartStatus");
 const blStatus = document.getElementById("blStatus");
 const invStatus = document.getElementById("invStatus");
@@ -393,7 +392,7 @@ function renderInventory(report){
   inventoryBox.appendChild(frag);
 }
 
-/** Worker proxied calls */
+// Worker proxied calls
 async function trelloFetchBoardJson(trelloUrl){
   const res = await fetchRL(`${API_BASE}/trello?url=${encodeURIComponent(trelloUrl)}`, { headers: authHeaders() });
   const data = await res.json().catch(()=> ({}));
@@ -447,7 +446,7 @@ async function canViewInventory(userId){
   return !!data.canView;
 }
 
-/** ✅ FIXED: inventory calls numeric assetTypeId */
+// ✅ inventory using assetTypeId param (worker handles fallbacks)
 async function inventoryItems(userId, assetTypeId){
   const out = [];
   let cursor = "";
@@ -464,7 +463,7 @@ async function inventoryItems(userId, assetTypeId){
   return out;
 }
 
-/** Blacklist check */
+// Blacklists
 async function trelloBlacklistStatus(username){
   const results = {};
   TRELLO_SOURCES.forEach(s => results[s.key] = false);
@@ -491,7 +490,7 @@ async function trelloBlacklistStatus(username){
   return results;
 }
 
-/** Admin doc commands */
+// Admin doc commands (unchanged behavior)
 async function cmdDocs(){
   const data = await api(`/google/docs`, { headers: authHeaders() });
   termPrint("Documents available:");
@@ -531,7 +530,41 @@ async function cmdRevokeAll(email){
   for (const r of data.results) termPrint(`- ${r.id} ${r.name}: ${r.removed ? "REMOVED" : "NO CHANGE"}`);
 }
 
-/** Run check */
+// Training status commands
+async function cmdTrainingStatus(user){
+  const data = await api(`/sheet/trainingstatus`, {
+    method:"POST",
+    headers: authHeaders({ "Content-Type":"application/json" }),
+    body: JSON.stringify({ username: user })
+  });
+  if (!data.found){ termPrint(`trainingstatus: ${user} not found.`); return; }
+  termPrint(`TRAINING STATUS — ${user}`);
+  termPrint(`Rank: ${data.rank}`);
+  termPrint(`Position: ${data.position}`);
+  termPrint(`Timezone: ${data.timezone}`);
+  termPrint(`Current Phase: ${data.currentPhase}`);
+  termPrint(`Entry Date: ${data.entryDate}`);
+  termPrint(`Date of Expiry: ${data.dateOfExpiry}`);
+  termPrint(`Designated Unit: ${data.designatedUnit}`);
+  termPrint(`Notes: ${data.notes}`);
+}
+async function cmdSicTrainingStatus(user){
+  const data = await api(`/sheet/sictrainingstatus`, {
+    method:"POST",
+    headers: authHeaders({ "Content-Type":"application/json" }),
+    body: JSON.stringify({ username: user })
+  });
+  if (!data.found){ termPrint(`sictrainingstatus: ${user} not found.`); return; }
+  termPrint(`SIC TRAINING STATUS — ${user}`);
+  termPrint(`Rank: ${data.rank}`);
+  termPrint(`Position: ${data.position}`);
+  termPrint(`Timezone: ${data.timezone}`);
+  termPrint(`Training Status: ${data.trainingStatus}`);
+  termPrint(`Entry Date: ${data.entryDate}`);
+  termPrint(`Designated Unit: ${data.designatedUnit}`);
+}
+
+// Check command
 async function runCheck(username){
   termPrint("");
   termPrint(`Checking user: ${username}`);
@@ -620,40 +653,7 @@ function printHelp(){
   }
 }
 
-async function cmdTrainingStatus(user){
-  const data = await api(`/sheet/trainingstatus`, {
-    method:"POST",
-    headers: authHeaders({ "Content-Type":"application/json" }),
-    body: JSON.stringify({ username: user })
-  });
-  if (!data.found){ termPrint(`trainingstatus: ${user} not found.`); return; }
-  termPrint(`TRAINING STATUS — ${user}`);
-  termPrint(`Rank: ${data.rank}`);
-  termPrint(`Position: ${data.position}`);
-  termPrint(`Timezone: ${data.timezone}`);
-  termPrint(`Current Phase: ${data.currentPhase}`);
-  termPrint(`Entry Date: ${data.entryDate}`);
-  termPrint(`Date of Expiry: ${data.dateOfExpiry}`);
-  termPrint(`Designated Unit: ${data.designatedUnit}`);
-  termPrint(`Notes: ${data.notes}`);
-}
-async function cmdSicTrainingStatus(user){
-  const data = await api(`/sheet/sictrainingstatus`, {
-    method:"POST",
-    headers: authHeaders({ "Content-Type":"application/json" }),
-    body: JSON.stringify({ username: user })
-  });
-  if (!data.found){ termPrint(`sictrainingstatus: ${user} not found.`); return; }
-  termPrint(`SIC TRAINING STATUS — ${user}`);
-  termPrint(`Rank: ${data.rank}`);
-  termPrint(`Position: ${data.position}`);
-  termPrint(`Timezone: ${data.timezone}`);
-  termPrint(`Training Status: ${data.trainingStatus}`);
-  termPrint(`Entry Date: ${data.entryDate}`);
-  termPrint(`Designated Unit: ${data.designatedUnit}`);
-}
-
-/** Boot */
+// Boot
 async function boot(){
   termPrint("CID Secure Console v1.0");
   termPrint("Authorized personnel only.");
