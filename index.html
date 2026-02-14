@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>CID Terminal</title>
+  <title>CID Management Terminal</title>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3"></script>
@@ -13,133 +13,93 @@
       --bg:#050607; --fg:#d7fbe6; --muted:#8fb3a3; --accent:#6ee7b7; --danger:#ff6b6b;
       --border:rgba(215,251,230,0.14);
     }
-
-    html, body { height: 100%; }
+    html, body { height:100%; }
     body{
       margin:0; background:var(--bg); color:var(--fg);
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
       overflow:auto;
     }
 
     /* ===== Intro overlay ===== */
     .intro {
-      position: fixed;
-      inset: 0;
+      position: fixed; inset: 0;
       background: radial-gradient(1200px 800px at 50% 35%, rgba(110,231,183,0.10), rgba(0,0,0,0.95) 60%),
                   linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.85));
-      display: grid;
-      place-items: center;
+      display: grid; place-items: center;
       z-index: 9999;
       transition: opacity 450ms ease, transform 450ms ease;
       opacity: 1;
     }
-    .intro.hide {
-      opacity: 0;
-      transform: scale(1.01);
-      pointer-events: none;
-    }
+    .intro.hide { opacity:0; transform: scale(1.01); pointer-events:none; }
+
     .introCard{
-      width: min(780px, calc(100vw - 40px));
-      border: 1px solid rgba(215,251,230,0.14);
-      border-radius: 14px;
+      width:min(780px, calc(100vw - 40px));
+      border:1px solid rgba(215,251,230,0.14);
+      border-radius:14px;
       background: rgba(0,0,0,0.38);
       box-shadow: 0 0 0 1px rgba(110,231,183,0.08), 0 30px 80px rgba(0,0,0,0.55);
-      overflow: hidden;
+      overflow:hidden;
     }
     .introTop{
-      display:flex;align-items:center;gap:10px;
+      display:flex; align-items:center; gap:10px;
       padding:10px 12px;
       border-bottom:1px solid rgba(215,251,230,0.12);
-      background:rgba(0,0,0,0.35);
+      background: rgba(0,0,0,0.35);
     }
-    .dots{display:flex;gap:6px;}
+    .dots{display:flex; gap:6px;}
     .dot{width:10px;height:10px;border-radius:999px;opacity:.75}
     .dot.red{background:#ff5f57}.dot.yellow{background:#febc2e}.dot.green{background:#28c840}
     .introTitle{color:var(--muted);font-size:13px;}
 
     .introBody{
-      padding: 18px 16px 16px;
-      display: grid;
+      padding:18px 16px 16px;
+      display:grid;
       grid-template-columns: 260px 1fr;
       gap: 16px;
     }
-    @media (max-width: 720px){
-      .introBody{grid-template-columns:1fr;}
-    }
+    @media (max-width: 720px){ .introBody{grid-template-columns:1fr;} }
 
-    .logoWrap{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding: 10px;
-    }
-    /* ✅ Put USACIDC_SSI.png in the same folder as index.html */
+    .logoWrap{display:flex; align-items:center; justify-content:center; padding:10px;}
     .ssiLogo{
-      width: min(240px, 60vw);
-      aspect-ratio: 1 / 1;
-      object-fit: contain;
-      filter:
-        grayscale(1)
-        sepia(1)
-        hue-rotate(85deg)
-        saturate(4.5)
-        brightness(1.10)
-        contrast(1.05)
-        drop-shadow(0 0 14px rgba(110,231,183,0.18));
-      opacity: 0.98;
+      width:min(240px, 60vw);
+      aspect-ratio:1/1;
+      object-fit:contain;
+      filter: grayscale(1) sepia(1) hue-rotate(85deg) saturate(4.5) brightness(1.10) contrast(1.05)
+              drop-shadow(0 0 14px rgba(110,231,183,0.18));
+      opacity: .98;
     }
 
-    .bootText{
-      font-size: 14px;
-      line-height: 1.35;
-      white-space: pre-wrap;
-      user-select: none;
-    }
-    .bootHeader{
-      font-size: 18px;
-      font-weight: 800;
-      letter-spacing: 0.4px;
-      margin-bottom: 8px;
-    }
+    .bootText{font-size:14px;line-height:1.35;white-space:pre-wrap;user-select:none;}
+    .bootHeader{font-size:18px;font-weight:800;letter-spacing:.4px;margin-bottom:8px;}
     .muted{color:var(--muted)}
     .accent{color:var(--accent)}
     .danger{color:var(--danger)}
 
     .progressOuter{
-      margin-top: 12px;
-      border: 1px solid rgba(215,251,230,0.16);
-      border-radius: 999px;
-      height: 10px;
-      overflow: hidden;
+      margin-top:12px;
+      border:1px solid rgba(215,251,230,0.16);
+      border-radius:999px;
+      height:10px;
+      overflow:hidden;
       background: rgba(0,0,0,0.35);
     }
     .progressInner{
-      height: 100%;
-      width: 0%;
+      height:100%;
+      width:0%;
       background: rgba(110,231,183,0.85);
-      box-shadow: 0 0 18px rgba(110,231,183,0.20);
+      box-shadow:0 0 18px rgba(110,231,183,0.20);
       transition: width 180ms ease;
     }
     .introFooter{
-      padding: 12px 16px 14px;
-      border-top: 1px solid rgba(215,251,230,0.10);
-      display:flex;
-      justify-content: space-between;
-      gap: 10px;
+      padding:12px 16px 14px;
+      border-top:1px solid rgba(215,251,230,0.10);
+      display:flex; justify-content:space-between; gap:10px;
       color: rgba(215,251,230,0.45);
-      font-size: 12px;
+      font-size:12px;
     }
 
-    /* ===== Main app layout ===== */
-    .wrap{
-      min-height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:18px;
-      box-sizing:border-box;
-    }
-
+    /* ===== App ===== */
+    .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px;box-sizing:border-box;}
     .terminal{
       width:min(1100px,100%);
       height:min(820px, calc(100vh - 36px));
@@ -152,13 +112,12 @@
       display:flex;
       flex-direction:column;
     }
-
     .bar{
       display:flex;align-items:center;gap:10px;
       padding:10px 12px;
       border-bottom:1px solid rgba(215,251,230,0.12);
       background:rgba(0,0,0,0.35);
-      flex: 0 0 auto;
+      flex:0 0 auto;
     }
     .title{color:var(--muted);font-size:13px;}
 
@@ -166,7 +125,7 @@
       flex:1 1 auto;
       min-height:0;
       display:grid;
-      grid-template-columns:1fr 460px;
+      grid-template-columns: 1fr 460px;
       gap:12px;
       padding:12px;
       box-sizing:border-box;
@@ -204,9 +163,8 @@
       display:flex;
       flex-direction:column;
       min-height:0;
-      flex: 0 0 auto;
+      flex:0 0 auto;
     }
-
     .panel .hd{
       padding:10px 12px;
       border-bottom:1px solid rgba(215,251,230,0.10);
@@ -214,17 +172,17 @@
       font-size:13px;
       background:rgba(0,0,0,0.18);
       display:flex;justify-content:space-between;align-items:center;
-      flex: 0 0 auto;
+      flex:0 0 auto;
     }
     .panel .bd{
       padding:10px 12px;
       overflow:auto;
-      min-height: 120px;
-      max-height: 240px;
+      min-height:120px;
+      max-height:240px;
     }
     .panel.chart .bd{
-      min-height: 260px;
-      max-height: 320px;
+      min-height:260px;
+      max-height:320px;
     }
 
     .watermark{
@@ -260,41 +218,33 @@
 
 <body>
 
-<!-- ===== Intro Overlay ===== -->
+<!-- Intro -->
 <div id="intro" class="intro">
   <div class="introCard">
     <div class="introTop">
       <div class="dots"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
       <div class="introTitle">Criminal Investigation Division — System Boot</div>
     </div>
-
     <div class="introBody">
       <div class="logoWrap">
+        <!-- Put USACIDC_SSI.png next to index.html -->
         <img class="ssiLogo" src="USACIDC_SSI.png" alt="CID SSI">
       </div>
-
       <div class="bootText">
         <div class="bootHeader">Criminal Investigation Division</div>
         <div id="bootLines" class="muted"></div>
-
-        <div class="progressOuter" aria-label="boot progress">
-          <div id="bootBar" class="progressInner"></div>
-        </div>
-
-        <div style="margin-top:10px" class="muted">
-          Press <span class="accent">Enter</span> to skip…
-        </div>
+        <div class="progressOuter"><div id="bootBar" class="progressInner"></div></div>
+        <div style="margin-top:10px" class="muted">Press <span class="accent">Enter</span> to skip…</div>
       </div>
     </div>
-
     <div class="introFooter">
-      <span>Do what has to be done.</span>
+      <span>SSI authenticated interface</span>
       <span class="muted" id="bootPct">0%</span>
     </div>
   </div>
 </div>
 
-<!-- ===== Main App ===== -->
+<!-- App -->
 <div class="wrap">
   <div class="terminal">
     <div class="bar">
@@ -307,7 +257,7 @@
 
       <div class="right">
         <div class="panel chart">
-          <div class="hd"><span>Badge Chart</span><span id="chartStatus" class="chip">idle</span></div>
+          <div class="hd"><span>Chart</span><span id="chartStatus" class="chip">idle</span></div>
           <div class="bd"><canvas id="chart" height="240"></canvas></div>
         </div>
 
@@ -328,108 +278,20 @@
 </div>
 
 <script>
-/* =========================
- * Intro boot animation (TYPEWRITER)
+/** =========================
+ * CONFIG
  * ========================= */
-const introEl = document.getElementById("intro");
-const bootLinesEl = document.getElementById("bootLines");
-const bootBarEl = document.getElementById("bootBar");
-const bootPctEl = document.getElementById("bootPct");
+const API_BASE = "https://the.chastiefola.workers.dev"; // <-- your Worker
 
-const BOOT_LINES = [
-  { t: "CID Secure Console v1.0", cls: "accent" },
-  { t: "Authorized personnel only.", cls: "muted" },
-  { t: "", cls: "muted" },
-  { t: "Initializing CID secure console…", cls: "muted" },
-  { t: "Loading interface modules…", cls: "muted" },
-  { t: "Verifying credential gateway…", cls: "muted" },
-  { t: "Mounting Trello intelligence feeds…", cls: "muted" },
-  { t: "Preparing Roblox proxy services…", cls: "muted" },
-  { t: "Establishing audit logging pipeline…", cls: "muted" },
-  { t: "Finalizing secure environment…", cls: "muted" },
-  { t: "READY.", cls: "accent" }
-];
-
-let bootDone = false;
-let skipIntro = false;
-
-function setBootPct(p){
-  const pct = Math.max(0, Math.min(100, p));
-  bootBarEl.style.width = pct + "%";
-  bootPctEl.textContent = pct + "%";
-}
-
-function finishIntro(){
-  if (bootDone) return;
-  bootDone = true;
-  introEl.classList.add("hide");
-  setTimeout(() => introEl.remove(), 520);
-  boot(); // ✅ start main app only after intro ends
-}
-
-function makeLine(cls){
-  const line = document.createElement("div");
-  line.className = cls || "muted";
-  line.textContent = "";
-  bootLinesEl.appendChild(line);
-  return line;
-}
-
-async function typeLine(lineEl, text, speedMs){
-  if (skipIntro) { lineEl.textContent = text; return; }
-  for (let i = 0; i < text.length; i++){
-    lineEl.textContent += text[i];
-    const jitter = Math.floor(Math.random()*18);
-    await new Promise(r => setTimeout(r, speedMs + jitter));
-    if (skipIntro) { lineEl.textContent = text; return; }
-  }
-}
-
-async function runIntro(){
-  setBootPct(0);
-
-  // Skip on Enter
-  window.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      skipIntro = true;
-      finishIntro();
-    }
-  }, { once: true });
-
-  let pct = 0;
-  for (let i = 0; i < BOOT_LINES.length; i++){
-    const { t, cls } = BOOT_LINES[i];
-    const lineEl = makeLine(cls);
-
-    const speed = t.length === 0 ? 0 : 16;
-    await typeLine(lineEl, t, speed);
-
-    pct = Math.min(100, Math.round(((i + 1) / BOOT_LINES.length) * 100));
-    setBootPct(pct);
-
-    if (!skipIntro) await new Promise(r => setTimeout(r, 120));
-    if (skipIntro) return;
-  }
-
-  if (!skipIntro) await new Promise(r => setTimeout(r, 450));
-  if (!skipIntro) finishIntro();
-}
-
-runIntro();
-
-/* =========================
- * App code
- * ========================= */
-const API_BASE = "https://the.chastiefola.workers.dev";
-
+// If your existing build already has these, keep them
 const TRELLO_SOURCES = [
   { key: "USAR WIDE", json: "https://trello.com/b/zVRnrvhb/usar-management-mainframe.json", list_name: "USAR Blacklists" },
   { key: "FORSCOM",   json: "https://trello.com/b/YncjLEbF/forces-command-information-trello.json", list_name: "Blacklists" },
   { key: "ASOC",      json: "https://trello.com/b/TwIxsGvt/army-special-operations-information.json", list_name: "ASOC Blacklists" },
   { key: "MPC",       json: "https://trello.com/b/IeGd7MBr/military-police-corps-information-board.json", list_name: "Unit Blacklists" },
-  { key: "TRADOC",    json: "https://trello.com/b/fUwjef3b/training-and-doctrine-command-information.json", list_name: "PERMANENT TRADOC BLACKLISTS" },
+  { key: "TRADOC",    json: "https://trello.com/b/fUwjef3b/training-and-doctrine-command-information.json", list_name: "PERMANENT TRADOC BLACKLISTS" }
 ];
-const DISPLAY_ORDER = ["USAR WIDE", "FORSCOM", "ASOC", "MPC", "TRADOC"];
+const DISPLAY_ORDER = ["USAR WIDE","FORSCOM","ASOC","MPC","TRADOC"];
 
 const INVENTORY_CATEGORIES = {
   "T-Shirts": "TShirt",
@@ -456,7 +318,80 @@ const MAX_RETRIES_429 = 6;
 function sleep(ms){ return new Promise(r=>setTimeout(r, ms)); }
 async function nap(base=BASE_DELAY_MS){ await sleep(base + Math.random()*JITTER_MS); }
 
-/* Terminal UI */
+/** =========================
+ * INTRO boot (typewriter)
+ * ========================= */
+const introEl = document.getElementById("intro");
+const bootLinesEl = document.getElementById("bootLines");
+const bootBarEl = document.getElementById("bootBar");
+const bootPctEl = document.getElementById("bootPct");
+
+const BOOT_LINES = [
+  { t: "CID Secure Console v1.0", cls: "accent" },
+  { t: "Authorized personnel only.", cls: "muted" },
+  { t: "", cls: "muted" },
+  { t: "Initializing CID secure console…", cls: "muted" },
+  { t: "Loading interface modules…", cls: "muted" },
+  { t: "Verifying credential gateway…", cls: "muted" },
+  { t: "Mounting Trello intelligence feeds…", cls: "muted" },
+  { t: "Preparing Roblox proxy services…", cls: "muted" },
+  { t: "Finalizing secure environment…", cls: "muted" },
+  { t: "READY.", cls: "accent" }
+];
+
+let bootDone = false;
+let skipIntro = false;
+
+function setBootPct(p){
+  const pct = Math.max(0, Math.min(100, p));
+  bootBarEl.style.width = pct + "%";
+  bootPctEl.textContent = pct + "%";
+}
+function finishIntro(){
+  if (bootDone) return;
+  bootDone = true;
+  introEl.classList.add("hide");
+  setTimeout(() => introEl.remove(), 520);
+  boot(); // start app
+}
+function makeLine(cls){
+  const line = document.createElement("div");
+  line.className = cls || "muted";
+  bootLinesEl.appendChild(line);
+  return line;
+}
+async function typeLine(lineEl, text, speedMs){
+  if (skipIntro) { lineEl.textContent = text; return; }
+  lineEl.textContent = "";
+  for (let i=0;i<text.length;i++){
+    lineEl.textContent += text[i];
+    const jitter = Math.floor(Math.random()*18);
+    await new Promise(r => setTimeout(r, speedMs + jitter));
+    if (skipIntro) { lineEl.textContent = text; return; }
+  }
+}
+async function runIntro(){
+  setBootPct(0);
+  window.addEventListener("keydown", (e)=>{ if (e.key === "Enter") { skipIntro = true; finishIntro(); } }, { once:true });
+
+  let pct = 0;
+  for (let i=0;i<BOOT_LINES.length;i++){
+    const {t, cls} = BOOT_LINES[i];
+    const lineEl = makeLine(cls);
+    await typeLine(lineEl, t, t.length ? 16 : 0);
+    pct = Math.min(100, Math.round(((i+1)/BOOT_LINES.length)*100));
+    setBootPct(pct);
+    if (!skipIntro) await new Promise(r=>setTimeout(r, 120));
+    if (skipIntro) return;
+  }
+  if (!skipIntro) await new Promise(r=>setTimeout(r, 450));
+  if (!skipIntro) finishIntro();
+}
+runIntro();
+
+/** =========================
+ * TERMINAL UI
+ * ========================= */
 const screen = document.getElementById("screen");
 function termPrint(text="", cls=null){
   const div = document.createElement("div");
@@ -506,13 +441,14 @@ function promptLine(label, isPassword=false){
   });
 }
 
-/* Auth */
+/** =========================
+ * AUTH + API helpers
+ * ========================= */
 let TOKEN = null;
+let IS_ADMIN = false;
+
 function authHeaders(extra={}) {
-  return {
-    ...(TOKEN ? { "Authorization": `Bearer ${TOKEN}` } : {}),
-    ...extra
-  };
+  return { ...(TOKEN ? { "Authorization": `Bearer ${TOKEN}` } : {}), ...extra };
 }
 async function fetchRL(url, opts={}){
   await nap();
@@ -530,42 +466,25 @@ async function fetchRL(url, opts={}){
   }
   return res;
 }
+async function api(path, opts={}){
+  const res = await fetchRL(`${API_BASE}${path}`, opts);
+  const data = await res.json().catch(()=> ({}));
+  if (!res.ok || data.ok === false) throw new Error(data.error || `HTTP ${res.status}`);
+  return data;
+}
 async function workerLogin(username, password) {
-  const res = await fetchRL(`${API_BASE}/auth/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+  const data = await api(`/auth/login`, {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
     body: JSON.stringify({ username, password })
   });
-  const data = await res.json().catch(()=> ({}));
-  if (!res.ok || !data.ok) throw new Error(data.error || `Login failed (HTTP ${res.status})`);
   TOKEN = data.token;
+  IS_ADMIN = !!data.isAdmin;
 }
 
-/* Helpers */
-function normalize(s){ return (s ?? "").toString().trim().toLowerCase(); }
-function usernameInCardName(username, cardName){
-  const u = (username ?? "").trim();
-  if (!u) return false;
-  const cn = (cardName ?? "").trim();
-  if (normalize(cn) === "[username]") return false;
-
-  const escaped = u.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  try {
-    const re = new RegExp(`(?<![A-Za-z0-9_])${escaped}(?![A-Za-z0-9_])`, "i");
-    return re.test(cn);
-  } catch {
-    const low = cn.toLowerCase();
-    const uu = u.toLowerCase();
-    const idx = low.indexOf(uu);
-    if (idx === -1) return false;
-    const before = low[idx-1] || "";
-    const after = low[idx+uu.length] || "";
-    const word = /[a-z0-9_]/i;
-    return !word.test(before) && !word.test(after);
-  }
-}
-
-/* Panels + chart */
+/** =========================
+ * SIDE PANELS + CHART
+ * ========================= */
 const chartStatus = document.getElementById("chartStatus");
 const blStatus = document.getElementById("blStatus");
 const invStatus = document.getElementById("invStatus");
@@ -590,11 +509,49 @@ let chart;
   });
 })();
 
+function setBadgeChart(points){
+  chart.data.datasets[0].label = "Badges over Time";
+  chart.data.datasets[0].data = points;
+  chart.update();
+}
+function setMemberHistoryChart(points){
+  const parsed = (points || [])
+    .map(p => ({ x: new Date(p.date), y: Number(p.count) }))
+    .filter(p => !isNaN(p.x.getTime()) && !isNaN(p.y));
+  chart.data.datasets[0].label = "Group Members (History)";
+  chart.data.datasets[0].data = parsed;
+  chart.update();
+}
+
+function normalize(s){ return (s ?? "").toString().trim().toLowerCase(); }
+function usernameInCardName(username, cardName){
+  const u = (username ?? "").trim();
+  if (!u) return false;
+  const cn = (cardName ?? "").trim();
+  if (normalize(cn) === "[username]") return false;
+
+  const escaped = u.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  try {
+    const re = new RegExp(`(?<![A-Za-z0-9_])${escaped}(?![A-Za-z0-9_])`, "i");
+    return re.test(cn);
+  } catch {
+    const low = cn.toLowerCase();
+    const uu = u.toLowerCase();
+    const idx = low.indexOf(uu);
+    if (idx === -1) return false;
+    const before = low[idx-1] || "";
+    const after = low[idx+uu.length] || "";
+    const word = /[a-z0-9_]/i;
+    return !word.test(before) && !word.test(after);
+  }
+}
+
 function renderBlacklists(statusMap){
   const lines = DISPLAY_ORDER.map(k => `${k} BLACKLIST - ${statusMap[k] ? "YES" : "NO"}`);
   blacklistsBox.textContent = lines.join("\n");
   blStatus.textContent = DISPLAY_ORDER.some(k => statusMap[k]) ? "flags" : "clear";
 }
+
 function renderInventory(report){
   const frag = document.createDocumentFragment();
   const kv = document.createElement("div");
@@ -630,7 +587,9 @@ function renderInventory(report){
   inventoryBox.appendChild(frag);
 }
 
-/* Worker proxies */
+/** =========================
+ * WORKER PROXIED Roblox + Trello (from your existing setup)
+ * ========================= */
 async function trelloFetchBoardJson(trelloJsonUrl){
   const u = `${API_BASE}/trello?url=${encodeURIComponent(trelloJsonUrl)}`;
   const res = await fetchRL(u, { headers: authHeaders() });
@@ -706,7 +665,9 @@ async function inventoryItems(userId, assetTypeName){
   return out;
 }
 
-/* Blacklists */
+/** =========================
+ * Blacklist check (via Worker trello proxy)
+ * ========================= */
 async function trelloBlacklistStatus(username){
   const results = {};
   TRELLO_SOURCES.forEach(s => results[s.key] = false);
@@ -733,7 +694,9 @@ async function trelloBlacklistStatus(username){
   return results;
 }
 
-/* Run check */
+/** =========================
+ * Run check (badge chart)
+ * ========================= */
 async function runCheck(username){
   termPrint("");
   termPrint(`Checking user: ${username}`);
@@ -796,15 +759,115 @@ async function runCheck(username){
 
   const parsed = dates.map(s => new Date(s)).filter(d => !isNaN(d.getTime())).sort((a,b)=>a-b);
   const points = parsed.map((d, idx)=>({ x: d, y: idx+1 }));
-  chart.data.datasets[0].data = points;
-  chart.update();
+  setBadgeChart(points);
 
-  chartStatus.textContent = "done";
+  chartStatus.textContent = "badges";
   termPrint("Chart updated.");
   termPrint("");
 }
 
-/* Boot */
+/** =========================
+ * Admin + Training + Member history commands (Worker-backed)
+ * ========================= */
+async function cmdTrainingStatus(user){
+  const data = await api(`/sheet/trainingstatus`, {
+    method:"POST",
+    headers: authHeaders({ "Content-Type":"application/json" }),
+    body: JSON.stringify({ username: user })
+  });
+  if (!data.found){ termPrint(`trainingstatus: ${user} not found.`); return; }
+  termPrint(`TRAINING STATUS — ${user}`);
+  termPrint(`Rank: ${data.rank}`);
+  termPrint(`Position: ${data.position}`);
+  termPrint(`Timezone: ${data.timezone}`);
+  termPrint(`Current Phase: ${data.currentPhase}`);
+  termPrint(`Entry Date: ${data.entryDate}`);
+  termPrint(`Date of Expiry: ${data.dateOfExpiry}`);
+  termPrint(`Designated Unit: ${data.designatedUnit}`);
+  termPrint(`Notes: ${data.notes}`);
+}
+async function cmdSicTrainingStatus(user){
+  const data = await api(`/sheet/sictrainingstatus`, {
+    method:"POST",
+    headers: authHeaders({ "Content-Type":"application/json" }),
+    body: JSON.stringify({ username: user })
+  });
+  if (!data.found){ termPrint(`sictrainingstatus: ${user} not found.`); return; }
+  termPrint(`SIC TRAINING STATUS — ${user}`);
+  termPrint(`Rank: ${data.rank}`);
+  termPrint(`Position: ${data.position}`);
+  termPrint(`Timezone: ${data.timezone}`);
+  termPrint(`Training Status: ${data.trainingStatus}`);
+  termPrint(`Entry Date: ${data.entryDate}`);
+  termPrint(`Designated Unit: ${data.designatedUnit}`);
+}
+async function cmdMemberHistory(){
+  const data = await api(`/sheet/memberhistory`, { headers: authHeaders() });
+  termPrint(`Loaded member history (${data.points.length} points).`);
+  setMemberHistoryChart(data.points);
+  chartStatus.textContent = "members";
+}
+
+async function cmdDocs(){
+  const data = await api(`/google/docs`, { headers: authHeaders() });
+  termPrint("Documents available:");
+  for (const d of data.docs) termPrint(`- ID ${d.id}: ${d.name}`);
+}
+async function cmdWhoHas(id){
+  const data = await api(`/google/docs/permissions?id=${encodeURIComponent(id)}`, { headers: authHeaders() });
+  termPrint(`Access list for ID ${data.id} — ${data.name}`);
+  if (!data.permissions.length){ termPrint("(No user permissions found)"); return; }
+  for (const p of data.permissions) termPrint(`- ${p.email} (${p.role})`);
+}
+async function cmdGrant(email, id){
+  const data = await api(`/google/grant`, {
+    method:"POST",
+    headers: authHeaders({ "Content-Type":"application/json" }),
+    body: JSON.stringify({ email, id })
+  });
+  termPrint(`GRANTED: ${data.email} → ${data.name} (ID ${data.docId})`);
+}
+async function cmdRevoke(email, id){
+  const data = await api(`/google/revoke`, {
+    method:"POST",
+    headers: authHeaders({ "Content-Type":"application/json" }),
+    body: JSON.stringify({ email, id })
+  });
+  termPrint(data.removed ? `REVOKED: ${email} from ${data.name} (ID ${data.docId})` : `REVOKE: ${email} had no access to ${data.name} (ID ${data.docId})`);
+}
+async function cmdRevokeAll(email){
+  const data = await api(`/google/revoke_all`, {
+    method:"POST",
+    headers: authHeaders({ "Content-Type":"application/json" }),
+    body: JSON.stringify({ email })
+  });
+  termPrint(`REVOKE ALL for ${email}:`);
+  for (const r of data.results) termPrint(`- ${r.id} ${r.name}: ${r.removed ? "REMOVED" : "NO CHANGE"}`);
+}
+
+function printHelp(){
+  termPrint("Commands:");
+  termPrint("  check <roblox_username>");
+  termPrint("  trainingstatus <username>");
+  termPrint("  sictrainingstatus <username>");
+  termPrint("  memberhistory");
+  termPrint("  logout");
+  termPrint("  help");
+
+  if (IS_ADMIN){
+    termPrint("");
+    termPrint("Admin Commands:");
+    termPrint("  grant <email> <ID>");
+    termPrint("  revoke <email> <ID>");
+    termPrint("  revoke all <email>");
+    termPrint("  docs");
+    termPrint("  whohas <ID>");
+  }
+}
+
+/** =========================
+ * MAIN BOOT
+ * ========================= */
 async function boot(){
   termPrint("CID Secure Console v1.0");
   termPrint("Authorized personnel only.");
@@ -814,11 +877,11 @@ async function boot(){
     termPrint("Login required.");
     const u = await promptLine("login> ");
     const p = await promptLine("password> ", true);
-
     try{
       await workerLogin(u, p);
       termPrint("");
       termPrint("ACCESS GRANTED");
+      termPrint(`User: ${u}${IS_ADMIN ? " (ADMIN)" : ""}`);
       termPrint("");
       break;
     } catch(e){
@@ -829,10 +892,7 @@ async function boot(){
     }
   }
 
-  termPrint("Commands:");
-  termPrint("  check <roblox_username>    Run background check");
-  termPrint("  logout                     Clear session token");
-  termPrint("  help                       Show commands");
+  printHelp();
   termPrint("");
 
   while(true){
@@ -841,21 +901,68 @@ async function boot(){
     if (!parts.length) continue;
 
     const base = parts[0].toLowerCase();
-    if (base === "help"){ termPrint("Commands: check <username>, logout, help"); continue; }
-    if (base === "logout"){ TOKEN = null; termPrint("Logged out. Refresh the page to log in again."); continue; }
-    if (base === "check"){
-      const user = parts.slice(1).join(" ");
-      if (!user){ termPrint("Usage: check <roblox_username>"); continue; }
-      try{ await runCheck(user); }
-      catch(e){
-        termPrint(`ERROR: ${e.message}`, "danger");
-        chartStatus.textContent = "error";
-        blStatus.textContent = "error";
-        invStatus.textContent = "error";
+
+    try{
+      if (base === "help"){ printHelp(); continue; }
+      if (base === "logout"){ TOKEN = null; IS_ADMIN = false; termPrint("Logged out. Refresh to log in again."); continue; }
+
+      if (base === "check"){
+        const user = parts.slice(1).join(" ");
+        if (!user){ termPrint("Usage: check <roblox_username>"); continue; }
+        await runCheck(user);
+        continue;
       }
-      continue;
+
+      if (base === "trainingstatus"){
+        const user = parts.slice(1).join(" ");
+        if (!user){ termPrint("Usage: trainingstatus <USERNAME>"); continue; }
+        await cmdTrainingStatus(user);
+        continue;
+      }
+
+      if (base === "sictrainingstatus"){
+        const user = parts.slice(1).join(" ");
+        if (!user){ termPrint("Usage: sictrainingstatus <USERNAME>"); continue; }
+        await cmdSicTrainingStatus(user);
+        continue;
+      }
+
+      if (base === "memberhistory"){
+        await cmdMemberHistory();
+        continue;
+      }
+
+      // Admin commands: only show + only callable if admin; Worker also enforces
+      if (base === "docs"){
+        if (!IS_ADMIN){ termPrint("Unknown command.", "danger"); continue; }
+        await cmdDocs(); continue;
+      }
+      if (base === "whohas"){
+        if (!IS_ADMIN){ termPrint("Unknown command.", "danger"); continue; }
+        const id = parts[1]; if (!id){ termPrint("Usage: whohas <ID>"); continue; }
+        await cmdWhoHas(id); continue;
+      }
+      if (base === "grant"){
+        if (!IS_ADMIN){ termPrint("Unknown command.", "danger"); continue; }
+        const email = parts[1], id = parts[2];
+        if (!email || !id){ termPrint("Usage: grant <email> <ID>"); continue; }
+        await cmdGrant(email, id); continue;
+      }
+      if (base === "revoke"){
+        if (!IS_ADMIN){ termPrint("Unknown command.", "danger"); continue; }
+        if ((parts[1]||"").toLowerCase() === "all"){
+          const email = parts[2]; if (!email){ termPrint("Usage: revoke all <email>"); continue; }
+          await cmdRevokeAll(email); continue;
+        }
+        const email = parts[1], id = parts[2];
+        if (!email || !id){ termPrint("Usage: revoke <email> <ID>"); continue; }
+        await cmdRevoke(email, id); continue;
+      }
+
+      termPrint(`Unknown command: ${base}`, "danger");
+    } catch(e){
+      termPrint(`ERROR: ${e.message}`, "danger");
     }
-    termPrint(`Unknown command: ${base}`, "danger");
   }
 }
 </script>
