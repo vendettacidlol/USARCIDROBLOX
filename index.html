@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>CID Management Terminal</title>
+  <title>CID Terminal</title>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3"></script>
@@ -19,86 +19,6 @@
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
       overflow:auto;
     }
-
-    /* ===== Intro overlay ===== */
-    .intro {
-      position: fixed; inset: 0;
-      background: radial-gradient(1200px 800px at 50% 35%, rgba(110,231,183,0.10), rgba(0,0,0,0.95) 60%),
-                  linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.85));
-      display: grid; place-items: center;
-      z-index: 9999;
-      transition: opacity 450ms ease, transform 450ms ease;
-      opacity: 1;
-    }
-    .intro.hide { opacity:0; transform: scale(1.01); pointer-events:none; }
-
-    .introCard{
-      width:min(780px, calc(100vw - 40px));
-      border:1px solid rgba(215,251,230,0.14);
-      border-radius:14px;
-      background: rgba(0,0,0,0.38);
-      box-shadow: 0 0 0 1px rgba(110,231,183,0.08), 0 30px 80px rgba(0,0,0,0.55);
-      overflow:hidden;
-    }
-    .introTop{
-      display:flex; align-items:center; gap:10px;
-      padding:10px 12px;
-      border-bottom:1px solid rgba(215,251,230,0.12);
-      background: rgba(0,0,0,0.35);
-    }
-    .dots{display:flex; gap:6px;}
-    .dot{width:10px;height:10px;border-radius:999px;opacity:.75}
-    .dot.red{background:#ff5f57}.dot.yellow{background:#febc2e}.dot.green{background:#28c840}
-    .introTitle{color:var(--muted);font-size:13px;}
-
-    .introBody{
-      padding:18px 16px 16px;
-      display:grid;
-      grid-template-columns: 260px 1fr;
-      gap: 16px;
-    }
-    @media (max-width: 720px){ .introBody{grid-template-columns:1fr;} }
-
-    .logoWrap{display:flex; align-items:center; justify-content:center; padding:10px;}
-    .ssiLogo{
-      width:min(240px, 60vw);
-      aspect-ratio:1/1;
-      object-fit:contain;
-      filter: grayscale(1) sepia(1) hue-rotate(85deg) saturate(4.5) brightness(1.10) contrast(1.05)
-              drop-shadow(0 0 14px rgba(110,231,183,0.18));
-      opacity: .98;
-    }
-
-    .bootText{font-size:14px;line-height:1.35;white-space:pre-wrap;user-select:none;}
-    .bootHeader{font-size:18px;font-weight:800;letter-spacing:.4px;margin-bottom:8px;}
-    .muted{color:var(--muted)}
-    .accent{color:var(--accent)}
-    .danger{color:var(--danger)}
-
-    .progressOuter{
-      margin-top:12px;
-      border:1px solid rgba(215,251,230,0.16);
-      border-radius:999px;
-      height:10px;
-      overflow:hidden;
-      background: rgba(0,0,0,0.35);
-    }
-    .progressInner{
-      height:100%;
-      width:0%;
-      background: rgba(110,231,183,0.85);
-      box-shadow:0 0 18px rgba(110,231,183,0.20);
-      transition: width 180ms ease;
-    }
-    .introFooter{
-      padding:12px 16px 14px;
-      border-top:1px solid rgba(215,251,230,0.10);
-      display:flex; justify-content:space-between; gap:10px;
-      color: rgba(215,251,230,0.45);
-      font-size:12px;
-    }
-
-    /* ===== App ===== */
     .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px;box-sizing:border-box;}
     .terminal{
       width:min(1100px,100%);
@@ -112,25 +32,12 @@
       display:flex;
       flex-direction:column;
     }
-    .bar{
-      display:flex;align-items:center;gap:10px;
-      padding:10px 12px;
-      border-bottom:1px solid rgba(215,251,230,0.12);
-      background:rgba(0,0,0,0.35);
-      flex:0 0 auto;
-    }
+    .bar{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid rgba(215,251,230,0.12);background:rgba(0,0,0,0.35);flex:0 0 auto;}
+    .dots{display:flex;gap:6px;}
+    .dot{width:10px;height:10px;border-radius:999px;opacity:.75}
+    .dot.red{background:#ff5f57}.dot.yellow{background:#febc2e}.dot.green{background:#28c840}
     .title{color:var(--muted);font-size:13px;}
-
-    .content{
-      flex:1 1 auto;
-      min-height:0;
-      display:grid;
-      grid-template-columns: 1fr 460px;
-      gap:12px;
-      padding:12px;
-      box-sizing:border-box;
-    }
-
+    .content{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:1fr 460px;gap:12px;padding:12px;box-sizing:border-box;}
     .screen{
       background:rgba(0,0,0,0.30);
       border:1px solid rgba(215,251,230,0.10);
@@ -143,70 +50,17 @@
       user-select:text;
       min-height:0;
     }
-
-    .right{
-      display:flex;
-      flex-direction:column;
-      gap:12px;
-      min-width:0;
-      min-height:0;
-      overflow:auto;
-      padding-right:4px;
-    }
-
-    .panel{
-      background:rgba(0,0,0,0.30);
-      border:1px solid rgba(215,251,230,0.10);
-      border-radius:10px;
-      overflow:hidden;
-      min-width:0;
-      display:flex;
-      flex-direction:column;
-      min-height:0;
-      flex:0 0 auto;
-    }
-    .panel .hd{
-      padding:10px 12px;
-      border-bottom:1px solid rgba(215,251,230,0.10);
-      color:var(--muted);
-      font-size:13px;
-      background:rgba(0,0,0,0.18);
-      display:flex;justify-content:space-between;align-items:center;
-      flex:0 0 auto;
-    }
-    .panel .bd{
-      padding:10px 12px;
-      overflow:auto;
-      min-height:120px;
-      max-height:240px;
-    }
-    .panel.chart .bd{
-      min-height:260px;
-      max-height:320px;
-    }
-
-    .watermark{
-      position:absolute;right:10px;bottom:10px;
-      color:rgba(215,251,230,0.18);
-      font-weight:800;
-      pointer-events:none;
-      user-select:none;
-    }
-
+    .right{display:flex;flex-direction:column;gap:12px;min-width:0;min-height:0;overflow:auto;padding-right:4px;}
+    .panel{background:rgba(0,0,0,0.30);border:1px solid rgba(215,251,230,0.10);border-radius:10px;overflow:hidden;min-width:0;display:flex;flex-direction:column;min-height:0;flex:0 0 auto;}
+    .panel .hd{padding:10px 12px;border-bottom:1px solid rgba(215,251,230,0.10);color:var(--muted);font-size:13px;background:rgba(0,0,0,0.18);display:flex;justify-content:space-between;align-items:center;flex:0 0 auto;}
+    .panel .bd{padding:10px 12px;overflow:auto;min-height:260px;max-height:360px;}
+    .watermark{position:absolute;right:10px;bottom:10px;color:rgba(215,251,230,0.18);font-weight:800;pointer-events:none;user-select:none;}
     .promptline{display:flex;gap:10px;align-items:baseline;}
     .prompt{color:var(--accent);}
-    input.term{
-      flex:1;background:transparent;border:none;outline:none;color:var(--fg);font:inherit;
-      padding:0;margin:0;caret-color:var(--accent);
-    }
-    .chip{
-      display:inline-block;padding:2px 8px;border:1px solid rgba(215,251,230,0.18);
-      border-radius:999px;font-size:12px;color:var(--muted);
-      white-space:nowrap;
-    }
-    .kv{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;}
-    .list{margin:0;padding-left:18px;}
-
+    input.term{flex:1;background:transparent;border:none;outline:none;color:var(--fg);font:inherit;padding:0;margin:0;caret-color:var(--accent);}
+    .chip{display:inline-block;padding:2px 8px;border:1px solid rgba(215,251,230,0.18);border-radius:999px;font-size:12px;color:var(--muted);white-space:nowrap;}
+    .muted{color:var(--muted)}
+    .danger{color:var(--danger)}
     @media (max-width:980px){
       .terminal{height:auto; min-height: calc(100vh - 36px);}
       .content{grid-template-columns:1fr;}
@@ -217,34 +71,6 @@
 </head>
 
 <body>
-
-<!-- Intro -->
-<div id="intro" class="intro">
-  <div class="introCard">
-    <div class="introTop">
-      <div class="dots"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
-      <div class="introTitle">Criminal Investigation Division — System Boot</div>
-    </div>
-    <div class="introBody">
-      <div class="logoWrap">
-        <!-- Put USACIDC_SSI.png next to index.html -->
-        <img class="ssiLogo" src="USACIDC_SSI.png" alt="CID SSI">
-      </div>
-      <div class="bootText">
-        <div class="bootHeader">Criminal Investigation Division</div>
-        <div id="bootLines" class="muted"></div>
-        <div class="progressOuter"><div id="bootBar" class="progressInner"></div></div>
-        <div style="margin-top:10px" class="muted">Press <span class="accent">Enter</span> to skip…</div>
-      </div>
-    </div>
-    <div class="introFooter">
-      <span>SSI authenticated interface</span>
-      <span class="muted" id="bootPct">0%</span>
-    </div>
-  </div>
-</div>
-
-<!-- App -->
 <div class="wrap">
   <div class="terminal">
     <div class="bar">
@@ -256,19 +82,9 @@
       <div id="screen" class="screen"></div>
 
       <div class="right">
-        <div class="panel chart">
+        <div class="panel">
           <div class="hd"><span>Chart</span><span id="chartStatus" class="chip">idle</span></div>
           <div class="bd"><canvas id="chart" height="240"></canvas></div>
-        </div>
-
-        <div class="panel">
-          <div class="hd"><span>Blacklist Status</span><span id="blStatus" class="chip">—</span></div>
-          <div class="bd" id="blacklistsBox" class="muted">Run <span class="chip">check &lt;username&gt;</span></div>
-        </div>
-
-        <div class="panel">
-          <div class="hd"><span>Inventory (No Prices)</span><span id="invStatus" class="chip">—</span></div>
-          <div class="bd" id="inventoryBox" class="muted">Run <span class="chip">check &lt;username&gt;</span></div>
         </div>
       </div>
     </div>
@@ -278,121 +94,11 @@
 </div>
 
 <script>
-/** =========================
- * CONFIG
- * ========================= */
 const API_BASE = "https://the.chastiefola.workers.dev"; // <-- your Worker
 
-// If your existing build already has these, keep them
-const TRELLO_SOURCES = [
-  { key: "USAR WIDE", json: "https://trello.com/b/zVRnrvhb/usar-management-mainframe.json", list_name: "USAR Blacklists" },
-  { key: "FORSCOM",   json: "https://trello.com/b/YncjLEbF/forces-command-information-trello.json", list_name: "Blacklists" },
-  { key: "ASOC",      json: "https://trello.com/b/TwIxsGvt/army-special-operations-information.json", list_name: "ASOC Blacklists" },
-  { key: "MPC",       json: "https://trello.com/b/IeGd7MBr/military-police-corps-information-board.json", list_name: "Unit Blacklists" },
-  { key: "TRADOC",    json: "https://trello.com/b/fUwjef3b/training-and-doctrine-command-information.json", list_name: "PERMANENT TRADOC BLACKLISTS" }
-];
-const DISPLAY_ORDER = ["USAR WIDE","FORSCOM","ASOC","MPC","TRADOC"];
-
-const INVENTORY_CATEGORIES = {
-  "T-Shirts": "TShirt",
-  "Classic Shirts": "Shirt",
-  "Classic Pants": "Pants",
-  "Hats": "Hat",
-  "Face": "Face",
-  "Gear": "Gear",
-  "Hair Accessories": "HairAccessory",
-  "Face Accessories": "FaceAccessory",
-  "Neck Accessories": "NeckAccessory",
-  "Shoulder Accessories": "ShoulderAccessory",
-  "Front Accessories": "FrontAccessory",
-  "Back Accessories": "BackAccessory",
-  "Waist Accessories": "WaistAccessory",
-};
-
-const BASE_DELAY_MS = 250;
-const JITTER_MS = 200;
-const BATCH_DELAY_MS = 600;
-const PHASE_DELAY_MS = 800;
-const MAX_RETRIES_429 = 6;
-
-function sleep(ms){ return new Promise(r=>setTimeout(r, ms)); }
-async function nap(base=BASE_DELAY_MS){ await sleep(base + Math.random()*JITTER_MS); }
-
-/** =========================
- * INTRO boot (typewriter)
- * ========================= */
-const introEl = document.getElementById("intro");
-const bootLinesEl = document.getElementById("bootLines");
-const bootBarEl = document.getElementById("bootBar");
-const bootPctEl = document.getElementById("bootPct");
-
-const BOOT_LINES = [
-  { t: "CID Secure Console v1.0", cls: "accent" },
-  { t: "Authorized personnel only.", cls: "muted" },
-  { t: "", cls: "muted" },
-  { t: "Initializing CID secure console…", cls: "muted" },
-  { t: "Loading interface modules…", cls: "muted" },
-  { t: "Verifying credential gateway…", cls: "muted" },
-  { t: "Mounting Trello intelligence feeds…", cls: "muted" },
-  { t: "Preparing Roblox proxy services…", cls: "muted" },
-  { t: "Finalizing secure environment…", cls: "muted" },
-  { t: "READY.", cls: "accent" }
-];
-
-let bootDone = false;
-let skipIntro = false;
-
-function setBootPct(p){
-  const pct = Math.max(0, Math.min(100, p));
-  bootBarEl.style.width = pct + "%";
-  bootPctEl.textContent = pct + "%";
-}
-function finishIntro(){
-  if (bootDone) return;
-  bootDone = true;
-  introEl.classList.add("hide");
-  setTimeout(() => introEl.remove(), 520);
-  boot(); // start app
-}
-function makeLine(cls){
-  const line = document.createElement("div");
-  line.className = cls || "muted";
-  bootLinesEl.appendChild(line);
-  return line;
-}
-async function typeLine(lineEl, text, speedMs){
-  if (skipIntro) { lineEl.textContent = text; return; }
-  lineEl.textContent = "";
-  for (let i=0;i<text.length;i++){
-    lineEl.textContent += text[i];
-    const jitter = Math.floor(Math.random()*18);
-    await new Promise(r => setTimeout(r, speedMs + jitter));
-    if (skipIntro) { lineEl.textContent = text; return; }
-  }
-}
-async function runIntro(){
-  setBootPct(0);
-  window.addEventListener("keydown", (e)=>{ if (e.key === "Enter") { skipIntro = true; finishIntro(); } }, { once:true });
-
-  let pct = 0;
-  for (let i=0;i<BOOT_LINES.length;i++){
-    const {t, cls} = BOOT_LINES[i];
-    const lineEl = makeLine(cls);
-    await typeLine(lineEl, t, t.length ? 16 : 0);
-    pct = Math.min(100, Math.round(((i+1)/BOOT_LINES.length)*100));
-    setBootPct(pct);
-    if (!skipIntro) await new Promise(r=>setTimeout(r, 120));
-    if (skipIntro) return;
-  }
-  if (!skipIntro) await new Promise(r=>setTimeout(r, 450));
-  if (!skipIntro) finishIntro();
-}
-runIntro();
-
-/** =========================
- * TERMINAL UI
- * ========================= */
 const screen = document.getElementById("screen");
+const chartStatus = document.getElementById("chartStatus");
+
 function termPrint(text="", cls=null){
   const div = document.createElement("div");
   if (cls) div.className = cls;
@@ -400,17 +106,10 @@ function termPrint(text="", cls=null){
   screen.appendChild(div);
   screen.scrollTop = screen.scrollHeight;
 }
-function getActiveInput(){
-  const inputs = screen.querySelectorAll("input.term");
-  return inputs.length ? inputs[inputs.length - 1] : null;
-}
-document.addEventListener("mousedown", ()=>{ const i=getActiveInput(); if(i) i.focus(); });
-window.addEventListener("focus", ()=>{ const i=getActiveInput(); if(i) i.focus(); });
 
 function promptLine(label, isPassword=false){
   const row = document.createElement("div");
   row.className = "promptline";
-
   const p = document.createElement("span");
   p.className = "prompt";
   p.textContent = label;
@@ -441,38 +140,21 @@ function promptLine(label, isPassword=false){
   });
 }
 
-/** =========================
- * AUTH + API helpers
- * ========================= */
 let TOKEN = null;
 let IS_ADMIN = false;
 
 function authHeaders(extra={}) {
   return { ...(TOKEN ? { "Authorization": `Bearer ${TOKEN}` } : {}), ...extra };
 }
-async function fetchRL(url, opts={}){
-  await nap();
-  let res = await fetch(url, opts);
-  if (res.status !== 429) return res;
 
-  let backoff = 2000;
-  for (let i=0; i<MAX_RETRIES_429; i++){
-    termPrint(`Rate limited. Sleeping ${(backoff/1000).toFixed(1)}s...`, "muted");
-    await sleep(backoff);
-    backoff = Math.floor(backoff * 1.6);
-    await nap(50);
-    res = await fetch(url, opts);
-    if (res.status !== 429) return res;
-  }
-  return res;
-}
-async function api(path, opts={}){
-  const res = await fetchRL(`${API_BASE}${path}`, opts);
+async function api(path, opts={}) {
+  const res = await fetch(`${API_BASE}${path}`, opts);
   const data = await res.json().catch(()=> ({}));
   if (!res.ok || data.ok === false) throw new Error(data.error || `HTTP ${res.status}`);
   return data;
 }
-async function workerLogin(username, password) {
+
+async function workerLogin(username, password){
   const data = await api(`/auth/login`, {
     method:"POST",
     headers:{ "Content-Type":"application/json" },
@@ -482,26 +164,18 @@ async function workerLogin(username, password) {
   IS_ADMIN = !!data.isAdmin;
 }
 
-/** =========================
- * SIDE PANELS + CHART
- * ========================= */
-const chartStatus = document.getElementById("chartStatus");
-const blStatus = document.getElementById("blStatus");
-const invStatus = document.getElementById("invStatus");
-const blacklistsBox = document.getElementById("blacklistsBox");
-const inventoryBox = document.getElementById("inventoryBox");
-
 let chart;
 (function initChart(){
   const ctx = document.getElementById("chart").getContext("2d");
   chart = new Chart(ctx, {
-    type: "scatter",
-    data: { datasets: [{ label: "Badges over Time", data: [], pointRadius: 2 }] },
+    type: "line",
+    data: { datasets: [{ label: "Series", data: [], pointRadius: 2, tension: 0.2 }] },
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      parsing: false,
       scales: {
-        x: { type: "time", time: { unit: "year" }, ticks: { color: "#8fb3a3" }, grid: { color: "rgba(215,251,230,0.08)" } },
+        x: { type: "time", time: { unit: "day" }, ticks: { color: "#8fb3a3" }, grid: { color: "rgba(215,251,230,0.08)" } },
         y: { ticks: { color: "#8fb3a3" }, grid: { color: "rgba(215,251,230,0.08)" } }
       },
       plugins: { legend: { labels: { color: "#8fb3a3" } } }
@@ -509,266 +183,24 @@ let chart;
   });
 })();
 
-function setBadgeChart(points){
-  chart.data.datasets[0].label = "Badges over Time";
+function setSeries(label, points){
+  chart.data.datasets[0].label = label;
   chart.data.datasets[0].data = points;
   chart.update();
 }
-function setMemberHistoryChart(points){
-  const parsed = (points || [])
+
+async function cmdMemberHistory(){
+  const data = await api(`/roblox/groupmemberhistory`, { headers: authHeaders() });
+  const pts = (data.points || [])
     .map(p => ({ x: new Date(p.date), y: Number(p.count) }))
-    .filter(p => !isNaN(p.x.getTime()) && !isNaN(p.y));
-  chart.data.datasets[0].label = "Group Members (History)";
-  chart.data.datasets[0].data = parsed;
-  chart.update();
+    .filter(p => !isNaN(p.x.getTime()) && Number.isFinite(p.y))
+    .sort((a,b)=> a.x - b.x);
+
+  setSeries(`Members — ${data.groupName || "Group"}`, pts);
+  chartStatus.textContent = "members";
+  termPrint(`Logged/Loaded ${pts.length} points. Latest: ${data.latest?.date} = ${data.latest?.count}`);
 }
 
-function normalize(s){ return (s ?? "").toString().trim().toLowerCase(); }
-function usernameInCardName(username, cardName){
-  const u = (username ?? "").trim();
-  if (!u) return false;
-  const cn = (cardName ?? "").trim();
-  if (normalize(cn) === "[username]") return false;
-
-  const escaped = u.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  try {
-    const re = new RegExp(`(?<![A-Za-z0-9_])${escaped}(?![A-Za-z0-9_])`, "i");
-    return re.test(cn);
-  } catch {
-    const low = cn.toLowerCase();
-    const uu = u.toLowerCase();
-    const idx = low.indexOf(uu);
-    if (idx === -1) return false;
-    const before = low[idx-1] || "";
-    const after = low[idx+uu.length] || "";
-    const word = /[a-z0-9_]/i;
-    return !word.test(before) && !word.test(after);
-  }
-}
-
-function renderBlacklists(statusMap){
-  const lines = DISPLAY_ORDER.map(k => `${k} BLACKLIST - ${statusMap[k] ? "YES" : "NO"}`);
-  blacklistsBox.textContent = lines.join("\n");
-  blStatus.textContent = DISPLAY_ORDER.some(k => statusMap[k]) ? "flags" : "clear";
-}
-
-function renderInventory(report){
-  const frag = document.createDocumentFragment();
-  const kv = document.createElement("div");
-  kv.className = "kv";
-  const total = Object.values(report).reduce((a, arr)=>a + (arr?.length||0), 0);
-  kv.innerHTML = `<span class="chip">categories: ${Object.keys(report).length}</span>
-                  <span class="chip">items: ${total}</span>`;
-  frag.appendChild(kv);
-
-  Object.entries(report).forEach(([cat, items])=>{
-    const h = document.createElement("div");
-    h.style.marginTop = "10px";
-    h.innerHTML = `<span class="chip">${cat}</span> <span class="muted">(${items.length})</span>`;
-    frag.appendChild(h);
-
-    const ul = document.createElement("ul");
-    ul.className = "list";
-    items.slice(0, 60).forEach(it=>{
-      const li = document.createElement("li");
-      li.textContent = `${it.name ?? "Unknown"} (AssetId: ${it.assetId ?? "?"})`;
-      ul.appendChild(li);
-    });
-    if (items.length > 60){
-      const li = document.createElement("li");
-      li.className = "muted";
-      li.textContent = `…and ${items.length - 60} more`;
-      ul.appendChild(li);
-    }
-    frag.appendChild(ul);
-  });
-
-  inventoryBox.innerHTML = "";
-  inventoryBox.appendChild(frag);
-}
-
-/** =========================
- * WORKER PROXIED Roblox + Trello (from your existing setup)
- * ========================= */
-async function trelloFetchBoardJson(trelloJsonUrl){
-  const u = `${API_BASE}/trello?url=${encodeURIComponent(trelloJsonUrl)}`;
-  const res = await fetchRL(u, { headers: authHeaders() });
-  if (!res.ok) throw new Error(`Trello HTTP ${res.status}`);
-  return await res.json();
-}
-async function robloxUserId(username){
-  const res = await fetchRL(`${API_BASE}/roblox/userid`, {
-    method:"POST",
-    headers: authHeaders({ "Content-Type":"application/json" }),
-    body: JSON.stringify({ username })
-  });
-  if (!res.ok) throw new Error(`UserId HTTP ${res.status}`);
-  const data = await res.json();
-  if (data?.data?.length) return String(data.data[0].id);
-  throw new Error("User not found");
-}
-async function robloxBadges(userId){
-  const base = `${API_BASE}/roblox/badges?userId=${encodeURIComponent(userId)}`;
-  const out = [];
-  let cursor = "";
-  while(true){
-    const url = cursor ? `${base}&cursor=${encodeURIComponent(cursor)}` : base;
-    const res = await fetchRL(url, { headers: authHeaders() });
-    if (!res.ok) throw new Error(`Badges HTTP ${res.status}`);
-    const data = await res.json();
-    out.push(...(data.data || []));
-    cursor = data.nextPageCursor || "";
-    if (!cursor) break;
-    await sleep(BATCH_DELAY_MS);
-  }
-  return out;
-}
-async function robloxAwardedDates(userId, badgeIds){
-  const STEP = 100;
-  const dates = [];
-  for (let i=0; i<badgeIds.length; i+=STEP){
-    const batch = badgeIds.slice(i, i+STEP);
-    const res = await fetchRL(`${API_BASE}/roblox/awardedDates`, {
-      method:"POST",
-      headers: authHeaders({ "Content-Type":"application/json" }),
-      body: JSON.stringify({ userId, badgeIds: batch })
-    });
-    if (!res.ok) throw new Error(`AwardedDates HTTP ${res.status}`);
-    const data = await res.json();
-    (data.data || []).forEach(x => dates.push(x.awardedDate));
-    await sleep(BATCH_DELAY_MS);
-  }
-  return dates;
-}
-async function canViewInventory(userId){
-  const url = `${API_BASE}/roblox/canViewInventory?userId=${encodeURIComponent(userId)}`;
-  const res = await fetchRL(url, { headers: authHeaders() });
-  if (!res.ok) throw new Error(`canViewInventory HTTP ${res.status}`);
-  const data = await res.json();
-  return !!data.canView;
-}
-async function inventoryItems(userId, assetTypeName){
-  const out = [];
-  let cursor = "";
-  while(true){
-    const url =
-      `${API_BASE}/roblox/inventory?userId=${encodeURIComponent(userId)}&assetTypes=${encodeURIComponent(assetTypeName)}` +
-      (cursor ? `&cursor=${encodeURIComponent(cursor)}` : "");
-    const res = await fetchRL(url, { headers: authHeaders() });
-    if (!res.ok) throw new Error(`Inventory(${assetTypeName}) HTTP ${res.status}`);
-    const data = await res.json();
-    out.push(...(data.data || []));
-    cursor = data.nextPageCursor || "";
-    if (!cursor) break;
-    await sleep(BATCH_DELAY_MS);
-  }
-  return out;
-}
-
-/** =========================
- * Blacklist check (via Worker trello proxy)
- * ========================= */
-async function trelloBlacklistStatus(username){
-  const results = {};
-  TRELLO_SOURCES.forEach(s => results[s.key] = false);
-
-  for (const src of TRELLO_SOURCES){
-    try{
-      const board = await trelloFetchBoardJson(src.json);
-      const lists = board.lists || [];
-      const cards = board.cards || [];
-      const listIds = lists.filter(l => normalize(l.name) === normalize(src.list_name)).map(l => l.id);
-      if (!listIds.length) continue;
-
-      let found = false;
-      for (const c of cards){
-        if (listIds.includes(c.idList) && usernameInCardName(username, c.name || "")) { found = true; break; }
-      }
-      results[src.key] = found;
-    } catch(e){
-      termPrint(`Trello check failed for ${src.key}: ${e.message}`, "muted");
-      results[src.key] = false;
-    }
-    await nap(350);
-  }
-  return results;
-}
-
-/** =========================
- * Run check (badge chart)
- * ========================= */
-async function runCheck(username){
-  termPrint("");
-  termPrint(`Checking user: ${username}`);
-
-  chartStatus.textContent = "running";
-  blStatus.textContent = "…";
-  invStatus.textContent = "…";
-  blacklistsBox.textContent = "Running…";
-  inventoryBox.textContent = "Running…";
-
-  termPrint("Fetching Trello blacklists…");
-  const bl = await trelloBlacklistStatus(username);
-  DISPLAY_ORDER.forEach(k => termPrint(`${k} BLACKLIST - ${bl[k] ? "YES" : "NO"}`));
-  renderBlacklists(bl);
-
-  await sleep(PHASE_DELAY_MS);
-
-  termPrint("");
-  termPrint("Resolving Roblox user ID…");
-  const userId = await robloxUserId(username);
-  termPrint(`UserId: ${userId}`);
-
-  await sleep(PHASE_DELAY_MS);
-
-  termPrint("");
-  termPrint("Checking inventory visibility…");
-  const canView = await canViewInventory(userId);
-  if (!canView){
-    termPrint("Inventory: PRIVATE (cannot scan items).");
-    invStatus.textContent = "private";
-    inventoryBox.textContent = "Inventory is private.";
-  } else {
-    termPrint("Inventory: PUBLIC. Scanning categories (no prices)…");
-    const report = {};
-    for (const [cat, typeName] of Object.entries(INVENTORY_CATEGORIES)){
-      termPrint(`- Fetching ${cat}…`, "muted");
-      try{
-        const items = await inventoryItems(userId, typeName);
-        report[cat] = items.map(x => ({ name: x.name, assetId: x.assetId }));
-      } catch(e){
-        termPrint(`  Inventory category failed (${cat}): ${e.message}`, "muted");
-        report[cat] = [];
-      }
-      await sleep(300);
-    }
-    invStatus.textContent = "done";
-    renderInventory(report);
-  }
-
-  await sleep(PHASE_DELAY_MS);
-
-  termPrint("");
-  termPrint("Fetching badges…");
-  const badges = await robloxBadges(userId);
-  termPrint(`Badges found: ${badges.length}`);
-
-  termPrint("Fetching awarded dates…");
-  const badgeIds = badges.map(b=>b.id).filter(Boolean);
-  const dates = await robloxAwardedDates(userId, badgeIds);
-
-  const parsed = dates.map(s => new Date(s)).filter(d => !isNaN(d.getTime())).sort((a,b)=>a-b);
-  const points = parsed.map((d, idx)=>({ x: d, y: idx+1 }));
-  setBadgeChart(points);
-
-  chartStatus.textContent = "badges";
-  termPrint("Chart updated.");
-  termPrint("");
-}
-
-/** =========================
- * Admin + Training + Member history commands (Worker-backed)
- * ========================= */
 async function cmdTrainingStatus(user){
   const data = await api(`/sheet/trainingstatus`, {
     method:"POST",
@@ -786,6 +218,7 @@ async function cmdTrainingStatus(user){
   termPrint(`Designated Unit: ${data.designatedUnit}`);
   termPrint(`Notes: ${data.notes}`);
 }
+
 async function cmdSicTrainingStatus(user){
   const data = await api(`/sheet/sictrainingstatus`, {
     method:"POST",
@@ -801,13 +234,8 @@ async function cmdSicTrainingStatus(user){
   termPrint(`Entry Date: ${data.entryDate}`);
   termPrint(`Designated Unit: ${data.designatedUnit}`);
 }
-async function cmdMemberHistory(){
-  const data = await api(`/sheet/memberhistory`, { headers: authHeaders() });
-  termPrint(`Loaded member history (${data.points.length} points).`);
-  setMemberHistoryChart(data.points);
-  chartStatus.textContent = "members";
-}
 
+// Admin-only
 async function cmdDocs(){
   const data = await api(`/google/docs`, { headers: authHeaders() });
   termPrint("Documents available:");
@@ -833,7 +261,9 @@ async function cmdRevoke(email, id){
     headers: authHeaders({ "Content-Type":"application/json" }),
     body: JSON.stringify({ email, id })
   });
-  termPrint(data.removed ? `REVOKED: ${email} from ${data.name} (ID ${data.docId})` : `REVOKE: ${email} had no access to ${data.name} (ID ${data.docId})`);
+  termPrint(data.removed
+    ? `REVOKED: ${email} from ${data.name} (ID ${data.docId})`
+    : `REVOKE: ${email} had no access to ${data.name} (ID ${data.docId})`);
 }
 async function cmdRevokeAll(email){
   const data = await api(`/google/revoke_all`, {
@@ -847,27 +277,22 @@ async function cmdRevokeAll(email){
 
 function printHelp(){
   termPrint("Commands:");
-  termPrint("  check <roblox_username>");
-  termPrint("  trainingstatus <username>");
-  termPrint("  sictrainingstatus <username>");
   termPrint("  memberhistory");
+  termPrint("  trainingstatus <USERNAME>");
+  termPrint("  sictrainingstatus <USERNAME>");
   termPrint("  logout");
   termPrint("  help");
-
   if (IS_ADMIN){
     termPrint("");
     termPrint("Admin Commands:");
+    termPrint("  docs");
+    termPrint("  whohas <ID>");
     termPrint("  grant <email> <ID>");
     termPrint("  revoke <email> <ID>");
     termPrint("  revoke all <email>");
-    termPrint("  docs");
-    termPrint("  whohas <ID>");
   }
 }
 
-/** =========================
- * MAIN BOOT
- * ========================= */
 async function boot(){
   termPrint("CID Secure Console v1.0");
   termPrint("Authorized personnel only.");
@@ -880,8 +305,7 @@ async function boot(){
     try{
       await workerLogin(u, p);
       termPrint("");
-      termPrint("ACCESS GRANTED");
-      termPrint(`User: ${u}${IS_ADMIN ? " (ADMIN)" : ""}`);
+      termPrint(`ACCESS GRANTED${IS_ADMIN ? " (ADMIN)" : ""}`);
       termPrint("");
       break;
     } catch(e){
@@ -906,33 +330,20 @@ async function boot(){
       if (base === "help"){ printHelp(); continue; }
       if (base === "logout"){ TOKEN = null; IS_ADMIN = false; termPrint("Logged out. Refresh to log in again."); continue; }
 
-      if (base === "check"){
-        const user = parts.slice(1).join(" ");
-        if (!user){ termPrint("Usage: check <roblox_username>"); continue; }
-        await runCheck(user);
-        continue;
-      }
+      if (base === "memberhistory"){ await cmdMemberHistory(); continue; }
 
       if (base === "trainingstatus"){
         const user = parts.slice(1).join(" ");
         if (!user){ termPrint("Usage: trainingstatus <USERNAME>"); continue; }
-        await cmdTrainingStatus(user);
-        continue;
+        await cmdTrainingStatus(user); continue;
       }
 
       if (base === "sictrainingstatus"){
         const user = parts.slice(1).join(" ");
         if (!user){ termPrint("Usage: sictrainingstatus <USERNAME>"); continue; }
-        await cmdSicTrainingStatus(user);
-        continue;
+        await cmdSicTrainingStatus(user); continue;
       }
 
-      if (base === "memberhistory"){
-        await cmdMemberHistory();
-        continue;
-      }
-
-      // Admin commands: only show + only callable if admin; Worker also enforces
       if (base === "docs"){
         if (!IS_ADMIN){ termPrint("Unknown command.", "danger"); continue; }
         await cmdDocs(); continue;
@@ -950,10 +361,13 @@ async function boot(){
       }
       if (base === "revoke"){
         if (!IS_ADMIN){ termPrint("Unknown command.", "danger"); continue; }
+
         if ((parts[1]||"").toLowerCase() === "all"){
-          const email = parts[2]; if (!email){ termPrint("Usage: revoke all <email>"); continue; }
+          const email = parts[2];
+          if (!email){ termPrint("Usage: revoke all <email>"); continue; }
           await cmdRevokeAll(email); continue;
         }
+
         const email = parts[1], id = parts[2];
         if (!email || !id){ termPrint("Usage: revoke <email> <ID>"); continue; }
         await cmdRevoke(email, id); continue;
@@ -965,7 +379,7 @@ async function boot(){
     }
   }
 }
+boot();
 </script>
 </body>
 </html>
-
