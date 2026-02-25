@@ -3,28 +3,249 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>CID Terminal</title>
+  <title>Secure Investigations Portal</title>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3"></script>
 
   <style>
     :root{
+      /* Terminal palette (kept) */
       --bg:#050607; --fg:#d7fbe6; --muted:#8fb3a3; --accent:#6ee7b7; --danger:#ff6b6b;
       --border:rgba(215,251,230,0.14);
+
+      /* Portal palette (new, “gov/mil-inspired” but distinct) */
+      --portal-ink:#0a1626;
+      --portal-ink-2:#0e223a;
+      --portal-gold:#c7a44a;
+      --portal-line:rgba(255,255,255,0.14);
+      --portal-text:#eaf0ff;
+      --portal-sub:#b7c4df;
+      --card:rgba(255,255,255,0.06);
+      --card-2:rgba(0,0,0,0.25);
     }
+
     html, body { height:100%; }
     body{
-      margin:0; background:var(--bg); color:var(--fg);
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+      margin:0;
+      background: radial-gradient(1200px 900px at 20% -10%, rgba(199,164,74,0.18), transparent 55%),
+                  radial-gradient(900px 700px at 110% 20%, rgba(82,140,255,0.14), transparent 55%),
+                  linear-gradient(180deg, var(--portal-ink), #06080c 65%, var(--bg));
+      color: var(--portal-text);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
       overflow:auto;
     }
-    .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px;box-sizing:border-box;}
+
+    /* Top “official-style” banner (but explicitly NOT official) */
+    .banner{
+      background: rgba(0,0,0,0.35);
+      border-bottom: 1px solid var(--portal-line);
+      padding: 8px 14px;
+      font-size: 13px;
+      color: var(--portal-sub);
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .banner b{ color: var(--portal-text); font-weight: 650; }
+    .banner .pill{
+      border:1px solid rgba(199,164,74,0.35);
+      color: rgba(255,255,255,0.85);
+      padding: 2px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      background: rgba(199,164,74,0.08);
+      white-space: nowrap;
+    }
+
+    /* Header */
+    header{
+      background: linear-gradient(180deg, rgba(14,34,58,0.92), rgba(10,22,38,0.92));
+      border-bottom: 1px solid var(--portal-line);
+      box-shadow: 0 16px 50px rgba(0,0,0,0.35);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(8px);
+    }
+    .header-inner{
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 14px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 14px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap: 12px;
+      min-width: 240px;
+    }
+    .brand-mark{
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: linear-gradient(145deg, rgba(199,164,74,0.30), rgba(199,164,74,0.08));
+      border: 1px solid rgba(199,164,74,0.35);
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.35) inset, 0 14px 40px rgba(0,0,0,0.28);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color: rgba(255,255,255,0.92);
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      user-select:none;
+    }
+    .brand-title{
+      line-height:1.1;
+    }
+    .brand-title .top{
+      font-weight: 800;
+      letter-spacing: 0.4px;
+      color: var(--portal-text);
+      font-size: 16px;
+    }
+    .brand-title .sub{
+      font-size: 12px;
+      color: var(--portal-sub);
+      margin-top: 4px;
+    }
+
+    nav{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content:flex-end;
+    }
+
+    .navbtn{
+      appearance:none;
+      border:1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.92);
+      border-radius: 10px;
+      padding: 9px 12px;
+      font-size: 13px;
+      font-weight: 650;
+      letter-spacing: 0.2px;
+      cursor:pointer;
+      transition: transform .06s ease, background .15s ease, border-color .15s ease;
+      user-select:none;
+      white-space: nowrap;
+    }
+    .navbtn:hover{
+      background: rgba(255,255,255,0.09);
+      border-color: rgba(199,164,74,0.32);
+    }
+    .navbtn:active{ transform: translateY(1px); }
+    .navbtn.primary{
+      border-color: rgba(199,164,74,0.45);
+      background: rgba(199,164,74,0.10);
+    }
+    .navbtn[hidden]{ display:none !important; }
+
+    .container{
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 16px 26px;
+      box-sizing: border-box;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 420px 1fr;
+      gap: 14px;
+      align-items:start;
+    }
+
+    .card{
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      box-shadow: 0 24px 70px rgba(0,0,0,0.40);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+      background: rgba(0,0,0,0.22);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+    }
+    .card .hd .title{
+      font-weight: 800;
+      letter-spacing: 0.25px;
+      font-size: 14px;
+      color: rgba(255,255,255,0.92);
+    }
+    .card .hd .tag{
+      font-size: 12px;
+      color: rgba(255,255,255,0.82);
+      border: 1px solid rgba(199,164,74,0.35);
+      background: rgba(199,164,74,0.08);
+      border-radius: 999px;
+      padding: 3px 10px;
+      white-space: nowrap;
+    }
+    .card .bd{
+      padding: 14px;
+      color: rgba(255,255,255,0.88);
+    }
+
+    .note{
+      color: var(--portal-sub);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    /* Login form */
+    .field{ display:flex; flex-direction:column; gap: 7px; margin-top: 12px; }
+    label{ font-size: 12px; color: rgba(255,255,255,0.82); font-weight: 650; letter-spacing: 0.2px; }
+    input.portal{
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(0,0,0,0.22);
+      color: rgba(255,255,255,0.92);
+      border-radius: 12px;
+      padding: 10px 12px;
+      outline: none;
+      font-size: 14px;
+    }
+    input.portal:focus{
+      border-color: rgba(199,164,74,0.40);
+      box-shadow: 0 0 0 4px rgba(199,164,74,0.10);
+    }
+    .row{
+      display:flex;
+      gap: 10px;
+      align-items:center;
+      justify-content:space-between;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+    .status{
+      font-size: 13px;
+      color: var(--portal-sub);
+      min-height: 18px;
+    }
+    .status.danger{ color: var(--danger); }
+    .status.ok{ color: rgba(110,231,183,0.92); }
+
+    /* Tool section wrapper */
+    #toolWrap[hidden]{ display:none !important; }
+
+    /* ----- YOUR TERMINAL STYLES (mostly kept) ----- */
+    .wrap{min-height:0;display:flex;align-items:flex-start;justify-content:center;padding:0;box-sizing:border-box;}
     .terminal{
-      width:min(1100px,100%);
-      height:min(820px, calc(100vh - 36px));
+      width:100%;
+      height:min(820px, calc(100vh - 260px));
       border:1px solid var(--border);
-      border-radius:12px;
+      border-radius:14px;
       overflow:hidden;
       background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.00));
       box-shadow: 0 0 0 1px rgba(110,231,183,0.08), 0 30px 80px rgba(0,0,0,0.55);
@@ -42,7 +263,7 @@
     .dots{display:flex;gap:6px;}
     .dot{width:10px;height:10px;border-radius:999px;opacity:.75}
     .dot.red{background:#ff5f57}.dot.yellow{background:#febc2e}.dot.green{background:#28c840}
-    .title{color:var(--muted);font-size:13px;}
+    .title-mono{color:var(--muted);font-size:13px;font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;}
     .content{
       flex:1 1 auto;
       min-height:0;
@@ -63,6 +284,8 @@
       font-size:14px;
       user-select:text;
       min-height:0;
+      color: var(--fg);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
     }
     .right{
       display:flex;
@@ -83,6 +306,8 @@
       flex-direction:column;
       min-height:0;
       flex:0 0 auto;
+      color: var(--fg);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
     }
     .panel .hd{
       padding:10px 12px;
@@ -98,6 +323,7 @@
       overflow:auto;
       min-height:120px;
       max-height:240px;
+      color: var(--fg);
     }
     .panel.chart .bd{
       min-height:260px;
@@ -109,6 +335,7 @@
       font-weight:800;
       pointer-events:none;
       user-select:none;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
     }
     .promptline{display:flex;gap:10px;align-items:baseline;}
     .prompt{color:var(--accent);}
@@ -120,13 +347,15 @@
       display:inline-block;padding:2px 8px;border:1px solid rgba(215,251,230,0.18);
       border-radius:999px;font-size:12px;color:var(--muted);
       white-space:nowrap;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
     }
     .kv{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;}
     .list{margin:0;padding-left:18px;}
     .muted{color:var(--muted)}
     .danger{color:var(--danger)}
-    @media (max-width:980px){
-      .terminal{height:auto; min-height: calc(100vh - 36px);}
+    @media (max-width: 980px){
+      .grid{ grid-template-columns: 1fr; }
+      .terminal{ height:auto; min-height: 640px; }
       .content{grid-template-columns:1fr;}
       .right{max-height:none;}
       .panel .bd{max-height:none;}
@@ -135,39 +364,134 @@
 </head>
 
 <body>
-<div class="wrap">
-  <div class="terminal">
-    <div class="bar">
-      <div class="dots"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
-      <div class="title">Criminal Investigation Division — BGC Terminal</div>
+  <div class="banner">
+    <div>
+      <b>Secure Investigations Portal</b> — demo/internal tool UI
+      <span style="opacity:.85;">(not affiliated with any government agency)</span>
     </div>
+    <div class="pill">No seals • No official branding</div>
+  </div>
 
-    <div class="content">
-      <div id="screen" class="screen"></div>
-
-      <div class="right">
-        <div class="panel chart">
-          <div class="hd"><span>Badge Chart</span><span id="chartStatus" class="chip">idle</span></div>
-          <div class="bd"><canvas id="chart" height="240"></canvas></div>
-        </div>
-
-        <div class="panel">
-          <div class="hd"><span>Blacklist Status</span><span id="blStatus" class="chip">—</span></div>
-          <div class="bd" id="blacklistsBox" class="muted">Run <span class="chip">check &lt;username&gt;</span></div>
-        </div>
-
-        <div class="panel">
-          <div class="hd"><span>Inventory (No Prices)</span><span id="invStatus" class="chip">—</span></div>
-          <div class="bd" id="inventoryBox" class="muted">Run <span class="chip">check &lt;username&gt;</span></div>
+  <header>
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-mark">SI</div>
+        <div class="brand-title">
+          <div class="top">Investigations Division Portal</div>
+          <div class="sub">Prevent • Investigate • Educate (internal)</div>
         </div>
       </div>
-    </div>
 
-    <div class="watermark">Criminal Investigation Division</div>
-  </div>
-</div>
+      <nav>
+        <button class="navbtn" id="navHome">Home</button>
+        <button class="navbtn" id="navAbout">About</button>
+        <button class="navbtn" id="navContact">Contact</button>
+
+        <!-- This is the “underscored-style” button you wanted:
+             It ONLY appears after login. -->
+        <button class="navbtn primary" id="navTool" hidden>CID Terminal</button>
+
+        <button class="navbtn" id="navLogout" hidden>Logout</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="grid">
+      <!-- Login / Info -->
+      <section class="card" id="homeCard">
+        <div class="hd">
+          <div class="title">Access Control</div>
+          <div class="tag">Authorized Users Only</div>
+        </div>
+        <div class="bd">
+          <div class="note">
+            This portal uses a Cloudflare Worker for authentication and API proxying.
+            After you sign in, the <b>CID Terminal</b> button will appear in the navigation bar.
+          </div>
+
+          <form id="loginForm" autocomplete="off">
+            <div class="field">
+              <label for="loginUser">Username</label>
+              <input class="portal" id="loginUser" type="text" required />
+            </div>
+            <div class="field">
+              <label for="loginPass">Password</label>
+              <input class="portal" id="loginPass" type="password" required />
+            </div>
+
+            <div class="row">
+              <button class="navbtn primary" type="submit" id="loginBtn">Sign in</button>
+              <div class="status" id="loginStatus"></div>
+            </div>
+          </form>
+
+          <div style="margin-top:14px" class="note">
+            Tip: keep your tool name unique (avoid “U.S. Army” wording, official insignia, or look-alike claims).
+          </div>
+        </div>
+      </section>
+
+      <!-- Right side: either “home” text or the tool -->
+      <section class="card" id="contentCard">
+        <div class="hd">
+          <div class="title" id="contentTitle">Home</div>
+          <div class="tag" id="contentTag">Portal Overview</div>
+        </div>
+        <div class="bd" id="contentBody">
+          <div class="note">
+            Use the navigation bar to access sections. The terminal tool is restricted and will only appear after login.
+          </div>
+          <div style="margin-top:12px" class="note">
+            Recommended: add your organization name, a custom logo, and a clear disclaimer to avoid confusion with any official site.
+          </div>
+
+          <!-- Tool (hidden until user clicks CID Terminal) -->
+          <div id="toolWrap" hidden style="margin-top:16px;">
+            <div class="wrap">
+              <div class="terminal">
+                <div class="bar">
+                  <div class="dots">
+                    <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+                  </div>
+                  <div class="title-mono">Criminal Investigation Division — BGC Terminal</div>
+                </div>
+
+                <div class="content">
+                  <div id="screen" class="screen"></div>
+
+                  <div class="right">
+                    <div class="panel chart">
+                      <div class="hd"><span>Badge Chart</span><span id="chartStatus" class="chip">idle</span></div>
+                      <div class="bd"><canvas id="chart" height="240"></canvas></div>
+                    </div>
+
+                    <div class="panel">
+                      <div class="hd"><span>Blacklist Status</span><span id="blStatus" class="chip">—</span></div>
+                      <div class="bd" id="blacklistsBox" class="muted">Run <span class="chip">check &lt;username&gt;</span></div>
+                    </div>
+
+                    <div class="panel">
+                      <div class="hd"><span>Inventory (No Prices)</span><span id="invStatus" class="chip">—</span></div>
+                      <div class="bd" id="inventoryBox" class="muted">Run <span class="chip">check &lt;username&gt;</span></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="watermark">Investigations Division</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
 
 <script>
+/* =========================
+   YOUR EXISTING TOOL LOGIC
+   ========================= */
+
 const API_BASE = "https://the.chastiefola.workers.dev";
 
 const TRELLO_SOURCES = [
@@ -179,7 +503,6 @@ const TRELLO_SOURCES = [
 ];
 const DISPLAY_ORDER = ["USAR WIDE", "FORSCOM", "ASOC", "MPC", "TRADOC"];
 
-// numeric asset type IDs
 const INVENTORY_CATEGORIES = {
   "T-Shirts": 2,
   "Classic Shirts": 11,
@@ -196,7 +519,6 @@ const INVENTORY_CATEGORIES = {
   "Waist Accessories": 47,
 };
 
-// pacing
 const BASE_DELAY_MS = 250;
 const JITTER_MS = 200;
 const BATCH_DELAY_MS = 900;
@@ -206,7 +528,7 @@ const MAX_RETRIES_429 = 7;
 function sleep(ms){ return new Promise(r=>setTimeout(r, ms)); }
 async function nap(base=BASE_DELAY_MS){ await sleep(base + Math.random()*JITTER_MS); }
 
-// Terminal
+/* Terminal */
 const screen = document.getElementById("screen");
 function termPrint(text="", cls=null){
   const div = document.createElement("div");
@@ -249,7 +571,7 @@ function promptLine(label, isPassword=false){
   });
 }
 
-// Auth
+/* Auth */
 let TOKEN = null;
 let IS_ADMIN = false;
 
@@ -302,7 +624,7 @@ async function logCommand(cmdString){
   } catch {}
 }
 
-// Panels + chart
+/* Panels + chart */
 const chartStatus = document.getElementById("chartStatus");
 const blStatus = document.getElementById("blStatus");
 const invStatus = document.getElementById("invStatus");
@@ -310,7 +632,7 @@ const blacklistsBox = document.getElementById("blacklistsBox");
 const inventoryBox = document.getElementById("inventoryBox");
 
 let chart;
-(function initChart(){
+function initChart(){
   const ctx = document.getElementById("chart").getContext("2d");
   chart = new Chart(ctx, {
     type: "scatter",
@@ -326,7 +648,7 @@ let chart;
       plugins: { legend: { labels: { color: "#8fb3a3" } } }
     }
   });
-})();
+}
 
 function normalize(s){ return (s ?? "").toString().trim().toLowerCase(); }
 function usernameInCardName(username, cardName){
@@ -392,7 +714,7 @@ function renderInventory(report){
   inventoryBox.appendChild(frag);
 }
 
-// Worker proxied calls
+/* Worker proxied calls */
 async function trelloFetchBoardJson(trelloUrl){
   const res = await fetchRL(`${API_BASE}/trello?url=${encodeURIComponent(trelloUrl)}`, { headers: authHeaders() });
   const data = await res.json().catch(()=> ({}));
@@ -446,7 +768,6 @@ async function canViewInventory(userId){
   return !!data.canView;
 }
 
-// ✅ inventory using assetTypeId param (worker handles fallbacks)
 async function inventoryItems(userId, assetTypeId){
   const out = [];
   let cursor = "";
@@ -463,7 +784,7 @@ async function inventoryItems(userId, assetTypeId){
   return out;
 }
 
-// Blacklists
+/* Blacklists */
 async function trelloBlacklistStatus(username){
   const results = {};
   TRELLO_SOURCES.forEach(s => results[s.key] = false);
@@ -490,7 +811,7 @@ async function trelloBlacklistStatus(username){
   return results;
 }
 
-// Admin doc commands (unchanged behavior)
+/* Admin doc commands */
 async function cmdDocs(){
   const data = await api(`/google/docs`, { headers: authHeaders() });
   termPrint("Documents available:");
@@ -530,7 +851,7 @@ async function cmdRevokeAll(email){
   for (const r of data.results) termPrint(`- ${r.id} ${r.name}: ${r.removed ? "REMOVED" : "NO CHANGE"}`);
 }
 
-// Training status commands
+/* Training status commands */
 async function cmdTrainingStatus(user){
   const data = await api(`/sheet/trainingstatus`, {
     method:"POST",
@@ -564,7 +885,7 @@ async function cmdSicTrainingStatus(user){
   termPrint(`Designated Unit: ${data.designatedUnit}`);
 }
 
-// Check command
+/* Check command */
 async function runCheck(username){
   termPrint("");
   termPrint(`Checking user: ${username}`);
@@ -653,31 +974,22 @@ function printHelp(){
   }
 }
 
-// Boot
-async function boot(){
+/* =========================
+   NEW: PORTAL FLOW
+   - Login happens in the login card
+   - Tool button appears after login
+   - Terminal runs without asking for login again
+   ========================= */
+
+let consoleRunning = false;
+
+async function consoleLoop(){
+  if (consoleRunning) return;
+  consoleRunning = true;
+
   termPrint("CID Secure Console v1.0");
   termPrint("Authorized personnel only.");
   termPrint("");
-
-  while(true){
-    termPrint("Login required.");
-    const u = await promptLine("login> ");
-    const p = await promptLine("password> ", true);
-
-    try{
-      await workerLogin(u, p);
-      termPrint("");
-      termPrint(`ACCESS GRANTED${IS_ADMIN ? " (ADMIN)" : ""}`);
-      termPrint("");
-      break;
-    } catch(e){
-      termPrint("");
-      termPrint("ACCESS DENIED", "danger");
-      termPrint("Reason: " + e.message, "muted");
-      termPrint("");
-    }
-  }
-
   printHelp();
   termPrint("");
 
@@ -692,7 +1004,14 @@ async function boot(){
 
     try{
       if (base === "help"){ printHelp(); continue; }
-      if (base === "logout"){ TOKEN = null; IS_ADMIN = false; termPrint("Logged out. Refresh to log in again."); continue; }
+
+      if (base === "logout"){
+        TOKEN = null; IS_ADMIN = false;
+        termPrint("Logged out.");
+        // also reflect portal logout UI
+        portalLogout();
+        return;
+      }
 
       if (base === "check"){
         const user = parts.slice(1).join(" ");
@@ -712,7 +1031,6 @@ async function boot(){
         await cmdSicTrainingStatus(user); continue;
       }
 
-      // Admin-only
       if (base === "docs"){ if (!IS_ADMIN) { termPrint("Unknown command.", "danger"); continue; } await cmdDocs(); continue; }
       if (base === "whohas"){
         if (!IS_ADMIN) { termPrint("Unknown command.", "danger"); continue; }
@@ -743,7 +1061,96 @@ async function boot(){
     }
   }
 }
-boot();
+
+/* UI wiring */
+const navHome   = document.getElementById("navHome");
+const navAbout  = document.getElementById("navAbout");
+const navContact= document.getElementById("navContact");
+const navTool   = document.getElementById("navTool");
+const navLogout = document.getElementById("navLogout");
+
+const contentTitle = document.getElementById("contentTitle");
+const contentTag   = document.getElementById("contentTag");
+const toolWrap     = document.getElementById("toolWrap");
+
+const loginForm   = document.getElementById("loginForm");
+const loginUser   = document.getElementById("loginUser");
+const loginPass   = document.getElementById("loginPass");
+const loginStatus = document.getElementById("loginStatus");
+const loginBtn    = document.getElementById("loginBtn");
+
+function setSection(title, tag, showTool=false){
+  contentTitle.textContent = title;
+  contentTag.textContent = tag;
+  toolWrap.hidden = !showTool;
+}
+
+function portalLogout(){
+  navTool.hidden = true;
+  navLogout.hidden = true;
+  consoleRunning = false;
+  setSection("Home","Portal Overview", false);
+  loginStatus.textContent = "Signed out.";
+  loginStatus.className = "status";
+  // Clear screen for safety
+  if (screen) screen.textContent = "";
+}
+
+navHome.addEventListener("click", ()=> setSection("Home","Portal Overview", false));
+navAbout.addEventListener("click", ()=> setSection("About","Info", false));
+navContact.addEventListener("click", ()=> setSection("Contact","Info", false));
+
+navTool.addEventListener("click", ()=>{
+  setSection("CID Terminal","Restricted Tool", true);
+  // Start terminal loop if not running
+  consoleLoop();
+});
+
+navLogout.addEventListener("click", ()=>{
+  TOKEN = null; IS_ADMIN = false;
+  portalLogout();
+});
+
+loginForm.addEventListener("submit", async (e)=>{
+  e.preventDefault();
+  loginStatus.textContent = "";
+  loginStatus.className = "status";
+  loginBtn.disabled = true;
+
+  try{
+    const u = (loginUser.value || "").trim();
+    const p = (loginPass.value || "");
+    if (!u || !p) throw new Error("Missing credentials");
+
+    await workerLogin(u, p);
+
+    loginStatus.textContent = `Access granted${IS_ADMIN ? " (ADMIN)" : ""}.`;
+    loginStatus.className = "status ok";
+
+    // Reveal the restricted nav button
+    navTool.hidden = false;
+    navLogout.hidden = false;
+
+    // Auto-open tool (optional). If you prefer manual, remove the next 2 lines.
+    setSection("CID Terminal","Restricted Tool", true);
+
+    // Initialize chart once tool is visible
+    if (!chart) initChart();
+
+    // Start terminal
+    consoleLoop();
+
+  } catch(err){
+    loginStatus.textContent = "Access denied: " + (err?.message || "Login failed");
+    loginStatus.className = "status danger";
+  } finally{
+    loginBtn.disabled = false;
+    loginPass.value = "";
+  }
+});
+
+/* Default section */
+setSection("Home","Portal Overview", false);
 </script>
 </body>
 </html>
