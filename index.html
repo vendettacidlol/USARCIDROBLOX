@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Secure Investigations Portal</title>
+  <title>Criminal Investigation Division</title>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3"></script>
@@ -197,12 +197,6 @@
       color: rgba(255,255,255,0.88);
     }
 
-    .note{
-      color: var(--portal-sub);
-      font-size: 13px;
-      line-height: 1.35;
-    }
-
     .field{ display:flex; flex-direction:column; gap: 7px; margin-top: 12px; }
     label{ font-size: 12px; color: rgba(255,255,255,0.82); font-weight: 650; letter-spacing: 0.2px; }
     input.portal, textarea.portal{
@@ -217,10 +211,6 @@
       box-sizing: border-box;
     }
     textarea.portal{ min-height: 110px; resize: vertical; }
-    input.portal:focus, textarea.portal:focus{
-      border-color: rgba(199,164,74,0.40);
-      box-shadow: 0 0 0 4px rgba(199,164,74,0.10);
-    }
     .row{
       display:flex;
       gap: 10px;
@@ -259,37 +249,6 @@
     .newsItem .t{ font-weight: 800; color: rgba(255,255,255,0.92); }
     .newsItem .d{ font-size: 12px; color: rgba(255,255,255,0.75); }
     .newsItem .b{ margin-top: 6px; color: rgba(255,255,255,0.86); font-size: 13px; line-height: 1.35; white-space: pre-wrap; }
-
-    .modalBack{
-      position:fixed; inset:0;
-      background: rgba(0,0,0,0.55);
-      display:none;
-      align-items:center;
-      justify-content:center;
-      z-index: 50;
-      padding: 18px;
-      box-sizing: border-box;
-    }
-    .modalBack.show{ display:flex; }
-    .modal{
-      width: min(560px, 100%);
-      background: rgba(10,22,38,0.96);
-      border: 1px solid rgba(255,255,255,0.14);
-      border-radius: 16px;
-      box-shadow: 0 30px 90px rgba(0,0,0,0.60);
-      overflow:hidden;
-    }
-    .modal .mh{
-      padding: 12px 14px;
-      background: rgba(0,0,0,0.25);
-      border-bottom: 1px solid rgba(255,255,255,0.10);
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap: 10px;
-    }
-    .modal .mh .mt{ font-weight: 900; }
-    .modal .mb{ padding: 14px; }
 
     .wrap{min-height:0;display:flex;align-items:flex-start;justify-content:center;padding:0;box-sizing:border-box;}
     .terminal{
@@ -419,7 +378,7 @@
 <body>
   <div class="banner">
     <div><b>Secure Investigations Portal</b> — demo/internal tool UI</div>
-    <div class="pill">No seals • No official branding</div>
+    <div class="pill">Contact VendettaPyrex for any issues.</div>
   </div>
 
   <header>
@@ -427,8 +386,8 @@
       <div class="brand">
         <div class="brand-mark">SI</div>
         <div class="brand-title">
-          <div class="top">Investigations Division Portal</div>
-          <div class="sub">Prevent • Investigate • Educate (internal)</div>
+          <div class="top">Criminal Investigation Division</div>
+          <div class="sub">Do What Has To Be Done</div>
         </div>
       </div>
 
@@ -436,12 +395,9 @@
         <button class="navbtn" id="navHome">Home</button>
         <button class="navbtn" id="navAbout">About</button>
         <button class="navbtn" id="navContact">Contact</button>
-
-        <button class="navbtn" id="navNewsletter">Newsletter</button>
         <button class="navbtn" id="navLogin">Login</button>
-
         <button class="navbtn primary" id="navTool" hidden>CID Terminal</button>
-        <button class="navbtn primary" id="navAdmin" hidden>Admin</button>
+        <button class="navbtn primary" id="navAdmin" hidden>Admin Page</button>
         <button class="navbtn" id="navLogout" hidden>Logout</button>
       </nav>
     </div>
@@ -452,7 +408,7 @@
       <section class="card" id="homeCard">
         <div class="hd">
           <div class="title">Access Control</div>
-          <div class="tag">Authorized Users Only</div>
+          <div class="tag">CID Staff Only</div>
         </div>
         <div class="bd">
           <form id="loginForm" autocomplete="off">
@@ -480,18 +436,12 @@
 
         <div class="bd" id="contentBody">
           <div id="homeView">
-            <div class="note"><b>Front Page News</b></div>
             <div class="news" id="newsList"></div>
-            <div class="note" id="newsEmpty" style="margin-top:8px; display:none;">No news posted.</div>
+            <div class="status" id="newsEmpty" style="display:none;">No news posted.</div>
           </div>
 
-          <div id="aboutView" hidden>
-            <div class="note">About page.</div>
-          </div>
-
-          <div id="contactView" hidden>
-            <div class="note">Contact page.</div>
-          </div>
+          <div id="aboutView" hidden><div class="status">About page.</div></div>
+          <div id="contactView" hidden><div class="status">Contact page.</div></div>
 
           <div id="adminView" hidden>
             <div class="field">
@@ -540,7 +490,7 @@
                   </div>
                 </div>
 
-                <div class="watermark">Investigations Division</div>
+                <div class="watermark">Criminal Investigations Division</div>
               </div>
             </div>
           </div>
@@ -550,45 +500,17 @@
     </div>
   </main>
 
-  <div class="modalBack" id="newsletterBack" aria-hidden="true">
-    <div class="modal" role="dialog" aria-modal="true">
-      <div class="mh">
-        <div class="mt">Newsletter</div>
-        <button class="navbtn" id="closeNewsletter">Close</button>
-      </div>
-      <div class="mb">
-        <div class="field">
-          <label for="nlEmail">Email</label>
-          <input class="portal" id="nlEmail" type="email" />
-        </div>
-        <div class="row">
-          <button class="navbtn primary" id="nlSubmit" type="button">Subscribe</button>
-          <div class="status" id="nlStatus"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
 <script>
-/* =========================
-   CONFIG
-   ========================= */
 const TOOL_API_BASE = "https://the.chastiefola.workers.dev";
-const NEWS_API_BASE = "https://YOUR-NEWS-WORKER.your-subdomain.workers.dev";
+const NEWS_API_BASE = "https://dawn-cell-038d.chastiefola.workers.dev";
 const ADMIN_USERNAME = "VendettaPyrex";
 
-/* =========================
-   PORTAL STATE
-   ========================= */
 let TOOL_TOKEN = null;
 let TOOL_IS_ADMIN = false;
 let LOGGED_IN_USER = null;
 
 let NEWS_TOKEN = null;
 
-/* =========================
-   COMMON HELPERS
-   ========================= */
 function escapeHtml(s){
   return (s ?? "").toString()
     .replaceAll("&","&amp;")
@@ -603,12 +525,10 @@ function fmtDate(iso){
   return d.toLocaleString(undefined, { year:"numeric", month:"short", day:"2-digit", hour:"2-digit", minute:"2-digit" });
 }
 
-/* =========================
-   TOOL API (existing worker)
-   ========================= */
 function toolAuthHeaders(extra={}) {
   return { ...(TOOL_TOKEN ? { "Authorization": `Bearer ${TOOL_TOKEN}` } : {}), ...extra };
 }
+
 async function toolApi(path, opts={}){
   const res = await fetch(`${TOOL_API_BASE}${path}`, opts);
   const data = await res.json().catch(()=> ({}));
@@ -616,6 +536,7 @@ async function toolApi(path, opts={}){
   if (data && data.ok === false) throw new Error(data.error || "Request failed");
   return data;
 }
+
 async function toolLogin(username, password){
   const data = await toolApi(`/auth/login`, {
     method:"POST",
@@ -626,6 +547,7 @@ async function toolLogin(username, password){
   TOOL_IS_ADMIN = !!data.isAdmin;
   LOGGED_IN_USER = username;
 }
+
 async function toolLogCommand(cmdString){
   try{
     await toolApi(`/log/command`, {
@@ -636,12 +558,10 @@ async function toolLogCommand(cmdString){
   } catch {}
 }
 
-/* =========================
-   NEWS API (separate worker)
-   ========================= */
 function newsAuthHeaders(extra={}) {
   return { ...(NEWS_TOKEN ? { "Authorization": `Bearer ${NEWS_TOKEN}` } : {}), ...extra };
 }
+
 async function newsApi(path, opts={}){
   const res = await fetch(`${NEWS_API_BASE}${path}`, opts);
   const data = await res.json().catch(()=> ({}));
@@ -649,6 +569,7 @@ async function newsApi(path, opts={}){
   if (data && data.ok === false) throw new Error(data.error || "Request failed");
   return data;
 }
+
 async function newsLogin(username, password){
   const data = await newsApi(`/auth/login`, {
     method:"POST",
@@ -657,12 +578,14 @@ async function newsLogin(username, password){
   });
   NEWS_TOKEN = data.token;
 }
+
 async function fetchNewsPublic(){
   const res = await fetch(`${NEWS_API_BASE}/news`);
   const data = await res.json().catch(()=> ({}));
   if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
   return data.items || [];
 }
+
 async function createNews(title, text){
   const data = await newsApi(`/news`, {
     method:"POST",
@@ -671,6 +594,7 @@ async function createNews(title, text){
   });
   return data.item;
 }
+
 async function deleteNews(id){
   const data = await newsApi(`/news/${encodeURIComponent(id)}`, {
     method:"DELETE",
@@ -679,9 +603,6 @@ async function deleteNews(id){
   return !!data.removed;
 }
 
-/* =========================
-   NEWS UI
-   ========================= */
 const newsListEl = document.getElementById("newsList");
 const newsEmptyEl = document.getElementById("newsEmpty");
 const adminNewsListEl = document.getElementById("adminNewsList");
@@ -752,13 +673,9 @@ async function refreshNewsEverywhere(){
   if (LOGGED_IN_USER === ADMIN_USERNAME) renderNewsAdmin(items);
 }
 
-/* =========================
-   NAV + VIEWS
-   ========================= */
 const grid = document.getElementById("grid");
-
 const contentTitle = document.getElementById("contentTitle");
-const contentTag   = document.getElementById("contentTag");
+const contentTag = document.getElementById("contentTag");
 
 const homeView = document.getElementById("homeView");
 const aboutView = document.getElementById("aboutView");
@@ -815,7 +732,6 @@ function setView(which){
 const navHome = document.getElementById("navHome");
 const navAbout = document.getElementById("navAbout");
 const navContact = document.getElementById("navContact");
-const navNewsletter = document.getElementById("navNewsletter");
 const navLogin = document.getElementById("navLogin");
 const navTool = document.getElementById("navTool");
 const navAdmin = document.getElementById("navAdmin");
@@ -854,45 +770,11 @@ navLogin.addEventListener("click", ()=>{
   document.getElementById("homeCard").scrollIntoView({ behavior: "smooth", block: "start" });
 });
 
-/* =========================
-   NEWSLETTER MODAL
-   ========================= */
-const newsletterBack = document.getElementById("newsletterBack");
-const closeNewsletter = document.getElementById("closeNewsletter");
-const nlEmail = document.getElementById("nlEmail");
-const nlSubmit = document.getElementById("nlSubmit");
-const nlStatus = document.getElementById("nlStatus");
-
-navNewsletter.addEventListener("click", ()=>{
-  newsletterBack.classList.add("show");
-  nlStatus.textContent = "";
-  nlStatus.className = "status";
-  nlEmail.value = "";
-  nlEmail.focus();
-});
-closeNewsletter.addEventListener("click", ()=> newsletterBack.classList.remove("show"));
-newsletterBack.addEventListener("click", (e)=>{
-  if (e.target === newsletterBack) newsletterBack.classList.remove("show");
-});
-nlSubmit.addEventListener("click", ()=>{
-  const email = (nlEmail.value||"").trim();
-  if (!email || !email.includes("@")){
-    nlStatus.textContent = "Invalid email.";
-    nlStatus.className = "status danger";
-    return;
-  }
-  nlStatus.textContent = "Subscribed.";
-  nlStatus.className = "status ok";
-});
-
-/* =========================
-   LOGIN FORM
-   ========================= */
-const loginForm   = document.getElementById("loginForm");
-const loginUser   = document.getElementById("loginUser");
-const loginPass   = document.getElementById("loginPass");
+const loginForm = document.getElementById("loginForm");
+const loginUser = document.getElementById("loginUser");
+const loginPass = document.getElementById("loginPass");
 const loginStatus = document.getElementById("loginStatus");
-const loginBtn    = document.getElementById("loginBtn");
+const loginBtn = document.getElementById("loginBtn");
 
 loginForm.addEventListener("submit", async (e)=>{
   e.preventDefault();
@@ -924,9 +806,6 @@ loginForm.addEventListener("submit", async (e)=>{
   }
 });
 
-/* =========================
-   ADMIN ADD NEWS
-   ========================= */
 document.getElementById("btnAddNews").addEventListener("click", async ()=>{
   if (LOGGED_IN_USER !== ADMIN_USERNAME){
     adminStatusEl.textContent = "Not authorized.";
@@ -934,16 +813,14 @@ document.getElementById("btnAddNews").addEventListener("click", async ()=>{
     return;
   }
   const titleEl = document.getElementById("newsTitle");
-  const bodyEl  = document.getElementById("newsBody");
+  const bodyEl = document.getElementById("newsBody");
   const title = (titleEl.value || "").trim();
-  const text  = (bodyEl.value || "").trim();
-
+  const text = (bodyEl.value || "").trim();
   if (!title || !text){
     adminStatusEl.textContent = "Title and body required.";
     adminStatusEl.className = "status danger";
     return;
   }
-
   try{
     adminStatusEl.textContent = "";
     adminStatusEl.className = "status";
@@ -959,9 +836,8 @@ document.getElementById("btnAddNews").addEventListener("click", async ()=>{
   }
 });
 
-/* =========================
-   TERMINAL TOOL (your logic)
-   ========================= */
+/* Terminal tool logic remains same as your previous integrated version:
+   The terminal section assumes you already have the needed functions. */
 const TRELLO_SOURCES = [
   { key: "USAR WIDE", json: "https://trello.com/b/zVRnrvhb/usar-management-mainframe.json", list_name: "USAR Blacklists" },
   { key: "FORSCOM",   json: "https://trello.com/b/YncjLEbF/forces-command-information-trello.json", list_name: "Blacklists" },
@@ -970,23 +846,11 @@ const TRELLO_SOURCES = [
   { key: "TRADOC",    json: "https://trello.com/b/fUwjef3b/training-and-doctrine-command-information.json", list_name: "PERMANENT TRADOC BLACKLISTS" },
 ];
 const DISPLAY_ORDER = ["USAR WIDE", "FORSCOM", "ASOC", "MPC", "TRADOC"];
-
 const INVENTORY_CATEGORIES = {
-  "T-Shirts": 2,
-  "Classic Shirts": 11,
-  "Classic Pants": 12,
-  "Hats": 8,
-  "Face": 18,
-  "Gear": 19,
-  "Hair Accessories": 41,
-  "Face Accessories": 42,
-  "Neck Accessories": 43,
-  "Shoulder Accessories": 44,
-  "Front Accessories": 45,
-  "Back Accessories": 46,
-  "Waist Accessories": 47,
+  "T-Shirts": 2, "Classic Shirts": 11, "Classic Pants": 12, "Hats": 8, "Face": 18, "Gear": 19,
+  "Hair Accessories": 41, "Face Accessories": 42, "Neck Accessories": 43, "Shoulder Accessories": 44,
+  "Front Accessories": 45, "Back Accessories": 46, "Waist Accessories": 47,
 };
-
 const BASE_DELAY_MS = 250;
 const JITTER_MS = 200;
 const BATCH_DELAY_MS = 900;
@@ -1007,19 +871,16 @@ function termPrint(text="", cls=null){
 function promptLine(label, isPassword=false){
   const row = document.createElement("div");
   row.className = "promptline";
-
   const p = document.createElement("span");
   p.className = "prompt";
   p.textContent = label;
   row.appendChild(p);
-
   const input = document.createElement("input");
   input.className = "term";
   input.autocomplete = "off";
   input.spellcheck = false;
   input.type = isPassword ? "password" : "text";
   row.appendChild(input);
-
   screen.appendChild(row);
   input.focus();
   screen.scrollTop = screen.scrollHeight;
@@ -1042,7 +903,6 @@ async function fetchRL(url, opts={}){
   await nap();
   let res = await fetch(url, opts);
   if (res.status !== 429) return res;
-
   let backoff = 2000;
   for (let i=0; i<MAX_RETRIES_429; i++){
     termPrint(`Rate limited. Sleeping ${(backoff/1000).toFixed(1)}s...`, "muted");
@@ -1319,7 +1179,7 @@ async function runCheck(username){
 
 function printHelp(){
   termPrint("Commands:");
-  termPrint("  check <roblox_username>       Run background check");
+  termPrint("  check <roblox_username>");
   termPrint("  logout");
   termPrint("  help");
 }
@@ -1346,10 +1206,7 @@ async function consoleLoop(){
 
     try{
       if (base === "help"){ printHelp(); continue; }
-      if (base === "logout"){
-        navLogout.click();
-        return;
-      }
+      if (base === "logout"){ navLogout.click(); return; }
       if (base === "check"){
         const user = parts.slice(1).join(" ");
         if (!user){ termPrint("Usage: check <roblox_username>"); continue; }
@@ -1364,6 +1221,11 @@ async function consoleLoop(){
 }
 
 updateNav();
+setView("home");
+refreshNewsEverywhere().catch(()=>{});
+</script>
+</body>
+</html>
 setView("home");
 refreshNewsEverywhere().catch(()=>{});
 </script>
