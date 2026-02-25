@@ -10,19 +10,15 @@
 
   <style>
     :root{
-      /* Terminal palette (kept) */
       --bg:#050607; --fg:#d7fbe6; --muted:#8fb3a3; --accent:#6ee7b7; --danger:#ff6b6b;
       --border:rgba(215,251,230,0.14);
 
-      /* Portal palette (new, “gov/mil-inspired” but distinct) */
       --portal-ink:#0a1626;
       --portal-ink-2:#0e223a;
       --portal-gold:#c7a44a;
       --portal-line:rgba(255,255,255,0.14);
       --portal-text:#eaf0ff;
       --portal-sub:#b7c4df;
-      --card:rgba(255,255,255,0.06);
-      --card-2:rgba(0,0,0,0.25);
     }
 
     html, body { height:100%; }
@@ -32,11 +28,10 @@
                   radial-gradient(900px 700px at 110% 20%, rgba(82,140,255,0.14), transparent 55%),
                   linear-gradient(180deg, var(--portal-ink), #06080c 65%, var(--bg));
       color: var(--portal-text);
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans";
       overflow:auto;
     }
 
-    /* Top “official-style” banner (but explicitly NOT official) */
     .banner{
       background: rgba(0,0,0,0.35);
       border-bottom: 1px solid var(--portal-line);
@@ -59,7 +54,6 @@
       white-space: nowrap;
     }
 
-    /* Header */
     header{
       background: linear-gradient(180deg, rgba(14,34,58,0.92), rgba(10,22,38,0.92));
       border-bottom: 1px solid var(--portal-line);
@@ -99,9 +93,7 @@
       letter-spacing: 0.5px;
       user-select:none;
     }
-    .brand-title{
-      line-height:1.1;
-    }
+    .brand-title{ line-height:1.1; }
     .brand-title .top{
       font-weight: 800;
       letter-spacing: 0.4px;
@@ -162,6 +154,13 @@
       align-items:start;
     }
 
+    .grid.toolmode{
+      grid-template-columns: 1fr;
+    }
+    .grid.toolmode #homeCard{
+      display:none;
+    }
+
     .card{
       background: rgba(255,255,255,0.06);
       border: 1px solid rgba(255,255,255,0.12);
@@ -204,10 +203,9 @@
       line-height: 1.35;
     }
 
-    /* Login form */
     .field{ display:flex; flex-direction:column; gap: 7px; margin-top: 12px; }
     label{ font-size: 12px; color: rgba(255,255,255,0.82); font-weight: 650; letter-spacing: 0.2px; }
-    input.portal{
+    input.portal, textarea.portal{
       border: 1px solid rgba(255,255,255,0.16);
       background: rgba(0,0,0,0.22);
       color: rgba(255,255,255,0.92);
@@ -215,8 +213,11 @@
       padding: 10px 12px;
       outline: none;
       font-size: 14px;
+      width: 100%;
+      box-sizing: border-box;
     }
-    input.portal:focus{
+    textarea.portal{ min-height: 110px; resize: vertical; }
+    input.portal:focus, textarea.portal:focus{
       border-color: rgba(199,164,74,0.40);
       box-shadow: 0 0 0 4px rgba(199,164,74,0.10);
     }
@@ -236,14 +237,64 @@
     .status.danger{ color: var(--danger); }
     .status.ok{ color: rgba(110,231,183,0.92); }
 
-    /* Tool section wrapper */
-    #toolWrap[hidden]{ display:none !important; }
+    .news{
+      margin-top: 12px;
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+    }
+    .newsItem{
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.18);
+      border-radius: 12px;
+      padding: 10px 12px;
+    }
+    .newsItem .h{
+      display:flex;
+      align-items:baseline;
+      justify-content:space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .newsItem .t{ font-weight: 800; color: rgba(255,255,255,0.92); }
+    .newsItem .d{ font-size: 12px; color: rgba(255,255,255,0.75); }
+    .newsItem .b{ margin-top: 6px; color: rgba(255,255,255,0.86); font-size: 13px; line-height: 1.35; white-space: pre-wrap; }
 
-    /* ----- YOUR TERMINAL STYLES (mostly kept) ----- */
+    .modalBack{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,0.55);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index: 50;
+      padding: 18px;
+      box-sizing: border-box;
+    }
+    .modalBack.show{ display:flex; }
+    .modal{
+      width: min(560px, 100%);
+      background: rgba(10,22,38,0.96);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 16px;
+      box-shadow: 0 30px 90px rgba(0,0,0,0.60);
+      overflow:hidden;
+    }
+    .modal .mh{
+      padding: 12px 14px;
+      background: rgba(0,0,0,0.25);
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+    }
+    .modal .mh .mt{ font-weight: 900; }
+    .modal .mb{ padding: 14px; }
+
     .wrap{min-height:0;display:flex;align-items:flex-start;justify-content:center;padding:0;box-sizing:border-box;}
     .terminal{
       width:100%;
-      height:min(820px, calc(100vh - 260px));
+      height: min(860px, calc(100vh - 210px));
       border:1px solid var(--border);
       border-radius:14px;
       overflow:hidden;
@@ -335,7 +386,7 @@
       font-weight:800;
       pointer-events:none;
       user-select:none;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","CourierNew", monospace;
     }
     .promptline{display:flex;gap:10px;align-items:baseline;}
     .prompt{color:var(--accent);}
@@ -353,22 +404,21 @@
     .list{margin:0;padding-left:18px;}
     .muted{color:var(--muted)}
     .danger{color:var(--danger)}
+
     @media (max-width: 980px){
       .grid{ grid-template-columns: 1fr; }
-      .terminal{ height:auto; min-height: 640px; }
+      .terminal{ height:auto; min-height: 700px; }
       .content{grid-template-columns:1fr;}
       .right{max-height:none;}
       .panel .bd{max-height:none;}
+      .grid.toolmode #homeCard{ display:none; }
     }
   </style>
 </head>
 
 <body>
   <div class="banner">
-    <div>
-      <b>Secure Investigations Portal</b> — demo/internal tool UI
-      <span style="opacity:.85;">(not affiliated with any government agency)</span>
-    </div>
+    <div><b>Secure Investigations Portal</b> — demo/internal tool UI</div>
     <div class="pill">No seals • No official branding</div>
   </div>
 
@@ -387,29 +437,24 @@
         <button class="navbtn" id="navAbout">About</button>
         <button class="navbtn" id="navContact">Contact</button>
 
-        <!-- This is the “underscored-style” button you wanted:
-             It ONLY appears after login. -->
-        <button class="navbtn primary" id="navTool" hidden>CID Terminal</button>
+        <button class="navbtn" id="navNewsletter">Newsletter</button>
+        <button class="navbtn" id="navLogin">Login</button>
 
+        <button class="navbtn primary" id="navTool" hidden>CID Terminal</button>
+        <button class="navbtn primary" id="navAdmin" hidden>Admin</button>
         <button class="navbtn" id="navLogout" hidden>Logout</button>
       </nav>
     </div>
   </header>
 
   <main class="container">
-    <div class="grid">
-      <!-- Login / Info -->
+    <div class="grid" id="grid">
       <section class="card" id="homeCard">
         <div class="hd">
           <div class="title">Access Control</div>
           <div class="tag">Authorized Users Only</div>
         </div>
         <div class="bd">
-          <div class="note">
-            This portal uses a Cloudflare Worker for authentication and API proxying.
-            After you sign in, the <b>CID Terminal</b> button will appear in the navigation bar.
-          </div>
-
           <form id="loginForm" autocomplete="off">
             <div class="field">
               <label for="loginUser">Username</label>
@@ -419,35 +464,52 @@
               <label for="loginPass">Password</label>
               <input class="portal" id="loginPass" type="password" required />
             </div>
-
             <div class="row">
               <button class="navbtn primary" type="submit" id="loginBtn">Sign in</button>
               <div class="status" id="loginStatus"></div>
             </div>
           </form>
-
-          <div style="margin-top:14px" class="note">
-            Tip: keep your tool name unique (avoid “U.S. Army” wording, official insignia, or look-alike claims).
-          </div>
         </div>
       </section>
 
-      <!-- Right side: either “home” text or the tool -->
       <section class="card" id="contentCard">
         <div class="hd">
           <div class="title" id="contentTitle">Home</div>
           <div class="tag" id="contentTag">Portal Overview</div>
         </div>
+
         <div class="bd" id="contentBody">
-          <div class="note">
-            Use the navigation bar to access sections. The terminal tool is restricted and will only appear after login.
-          </div>
-          <div style="margin-top:12px" class="note">
-            Recommended: add your organization name, a custom logo, and a clear disclaimer to avoid confusion with any official site.
+          <div id="homeView">
+            <div class="note"><b>Front Page News</b></div>
+            <div class="news" id="newsList"></div>
+            <div class="note" id="newsEmpty" style="margin-top:8px; display:none;">No news posted.</div>
           </div>
 
-          <!-- Tool (hidden until user clicks CID Terminal) -->
-          <div id="toolWrap" hidden style="margin-top:16px;">
+          <div id="aboutView" hidden>
+            <div class="note">About page.</div>
+          </div>
+
+          <div id="contactView" hidden>
+            <div class="note">Contact page.</div>
+          </div>
+
+          <div id="adminView" hidden>
+            <div class="field">
+              <label for="newsTitle">Title</label>
+              <input class="portal" id="newsTitle" type="text" />
+            </div>
+            <div class="field">
+              <label for="newsBody">Body</label>
+              <textarea class="portal" id="newsBody"></textarea>
+            </div>
+            <div class="row">
+              <button class="navbtn primary" id="btnAddNews" type="button">Add News</button>
+              <div class="status" id="adminStatus"></div>
+            </div>
+            <div class="news" id="adminNewsList" style="margin-top:14px;"></div>
+          </div>
+
+          <div id="toolView" hidden style="margin-top:0;">
             <div class="wrap">
               <div class="terminal">
                 <div class="bar">
@@ -482,18 +544,424 @@
               </div>
             </div>
           </div>
+
         </div>
       </section>
     </div>
   </main>
 
+  <div class="modalBack" id="newsletterBack" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="mh">
+        <div class="mt">Newsletter</div>
+        <button class="navbtn" id="closeNewsletter">Close</button>
+      </div>
+      <div class="mb">
+        <div class="field">
+          <label for="nlEmail">Email</label>
+          <input class="portal" id="nlEmail" type="email" />
+        </div>
+        <div class="row">
+          <button class="navbtn primary" id="nlSubmit" type="button">Subscribe</button>
+          <div class="status" id="nlStatus"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 <script>
 /* =========================
-   YOUR EXISTING TOOL LOGIC
+   CONFIG
    ========================= */
+const TOOL_API_BASE = "https://the.chastiefola.workers.dev";
+const NEWS_API_BASE = "https://YOUR-NEWS-WORKER.your-subdomain.workers.dev";
+const ADMIN_USERNAME = "VendettaPyrex";
 
-const API_BASE = "https://the.chastiefola.workers.dev";
+/* =========================
+   PORTAL STATE
+   ========================= */
+let TOOL_TOKEN = null;
+let TOOL_IS_ADMIN = false;
+let LOGGED_IN_USER = null;
 
+let NEWS_TOKEN = null;
+
+/* =========================
+   COMMON HELPERS
+   ========================= */
+function escapeHtml(s){
+  return (s ?? "").toString()
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+function fmtDate(iso){
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return "";
+  return d.toLocaleString(undefined, { year:"numeric", month:"short", day:"2-digit", hour:"2-digit", minute:"2-digit" });
+}
+
+/* =========================
+   TOOL API (existing worker)
+   ========================= */
+function toolAuthHeaders(extra={}) {
+  return { ...(TOOL_TOKEN ? { "Authorization": `Bearer ${TOOL_TOKEN}` } : {}), ...extra };
+}
+async function toolApi(path, opts={}){
+  const res = await fetch(`${TOOL_API_BASE}${path}`, opts);
+  const data = await res.json().catch(()=> ({}));
+  if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+  if (data && data.ok === false) throw new Error(data.error || "Request failed");
+  return data;
+}
+async function toolLogin(username, password){
+  const data = await toolApi(`/auth/login`, {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({ username, password })
+  });
+  TOOL_TOKEN = data.token;
+  TOOL_IS_ADMIN = !!data.isAdmin;
+  LOGGED_IN_USER = username;
+}
+async function toolLogCommand(cmdString){
+  try{
+    await toolApi(`/log/command`, {
+      method:"POST",
+      headers: toolAuthHeaders({ "Content-Type":"application/json" }),
+      body: JSON.stringify({ command: cmdString })
+    });
+  } catch {}
+}
+
+/* =========================
+   NEWS API (separate worker)
+   ========================= */
+function newsAuthHeaders(extra={}) {
+  return { ...(NEWS_TOKEN ? { "Authorization": `Bearer ${NEWS_TOKEN}` } : {}), ...extra };
+}
+async function newsApi(path, opts={}){
+  const res = await fetch(`${NEWS_API_BASE}${path}`, opts);
+  const data = await res.json().catch(()=> ({}));
+  if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+  if (data && data.ok === false) throw new Error(data.error || "Request failed");
+  return data;
+}
+async function newsLogin(username, password){
+  const data = await newsApi(`/auth/login`, {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({ username, password })
+  });
+  NEWS_TOKEN = data.token;
+}
+async function fetchNewsPublic(){
+  const res = await fetch(`${NEWS_API_BASE}/news`);
+  const data = await res.json().catch(()=> ({}));
+  if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+  return data.items || [];
+}
+async function createNews(title, text){
+  const data = await newsApi(`/news`, {
+    method:"POST",
+    headers: newsAuthHeaders({ "Content-Type":"application/json" }),
+    body: JSON.stringify({ title, text })
+  });
+  return data.item;
+}
+async function deleteNews(id){
+  const data = await newsApi(`/news/${encodeURIComponent(id)}`, {
+    method:"DELETE",
+    headers: newsAuthHeaders()
+  });
+  return !!data.removed;
+}
+
+/* =========================
+   NEWS UI
+   ========================= */
+const newsListEl = document.getElementById("newsList");
+const newsEmptyEl = document.getElementById("newsEmpty");
+const adminNewsListEl = document.getElementById("adminNewsList");
+const adminStatusEl = document.getElementById("adminStatus");
+
+function renderNewsHome(items){
+  newsListEl.innerHTML = "";
+  if (!items.length){
+    newsEmptyEl.style.display = "block";
+    return;
+  }
+  newsEmptyEl.style.display = "none";
+
+  for (const n of items.slice(0, 8)){
+    const div = document.createElement("div");
+    div.className = "newsItem";
+    div.innerHTML = `
+      <div class="h">
+        <div class="t">${escapeHtml(n.title || "Untitled")}</div>
+        <div class="d">${escapeHtml(fmtDate(n.createdAt))}</div>
+      </div>
+      <div class="b">${escapeHtml(n.text || "")}</div>
+    `;
+    newsListEl.appendChild(div);
+  }
+}
+
+function renderNewsAdmin(items){
+  adminNewsListEl.innerHTML = "";
+
+  for (const n of items){
+    const div = document.createElement("div");
+    div.className = "newsItem";
+    div.innerHTML = `
+      <div class="h">
+        <div class="t">${escapeHtml(n.title || "Untitled")}</div>
+        <div class="d">${escapeHtml(fmtDate(n.createdAt))}</div>
+      </div>
+      <div class="b">${escapeHtml(n.text || "")}</div>
+      <div style="margin-top:10px; display:flex; justify-content:flex-end;">
+        <button class="navbtn" data-del="${escapeHtml(n.id)}">Delete</button>
+      </div>
+    `;
+    adminNewsListEl.appendChild(div);
+  }
+
+  adminNewsListEl.querySelectorAll("button[data-del]").forEach(btn=>{
+    btn.addEventListener("click", async ()=>{
+      const id = btn.getAttribute("data-del");
+      if (!id) return;
+      try{
+        btn.disabled = true;
+        await deleteNews(id);
+        await refreshNewsEverywhere();
+      } catch(e){
+        adminStatusEl.textContent = e.message;
+        adminStatusEl.className = "status danger";
+      } finally{
+        btn.disabled = false;
+      }
+    });
+  });
+}
+
+async function refreshNewsEverywhere(){
+  const items = await fetchNewsPublic();
+  renderNewsHome(items);
+  if (LOGGED_IN_USER === ADMIN_USERNAME) renderNewsAdmin(items);
+}
+
+/* =========================
+   NAV + VIEWS
+   ========================= */
+const grid = document.getElementById("grid");
+
+const contentTitle = document.getElementById("contentTitle");
+const contentTag   = document.getElementById("contentTag");
+
+const homeView = document.getElementById("homeView");
+const aboutView = document.getElementById("aboutView");
+const contactView = document.getElementById("contactView");
+const adminView = document.getElementById("adminView");
+const toolView = document.getElementById("toolView");
+
+function setView(which){
+  homeView.hidden = true;
+  aboutView.hidden = true;
+  contactView.hidden = true;
+  adminView.hidden = true;
+  toolView.hidden = true;
+  grid.classList.remove("toolmode");
+
+  if (which === "home"){
+    contentTitle.textContent = "Home";
+    contentTag.textContent = "Portal Overview";
+    homeView.hidden = false;
+    refreshNewsEverywhere().catch(()=>{});
+    return;
+  }
+  if (which === "about"){
+    contentTitle.textContent = "About";
+    contentTag.textContent = "Info";
+    aboutView.hidden = false;
+    return;
+  }
+  if (which === "contact"){
+    contentTitle.textContent = "Contact";
+    contentTag.textContent = "Info";
+    contactView.hidden = false;
+    return;
+  }
+  if (which === "admin"){
+    contentTitle.textContent = "Admin";
+    contentTag.textContent = "Front Page";
+    adminView.hidden = false;
+    refreshNewsEverywhere().catch(()=>{});
+    return;
+  }
+  if (which === "tool"){
+    contentTitle.textContent = "CID Terminal";
+    contentTag.textContent = "Restricted Tool";
+    toolView.hidden = false;
+    grid.classList.add("toolmode");
+    if (!chart) initChart();
+    consoleLoop();
+    setTimeout(()=>{ try{ chart.resize(); }catch{} }, 50);
+    return;
+  }
+}
+
+const navHome = document.getElementById("navHome");
+const navAbout = document.getElementById("navAbout");
+const navContact = document.getElementById("navContact");
+const navNewsletter = document.getElementById("navNewsletter");
+const navLogin = document.getElementById("navLogin");
+const navTool = document.getElementById("navTool");
+const navAdmin = document.getElementById("navAdmin");
+const navLogout = document.getElementById("navLogout");
+
+function updateNav(){
+  const loggedIn = !!TOOL_TOKEN;
+  navTool.hidden = !loggedIn;
+  navLogout.hidden = !loggedIn;
+  navAdmin.hidden = !(loggedIn && LOGGED_IN_USER === ADMIN_USERNAME);
+}
+
+navHome.addEventListener("click", ()=> setView("home"));
+navAbout.addEventListener("click", ()=> setView("about"));
+navContact.addEventListener("click", ()=> setView("contact"));
+navTool.addEventListener("click", ()=> setView("tool"));
+navAdmin.addEventListener("click", ()=> {
+  if (LOGGED_IN_USER !== ADMIN_USERNAME) return;
+  setView("admin");
+});
+
+navLogout.addEventListener("click", ()=>{
+  TOOL_TOKEN = null;
+  TOOL_IS_ADMIN = false;
+  LOGGED_IN_USER = null;
+  NEWS_TOKEN = null;
+  consoleRunning = false;
+  if (screen) screen.textContent = "";
+  updateNav();
+  setView("home");
+});
+
+navLogin.addEventListener("click", ()=>{
+  setView("home");
+  document.getElementById("loginUser").focus();
+  document.getElementById("homeCard").scrollIntoView({ behavior: "smooth", block: "start" });
+});
+
+/* =========================
+   NEWSLETTER MODAL
+   ========================= */
+const newsletterBack = document.getElementById("newsletterBack");
+const closeNewsletter = document.getElementById("closeNewsletter");
+const nlEmail = document.getElementById("nlEmail");
+const nlSubmit = document.getElementById("nlSubmit");
+const nlStatus = document.getElementById("nlStatus");
+
+navNewsletter.addEventListener("click", ()=>{
+  newsletterBack.classList.add("show");
+  nlStatus.textContent = "";
+  nlStatus.className = "status";
+  nlEmail.value = "";
+  nlEmail.focus();
+});
+closeNewsletter.addEventListener("click", ()=> newsletterBack.classList.remove("show"));
+newsletterBack.addEventListener("click", (e)=>{
+  if (e.target === newsletterBack) newsletterBack.classList.remove("show");
+});
+nlSubmit.addEventListener("click", ()=>{
+  const email = (nlEmail.value||"").trim();
+  if (!email || !email.includes("@")){
+    nlStatus.textContent = "Invalid email.";
+    nlStatus.className = "status danger";
+    return;
+  }
+  nlStatus.textContent = "Subscribed.";
+  nlStatus.className = "status ok";
+});
+
+/* =========================
+   LOGIN FORM
+   ========================= */
+const loginForm   = document.getElementById("loginForm");
+const loginUser   = document.getElementById("loginUser");
+const loginPass   = document.getElementById("loginPass");
+const loginStatus = document.getElementById("loginStatus");
+const loginBtn    = document.getElementById("loginBtn");
+
+loginForm.addEventListener("submit", async (e)=>{
+  e.preventDefault();
+  loginStatus.textContent = "";
+  loginStatus.className = "status";
+  loginBtn.disabled = true;
+
+  try{
+    const u = (loginUser.value || "").trim();
+    const p = (loginPass.value || "");
+    await toolLogin(u, p);
+
+    if (u === ADMIN_USERNAME){
+      await newsLogin(u, p);
+    } else {
+      NEWS_TOKEN = null;
+    }
+
+    loginStatus.textContent = "Access granted.";
+    loginStatus.className = "status ok";
+    updateNav();
+    setView("tool");
+  } catch(err){
+    loginStatus.textContent = err?.message || "Login failed";
+    loginStatus.className = "status danger";
+  } finally{
+    loginBtn.disabled = false;
+    loginPass.value = "";
+  }
+});
+
+/* =========================
+   ADMIN ADD NEWS
+   ========================= */
+document.getElementById("btnAddNews").addEventListener("click", async ()=>{
+  if (LOGGED_IN_USER !== ADMIN_USERNAME){
+    adminStatusEl.textContent = "Not authorized.";
+    adminStatusEl.className = "status danger";
+    return;
+  }
+  const titleEl = document.getElementById("newsTitle");
+  const bodyEl  = document.getElementById("newsBody");
+  const title = (titleEl.value || "").trim();
+  const text  = (bodyEl.value || "").trim();
+
+  if (!title || !text){
+    adminStatusEl.textContent = "Title and body required.";
+    adminStatusEl.className = "status danger";
+    return;
+  }
+
+  try{
+    adminStatusEl.textContent = "";
+    adminStatusEl.className = "status";
+    await createNews(title, text);
+    titleEl.value = "";
+    bodyEl.value = "";
+    adminStatusEl.textContent = "News added.";
+    adminStatusEl.className = "status ok";
+    await refreshNewsEverywhere();
+  } catch(e){
+    adminStatusEl.textContent = e.message;
+    adminStatusEl.className = "status danger";
+  }
+});
+
+/* =========================
+   TERMINAL TOOL (your logic)
+   ========================= */
 const TRELLO_SOURCES = [
   { key: "USAR WIDE", json: "https://trello.com/b/zVRnrvhb/usar-management-mainframe.json", list_name: "USAR Blacklists" },
   { key: "FORSCOM",   json: "https://trello.com/b/YncjLEbF/forces-command-information-trello.json", list_name: "Blacklists" },
@@ -528,7 +996,6 @@ const MAX_RETRIES_429 = 7;
 function sleep(ms){ return new Promise(r=>setTimeout(r, ms)); }
 async function nap(base=BASE_DELAY_MS){ await sleep(base + Math.random()*JITTER_MS); }
 
-/* Terminal */
 const screen = document.getElementById("screen");
 function termPrint(text="", cls=null){
   const div = document.createElement("div");
@@ -571,14 +1038,6 @@ function promptLine(label, isPassword=false){
   });
 }
 
-/* Auth */
-let TOKEN = null;
-let IS_ADMIN = false;
-
-function authHeaders(extra={}) {
-  return { ...(TOKEN ? { "Authorization": `Bearer ${TOKEN}` } : {}), ...extra };
-}
-
 async function fetchRL(url, opts={}){
   await nap();
   let res = await fetch(url, opts);
@@ -596,58 +1055,81 @@ async function fetchRL(url, opts={}){
   return res;
 }
 
-async function api(path, opts={}){
-  const res = await fetchRL(`${API_BASE}${path}`, opts);
+async function toolApiRL(path, opts={}){
+  const res = await fetchRL(`${TOOL_API_BASE}${path}`, opts);
   const data = await res.json().catch(()=> ({}));
   if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
   if (data && data.ok === false) throw new Error(data.error || "Request failed");
   return data;
 }
 
-async function workerLogin(username, password) {
-  const data = await api(`/auth/login`, {
+async function trelloFetchBoardJson(trelloUrl){
+  const res = await fetchRL(`${TOOL_API_BASE}/trello?url=${encodeURIComponent(trelloUrl)}`, { headers: toolAuthHeaders() });
+  const data = await res.json().catch(()=> ({}));
+  if (!res.ok) throw new Error(data.error || `Trello HTTP ${res.status}`);
+  return data;
+}
+
+async function robloxUserId(username){
+  const data = await toolApiRL(`/roblox/userid`, {
     method:"POST",
-    headers:{ "Content-Type":"application/json" },
-    body: JSON.stringify({ username, password })
+    headers: toolAuthHeaders({ "Content-Type":"application/json" }),
+    body: JSON.stringify({ username })
   });
-  TOKEN = data.token;
-  IS_ADMIN = !!data.isAdmin;
+  if (data?.data?.length) return String(data.data[0].id);
+  throw new Error("User not found");
 }
 
-async function logCommand(cmdString){
-  try{
-    await api(`/log/command`, {
+async function robloxBadges(userId){
+  const out = [];
+  let cursor = "";
+  while(true){
+    const url = cursor ? `/roblox/badges?userId=${encodeURIComponent(userId)}&cursor=${encodeURIComponent(cursor)}`
+                       : `/roblox/badges?userId=${encodeURIComponent(userId)}`;
+    const data = await toolApiRL(url, { headers: toolAuthHeaders() });
+    out.push(...(data.data || []));
+    cursor = data.nextPageCursor || "";
+    if (!cursor) break;
+    await sleep(BATCH_DELAY_MS);
+  }
+  return out;
+}
+
+async function robloxAwardedDates(userId, badgeIds){
+  const STEP = 100;
+  const dates = [];
+  for (let i=0; i<badgeIds.length; i+=STEP){
+    const batch = badgeIds.slice(i, i+STEP);
+    const data = await toolApiRL(`/roblox/awardedDates`, {
       method:"POST",
-      headers: authHeaders({ "Content-Type":"application/json" }),
-      body: JSON.stringify({ command: cmdString })
+      headers: toolAuthHeaders({ "Content-Type":"application/json" }),
+      body: JSON.stringify({ userId, badgeIds: batch })
     });
-  } catch {}
+    (data.data || []).forEach(x => dates.push(x.awardedDate));
+    await sleep(BATCH_DELAY_MS);
+  }
+  return dates;
 }
 
-/* Panels + chart */
-const chartStatus = document.getElementById("chartStatus");
-const blStatus = document.getElementById("blStatus");
-const invStatus = document.getElementById("invStatus");
-const blacklistsBox = document.getElementById("blacklistsBox");
-const inventoryBox = document.getElementById("inventoryBox");
+async function canViewInventory(userId){
+  const data = await toolApiRL(`/roblox/canViewInventory?userId=${encodeURIComponent(userId)}`, { headers: toolAuthHeaders() });
+  return !!data.canView;
+}
 
-let chart;
-function initChart(){
-  const ctx = document.getElementById("chart").getContext("2d");
-  chart = new Chart(ctx, {
-    type: "scatter",
-    data: { datasets: [{ label: "Badges over Time", data: [], pointRadius: 2 }] },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      parsing: false,
-      scales: {
-        x: { type: "time", time: { unit: "year" }, ticks: { color: "#8fb3a3" }, grid: { color: "rgba(215,251,230,0.08)" } },
-        y: { ticks: { color: "#8fb3a3" }, grid: { color: "rgba(215,251,230,0.08)" } }
-      },
-      plugins: { legend: { labels: { color: "#8fb3a3" } } }
-    }
-  });
+async function inventoryItems(userId, assetTypeId){
+  const out = [];
+  let cursor = "";
+  while(true){
+    const path =
+      `/roblox/inventory?userId=${encodeURIComponent(userId)}&assetTypeId=${encodeURIComponent(assetTypeId)}` +
+      (cursor ? `&cursor=${encodeURIComponent(cursor)}` : "");
+    const data = await toolApiRL(path, { headers: toolAuthHeaders() });
+    out.push(...(data.data || []));
+    cursor = data.nextPageCursor || "";
+    if (!cursor) break;
+    await sleep(BATCH_DELAY_MS);
+  }
+  return out;
 }
 
 function normalize(s){ return (s ?? "").toString().trim().toLowerCase(); }
@@ -671,6 +1153,57 @@ function usernameInCardName(username, cardName){
     const word = /[a-z0-9_]/i;
     return !word.test(before) && !word.test(after);
   }
+}
+
+async function trelloBlacklistStatus(username){
+  const results = {};
+  TRELLO_SOURCES.forEach(s => results[s.key] = false);
+
+  for (const src of TRELLO_SOURCES){
+    try{
+      const board = await trelloFetchBoardJson(src.json);
+      const lists = board.lists || [];
+      const cards = board.cards || [];
+      const listIds = lists.filter(l => normalize(l.name) === normalize(src.list_name)).map(l => l.id);
+      if (!listIds.length) { results[src.key] = false; continue; }
+
+      let found = false;
+      for (const c of cards){
+        if (listIds.includes(c.idList) && usernameInCardName(username, c.name || "")) { found = true; break; }
+      }
+      results[src.key] = found;
+    } catch(e){
+      termPrint(`Trello check failed for ${src.key}: ${e.message}`, "muted");
+      results[src.key] = false;
+    }
+    await nap(250);
+  }
+  return results;
+}
+
+const chartStatus = document.getElementById("chartStatus");
+const blStatus = document.getElementById("blStatus");
+const invStatus = document.getElementById("invStatus");
+const blacklistsBox = document.getElementById("blacklistsBox");
+const inventoryBox = document.getElementById("inventoryBox");
+
+let chart;
+function initChart(){
+  const ctx = document.getElementById("chart").getContext("2d");
+  chart = new Chart(ctx, {
+    type: "scatter",
+    data: { datasets: [{ label: "Badges over Time", data: [], pointRadius: 2 }] },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      parsing: false,
+      scales: {
+        x: { type: "time", time: { unit: "year" }, ticks: { color: "#8fb3a3" }, grid: { color: "rgba(215,251,230,0.08)" } },
+        y: { ticks: { color: "#8fb3a3" }, grid: { color: "rgba(215,251,230,0.08)" } }
+      },
+      plugins: { legend: { labels: { color: "#8fb3a3" } } }
+    }
+  });
 }
 
 function renderBlacklists(statusMap){
@@ -714,178 +1247,6 @@ function renderInventory(report){
   inventoryBox.appendChild(frag);
 }
 
-/* Worker proxied calls */
-async function trelloFetchBoardJson(trelloUrl){
-  const res = await fetchRL(`${API_BASE}/trello?url=${encodeURIComponent(trelloUrl)}`, { headers: authHeaders() });
-  const data = await res.json().catch(()=> ({}));
-  if (!res.ok) throw new Error(data.error || `Trello HTTP ${res.status}`);
-  return data;
-}
-
-async function robloxUserId(username){
-  const data = await api(`/roblox/userid`, {
-    method:"POST",
-    headers: authHeaders({ "Content-Type":"application/json" }),
-    body: JSON.stringify({ username })
-  });
-  if (data?.data?.length) return String(data.data[0].id);
-  throw new Error("User not found");
-}
-
-async function robloxBadges(userId){
-  const out = [];
-  let cursor = "";
-  while(true){
-    const url = cursor ? `/roblox/badges?userId=${encodeURIComponent(userId)}&cursor=${encodeURIComponent(cursor)}`
-                       : `/roblox/badges?userId=${encodeURIComponent(userId)}`;
-    const data = await api(url, { headers: authHeaders() });
-    out.push(...(data.data || []));
-    cursor = data.nextPageCursor || "";
-    if (!cursor) break;
-    await sleep(BATCH_DELAY_MS);
-  }
-  return out;
-}
-
-async function robloxAwardedDates(userId, badgeIds){
-  const STEP = 100;
-  const dates = [];
-  for (let i=0; i<badgeIds.length; i+=STEP){
-    const batch = badgeIds.slice(i, i+STEP);
-    const data = await api(`/roblox/awardedDates`, {
-      method:"POST",
-      headers: authHeaders({ "Content-Type":"application/json" }),
-      body: JSON.stringify({ userId, badgeIds: batch })
-    });
-    (data.data || []).forEach(x => dates.push(x.awardedDate));
-    await sleep(BATCH_DELAY_MS);
-  }
-  return dates;
-}
-
-async function canViewInventory(userId){
-  const data = await api(`/roblox/canViewInventory?userId=${encodeURIComponent(userId)}`, { headers: authHeaders() });
-  return !!data.canView;
-}
-
-async function inventoryItems(userId, assetTypeId){
-  const out = [];
-  let cursor = "";
-  while(true){
-    const path =
-      `/roblox/inventory?userId=${encodeURIComponent(userId)}&assetTypeId=${encodeURIComponent(assetTypeId)}` +
-      (cursor ? `&cursor=${encodeURIComponent(cursor)}` : "");
-    const data = await api(path, { headers: authHeaders() });
-    out.push(...(data.data || []));
-    cursor = data.nextPageCursor || "";
-    if (!cursor) break;
-    await sleep(BATCH_DELAY_MS);
-  }
-  return out;
-}
-
-/* Blacklists */
-async function trelloBlacklistStatus(username){
-  const results = {};
-  TRELLO_SOURCES.forEach(s => results[s.key] = false);
-
-  for (const src of TRELLO_SOURCES){
-    try{
-      const board = await trelloFetchBoardJson(src.json);
-      const lists = board.lists || [];
-      const cards = board.cards || [];
-      const listIds = lists.filter(l => normalize(l.name) === normalize(src.list_name)).map(l => l.id);
-      if (!listIds.length) { results[src.key] = false; continue; }
-
-      let found = false;
-      for (const c of cards){
-        if (listIds.includes(c.idList) && usernameInCardName(username, c.name || "")) { found = true; break; }
-      }
-      results[src.key] = found;
-    } catch(e){
-      termPrint(`Trello check failed for ${src.key}: ${e.message}`, "muted");
-      results[src.key] = false;
-    }
-    await nap(250);
-  }
-  return results;
-}
-
-/* Admin doc commands */
-async function cmdDocs(){
-  const data = await api(`/google/docs`, { headers: authHeaders() });
-  termPrint("Documents available:");
-  for (const d of data.docs) termPrint(`- ID ${d.id}: ${d.name}`);
-}
-async function cmdWhoHas(id){
-  const data = await api(`/google/docs/permissions?id=${encodeURIComponent(id)}`, { headers: authHeaders() });
-  termPrint(`Access list for ID ${data.id} — ${data.name}`);
-  if (!data.permissions.length){ termPrint("(No user permissions found)"); return; }
-  for (const p of data.permissions) termPrint(`- ${p.email} (${p.role})`);
-}
-async function cmdGrant(email, id){
-  const data = await api(`/google/grant`, {
-    method:"POST",
-    headers: authHeaders({ "Content-Type":"application/json" }),
-    body: JSON.stringify({ email, id })
-  });
-  termPrint(`GRANTED: ${data.email} → ${data.name} (ID ${data.docId})`);
-}
-async function cmdRevoke(email, id){
-  const data = await api(`/google/revoke`, {
-    method:"POST",
-    headers: authHeaders({ "Content-Type":"application/json" }),
-    body: JSON.stringify({ email, id })
-  });
-  termPrint(data.removed
-    ? `REVOKED: ${email} from ${data.name} (ID ${data.docId})`
-    : `REVOKE: ${email} had no access to ${data.name} (ID ${data.docId})`);
-}
-async function cmdRevokeAll(email){
-  const data = await api(`/google/revoke_all`, {
-    method:"POST",
-    headers: authHeaders({ "Content-Type":"application/json" }),
-    body: JSON.stringify({ email })
-  });
-  termPrint(`REVOKE ALL for ${email}:`);
-  for (const r of data.results) termPrint(`- ${r.id} ${r.name}: ${r.removed ? "REMOVED" : "NO CHANGE"}`);
-}
-
-/* Training status commands */
-async function cmdTrainingStatus(user){
-  const data = await api(`/sheet/trainingstatus`, {
-    method:"POST",
-    headers: authHeaders({ "Content-Type":"application/json" }),
-    body: JSON.stringify({ username: user })
-  });
-  if (!data.found){ termPrint(`trainingstatus: ${user} not found.`); return; }
-  termPrint(`TRAINING STATUS — ${user}`);
-  termPrint(`Rank: ${data.rank}`);
-  termPrint(`Position: ${data.position}`);
-  termPrint(`Timezone: ${data.timezone}`);
-  termPrint(`Current Phase: ${data.currentPhase}`);
-  termPrint(`Entry Date: ${data.entryDate}`);
-  termPrint(`Date of Expiry: ${data.dateOfExpiry}`);
-  termPrint(`Designated Unit: ${data.designatedUnit}`);
-  termPrint(`Notes: ${data.notes}`);
-}
-async function cmdSicTrainingStatus(user){
-  const data = await api(`/sheet/sictrainingstatus`, {
-    method:"POST",
-    headers: authHeaders({ "Content-Type":"application/json" }),
-    body: JSON.stringify({ username: user })
-  });
-  if (!data.found){ termPrint(`sictrainingstatus: ${user} not found.`); return; }
-  termPrint(`SIC TRAINING STATUS — ${user}`);
-  termPrint(`Rank: ${data.rank}`);
-  termPrint(`Position: ${data.position}`);
-  termPrint(`Timezone: ${data.timezone}`);
-  termPrint(`Training Status: ${data.trainingStatus}`);
-  termPrint(`Entry Date: ${data.entryDate}`);
-  termPrint(`Designated Unit: ${data.designatedUnit}`);
-}
-
-/* Check command */
 async function runCheck(username){
   termPrint("");
   termPrint(`Checking user: ${username}`);
@@ -959,30 +1320,11 @@ async function runCheck(username){
 function printHelp(){
   termPrint("Commands:");
   termPrint("  check <roblox_username>       Run background check");
-  termPrint("  trainingstatus <USERNAME>     Show CID training status");
-  termPrint("  sictrainingstatus <USERNAME>  Show SIC training status");
   termPrint("  logout");
   termPrint("  help");
-  if (IS_ADMIN){
-    termPrint("");
-    termPrint("Admin Commands:");
-    termPrint("  docs");
-    termPrint("  whohas <ID>");
-    termPrint("  grant <email> <ID>");
-    termPrint("  revoke <email> <ID>");
-    termPrint("  revoke all <email>");
-  }
 }
 
-/* =========================
-   NEW: PORTAL FLOW
-   - Login happens in the login card
-   - Tool button appears after login
-   - Terminal runs without asking for login again
-   ========================= */
-
 let consoleRunning = false;
-
 async function consoleLoop(){
   if (consoleRunning) return;
   consoleRunning = true;
@@ -995,7 +1337,7 @@ async function consoleLoop(){
 
   while(true){
     const cmd = await promptLine("cid> ");
-    await logCommand(cmd);
+    await toolLogCommand(cmd);
 
     const parts = cmd.trim().split(/\s+/).filter(Boolean);
     if (!parts.length) continue;
@@ -1004,56 +1346,15 @@ async function consoleLoop(){
 
     try{
       if (base === "help"){ printHelp(); continue; }
-
       if (base === "logout"){
-        TOKEN = null; IS_ADMIN = false;
-        termPrint("Logged out.");
-        // also reflect portal logout UI
-        portalLogout();
+        navLogout.click();
         return;
       }
-
       if (base === "check"){
         const user = parts.slice(1).join(" ");
         if (!user){ termPrint("Usage: check <roblox_username>"); continue; }
         await runCheck(user); continue;
       }
-
-      if (base === "trainingstatus"){
-        const user = parts.slice(1).join(" ");
-        if (!user){ termPrint("Usage: trainingstatus <USERNAME>"); continue; }
-        await cmdTrainingStatus(user); continue;
-      }
-
-      if (base === "sictrainingstatus"){
-        const user = parts.slice(1).join(" ");
-        if (!user){ termPrint("Usage: sictrainingstatus <USERNAME>"); continue; }
-        await cmdSicTrainingStatus(user); continue;
-      }
-
-      if (base === "docs"){ if (!IS_ADMIN) { termPrint("Unknown command.", "danger"); continue; } await cmdDocs(); continue; }
-      if (base === "whohas"){
-        if (!IS_ADMIN) { termPrint("Unknown command.", "danger"); continue; }
-        const id = parts[1]; if (!id){ termPrint("Usage: whohas <ID>"); continue; }
-        await cmdWhoHas(id); continue;
-      }
-      if (base === "grant"){
-        if (!IS_ADMIN) { termPrint("Unknown command.", "danger"); continue; }
-        const email = parts[1], id = parts[2];
-        if (!email || !id){ termPrint("Usage: grant <email> <ID>"); continue; }
-        await cmdGrant(email, id); continue;
-      }
-      if (base === "revoke"){
-        if (!IS_ADMIN) { termPrint("Unknown command.", "danger"); continue; }
-        if ((parts[1]||"").toLowerCase() === "all"){
-          const email = parts[2]; if (!email){ termPrint("Usage: revoke all <email>"); continue; }
-          await cmdRevokeAll(email); continue;
-        }
-        const email = parts[1], id = parts[2];
-        if (!email || !id){ termPrint("Usage: revoke <email> <ID>"); continue; }
-        await cmdRevoke(email, id); continue;
-      }
-
       termPrint(`Unknown command: ${base}`, "danger");
     } catch(e){
       termPrint(`ERROR: ${e.message}`, "danger");
@@ -1062,95 +1363,9 @@ async function consoleLoop(){
   }
 }
 
-/* UI wiring */
-const navHome   = document.getElementById("navHome");
-const navAbout  = document.getElementById("navAbout");
-const navContact= document.getElementById("navContact");
-const navTool   = document.getElementById("navTool");
-const navLogout = document.getElementById("navLogout");
-
-const contentTitle = document.getElementById("contentTitle");
-const contentTag   = document.getElementById("contentTag");
-const toolWrap     = document.getElementById("toolWrap");
-
-const loginForm   = document.getElementById("loginForm");
-const loginUser   = document.getElementById("loginUser");
-const loginPass   = document.getElementById("loginPass");
-const loginStatus = document.getElementById("loginStatus");
-const loginBtn    = document.getElementById("loginBtn");
-
-function setSection(title, tag, showTool=false){
-  contentTitle.textContent = title;
-  contentTag.textContent = tag;
-  toolWrap.hidden = !showTool;
-}
-
-function portalLogout(){
-  navTool.hidden = true;
-  navLogout.hidden = true;
-  consoleRunning = false;
-  setSection("Home","Portal Overview", false);
-  loginStatus.textContent = "Signed out.";
-  loginStatus.className = "status";
-  // Clear screen for safety
-  if (screen) screen.textContent = "";
-}
-
-navHome.addEventListener("click", ()=> setSection("Home","Portal Overview", false));
-navAbout.addEventListener("click", ()=> setSection("About","Info", false));
-navContact.addEventListener("click", ()=> setSection("Contact","Info", false));
-
-navTool.addEventListener("click", ()=>{
-  setSection("CID Terminal","Restricted Tool", true);
-  // Start terminal loop if not running
-  consoleLoop();
-});
-
-navLogout.addEventListener("click", ()=>{
-  TOKEN = null; IS_ADMIN = false;
-  portalLogout();
-});
-
-loginForm.addEventListener("submit", async (e)=>{
-  e.preventDefault();
-  loginStatus.textContent = "";
-  loginStatus.className = "status";
-  loginBtn.disabled = true;
-
-  try{
-    const u = (loginUser.value || "").trim();
-    const p = (loginPass.value || "");
-    if (!u || !p) throw new Error("Missing credentials");
-
-    await workerLogin(u, p);
-
-    loginStatus.textContent = `Access granted${IS_ADMIN ? " (ADMIN)" : ""}.`;
-    loginStatus.className = "status ok";
-
-    // Reveal the restricted nav button
-    navTool.hidden = false;
-    navLogout.hidden = false;
-
-    // Auto-open tool (optional). If you prefer manual, remove the next 2 lines.
-    setSection("CID Terminal","Restricted Tool", true);
-
-    // Initialize chart once tool is visible
-    if (!chart) initChart();
-
-    // Start terminal
-    consoleLoop();
-
-  } catch(err){
-    loginStatus.textContent = "Access denied: " + (err?.message || "Login failed");
-    loginStatus.className = "status danger";
-  } finally{
-    loginBtn.disabled = false;
-    loginPass.value = "";
-  }
-});
-
-/* Default section */
-setSection("Home","Portal Overview", false);
+updateNav();
+setView("home");
+refreshNewsEverywhere().catch(()=>{});
 </script>
 </body>
 </html>
