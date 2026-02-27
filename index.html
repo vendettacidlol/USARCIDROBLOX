@@ -5,29 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Criminal Investigation Division</title>
     <style>
-        :root { --bg: #0a0a0a; --text: #e0e0e0; --accent: #00ff41; --dim: #444; --err: #ff3333; }
+        :root { --bg: #0a0a0a; --text: #e0e0e0; --accent: #00ff41; --dim: #444; --err: #ff3333; --panel: #111; }
         body { background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; margin: 0; padding: 0; }
         a { color: var(--accent); text-decoration: none; cursor: pointer; }
         a:hover { text-decoration: underline; }
-        header { background: #111; padding: 1rem; border-bottom: 1px solid var(--dim); display: flex; justify-content: space-between; align-items: center; }
-        nav { display: flex; gap: 15px; }
+        header { background: var(--panel); padding: 1rem; border-bottom: 1px solid var(--dim); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+        .brand { font-weight: bold; font-size: 1.2rem; }
+        nav { display: flex; gap: 15px; flex-wrap: wrap; }
         .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        
+        /* PAGE SECTIONS - FIXED NAVIGATION */
         .page-section { display: none; animation: fade 0.3s; }
         .page-section.active { display: block; }
         @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
-        .card { background: #111; border: 1px solid var(--dim); padding: 15px; margin-bottom: 15px; }
+
+        .card { background: var(--panel); border: 1px solid var(--dim); padding: 15px; margin-bottom: 15px; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        input, textarea, button { background: #222; border: 1px solid var(--dim); color: var(--text); padding: 8px; font-family: inherit; width: 100%; box-sizing: border-box; }
+        @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
+        
+        input, textarea, button, select { background: #222; border: 1px solid var(--dim); color: var(--text); padding: 8px; font-family: inherit; width: 100%; box-sizing: border-box; margin-bottom: 10px; }
         button { background: var(--dim); cursor: pointer; font-weight: bold; }
         button:hover { background: var(--accent); color: #000; }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 100; justify-content: center; align-items: center; }
-        .modal-content { background: #111; border: 1px solid var(--accent); padding: 20px; width: 500px; max-width: 90%; }
-        .hidden { display: none; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        
+        /* MODAL */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; }
+        .modal.active { display: flex; }
+        .modal-content { background: var(--panel); border: 1px solid var(--accent); padding: 20px; width: 600px; max-width: 90%; max-height: 90vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; margin-bottom: 15px; }
+        .close-btn { cursor: pointer; color: var(--err); font-weight: bold; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9rem; }
         th, td { border: 1px solid var(--dim); padding: 8px; text-align: left; }
         th { background: #222; }
         .status-ok { color: var(--accent); }
         .status-err { color: var(--err); }
+        .hidden { display: none !important; }
+        .profile-card { text-align: center; }
+        .profile-img { width: 100px; height: 100px; border-radius: 50%; border: 2px solid var(--accent); margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -39,7 +53,7 @@
         <a onclick="navigateTo('about')">About</a>
         <a onclick="navigateTo('contact')">Contact</a>
         <a onclick="navigateTo('admin')" id="nav-admin" class="hidden">Admin</a>
-        <a onclick="navigateTo('settings')" id="nav-settings" class="hidden">Settings</a>
+        <a onclick="openSettings()" id="nav-settings" class="hidden">Settings</a>
         <a onclick="logout()" id="nav-logout" class="hidden">Logout</a>
         <a onclick="navigateTo('login')" id="nav-login">Login</a>
     </nav>
@@ -50,7 +64,10 @@
     <!-- HOME -->
     <div id="home" class="page-section active">
         <h1>Overview</h1>
-        <div id="news-feed"></div>
+        <div class="card">
+            <h3>Latest News</h3>
+            <div id="news-feed"><p>No news posted.</p></div>
+        </div>
     </div>
 
     <!-- ABOUT -->
@@ -94,10 +111,28 @@
         </div>
     </div>
 
-    <!-- SETTINGS (Modal-like section) -->
-    <div id="settings" class="page-section">
-        <h1>Page Settings</h1>
+    <!-- LOGIN -->
+    <div id="login" class="page-section">
+        <h1>Access Control</h1>
+        <div class="card" style="max-width: 400px; margin: 0 auto;">
+            <input type="text" id="login-user" placeholder="Username">
+            <input type="password" id="login-pass" placeholder="Password">
+            <button onclick="login()">Sign in</button>
+            <p id="login-msg"></p>
+        </div>
+    </div>
+
+</div>
+
+<!-- SETTINGS MODAL -->
+<div id="settings-modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Page Settings</h2>
+            <span class="close-btn" onclick="closeSettings()">×</span>
+        </div>
         <p class="status-err">Only accessible by VendettaPyrex</p>
+        
         <div class="card">
             <h3>About Page Content</h3>
             <label>Box 1 Description</label>
@@ -112,52 +147,48 @@
         </div>
         <button onclick="saveSettings()">Save Changes</button>
     </div>
-
-    <!-- LOGIN -->
-    <div id="login" class="page-section">
-        <h1>Access Control</h1>
-        <div class="card" style="max-width: 400px; margin: 0 auto;">
-            <input type="text" id="login-user" placeholder="Username">
-            <input type="password" id="login-pass" placeholder="Password">
-            <button onclick="login()">Sign in</button>
-            <p id="login-msg"></p>
-        </div>
-    </div>
-
 </div>
-
-<!-- Settings Modal Overlay (Optional visual cue) -->
-<div id="modal-overlay" class="modal" onclick="if(event.target===this) navigateTo('home')"></div>
 
 <script>
     const API_URL = ""; // Leave empty for same origin (Cloudflare Worker)
     let authToken = localStorage.getItem('cid_token');
+    let currentUser = null;
 
-    // --- NAVIGATION LOGIC (Prevents Glitching) ---
+    // --- NAVIGATION LOGIC (FIXED OVERLAPPING) ---
     function navigateTo(pageId) {
-        // Hide all pages
+        // 1. Hide ALL page sections
         document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active'));
-        // Show target
+        
+        // 2. Show ONLY the target section
         const target = document.getElementById(pageId);
         if (target) target.classList.add('active');
         
-        // Close modal overlay if open
-        document.getElementById('modal-overlay').style.display = 'none';
+        // 3. Close any open modals
+        closeSettings();
 
-        // Load data specific to page
+        // 4. Load data specific to page
         if (pageId === 'home') loadNews();
         if (pageId === 'about') loadPageContent();
         if (pageId === 'contact') loadPageContent();
-        if (pageId === 'settings') loadSettingsData();
         if (pageId === 'admin') loadAudit();
         
         updateAuthUI();
         window.scrollTo(0,0);
     }
 
+    // --- SETTINGS MODAL LOGIC ---
+    function openSettings() {
+        if (!authToken) return navigateTo('login');
+        document.getElementById('settings-modal').classList.add('active');
+        loadSettingsData();
+    }
+    function closeSettings() {
+        document.getElementById('settings-modal').classList.remove('active');
+    }
+
     // --- AUTH ---
     function updateAuthUI() {
-        const isAdmin = authToken && true; // Simplified: if token exists, assume admin for UI toggle
+        const isAdmin = authToken && currentUser === "VendettaPyrex";
         document.getElementById('nav-admin').classList.toggle('hidden', !isAdmin);
         document.getElementById('nav-settings').classList.toggle('hidden', !isAdmin);
         document.getElementById('nav-logout').classList.toggle('hidden', !isAdmin);
@@ -177,6 +208,7 @@
             const data = await res.json();
             if (data.ok) {
                 authToken = data.token;
+                currentUser = u;
                 localStorage.setItem('cid_token', authToken);
                 msg.textContent = "Login successful";
                 msg.className = "status-ok";
@@ -193,6 +225,7 @@
 
     function logout() {
         authToken = null;
+        currentUser = null;
         localStorage.removeItem('cid_token');
         navigateTo('home');
     }
@@ -204,9 +237,10 @@
             const res = await fetch(API_URL + '/pages/about');
             const data = await res.json();
             if (data.ok && data.value) {
-                // Simple parser for demo, ideally structured JSON
-                document.getElementById('about-box1-desc').textContent = data.value.split('|')[0] || document.getElementById('about-box1-desc').textContent;
-                document.getElementById('about-box2-desc').textContent = data.value.split('|')[1] || document.getElementById('about-box2-desc').textContent;
+                // Expecting format: "Box1Desc|Box2Desc"
+                const parts = data.value.split('|');
+                if(parts[0]) document.getElementById('about-box1-desc').textContent = parts[0];
+                if(parts[1]) document.getElementById('about-box2-desc').textContent = parts[1];
             }
         } catch(e) {}
         
@@ -221,7 +255,7 @@
     }
 
     async function loadSettingsData() {
-        if (!authToken) return navigateTo('login');
+        if (!authToken) return;
         // Load current values into inputs
         try {
             const resAbout = await fetch(API_URL + '/pages/about');
@@ -248,18 +282,24 @@
         const contactVal = document.getElementById('set-contact-content').value;
 
         try {
-            await fetch(API_URL + '/pages/about', {
+            const res1 = await fetch(API_URL + '/pages/about', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
                 body: JSON.stringify({ value: aboutVal })
             });
-            await fetch(API_URL + '/pages/contact', {
+            const res2 = await fetch(API_URL + '/pages/contact', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
                 body: JSON.stringify({ value: contactVal })
             });
-            alert("Settings Saved Server-Side");
-            navigateTo('about');
+            
+            if(res1.ok && res2.ok) {
+                alert("Settings Saved Server-Side");
+                closeSettings();
+                navigateTo('about');
+            } else {
+                alert("Save Failed (Ensure you are VendettaPyrex)");
+            }
         } catch (e) {
             alert("Save Failed");
         }
@@ -290,6 +330,8 @@
             body: JSON.stringify({ title: t, text: c })
         });
         loadNews();
+        document.getElementById('news-title').value = "";
+        document.getElementById('news-text').value = "";
     }
 
     async function loadAudit() {
