@@ -72,18 +72,26 @@
       justify-content:space-between;
       gap: 14px;
     }
+
+    /* ✅ FIX: bring title closer to logo, remove forced centering look */
     .brand{
       display:flex;
       align-items:center;
-      gap: 12px;
-      min-width: 240px;
+      gap: 10px;
+      min-width: unset;
     }
-.brand-mark img{
-  width: 25%;
-  height: 25%;
-  object-fit: contain;
-  display: block;
-}
+    .brand-mark{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex: 0 0 auto;
+    }
+    .brand-mark img{
+      width: 64px;
+      height: 64px;
+      object-fit: contain;
+      display:block;
+      filter: drop-shadow(0 10px 20px rgba(0,0,0,0.35));
     }
     .brand-title{ line-height:1.1; }
     .brand-title .top{
@@ -95,7 +103,7 @@
     .brand-title .sub{
       font-size: 12px;
       color: var(--portal-sub);
-      margin-top: 4px;
+      margin-top: 3px;
     }
 
     nav{
@@ -104,6 +112,7 @@
       gap: 10px;
       flex-wrap: wrap;
       justify-content:flex-end;
+      margin-left: auto;
     }
 
     .navbtn{
@@ -117,18 +126,24 @@
       font-weight: 650;
       letter-spacing: 0.2px;
       cursor:pointer;
-      transition: transform .06s ease, background .15s ease, border-color .15s ease;
+      transition: transform .06s ease, background .15s ease, border-color .15s ease, box-shadow .15s ease;
       user-select:none;
       white-space: nowrap;
     }
     .navbtn:hover{
       background: rgba(255,255,255,0.09);
       border-color: rgba(199,164,74,0.32);
+      box-shadow: 0 0 0 1px rgba(199,164,74,0.10);
     }
     .navbtn:active{ transform: translateY(1px); }
     .navbtn.primary{
       border-color: rgba(199,164,74,0.45);
       background: rgba(199,164,74,0.10);
+    }
+    .navbtn.active{
+      border-color: rgba(199,164,74,0.65);
+      background: rgba(199,164,74,0.14);
+      box-shadow: 0 0 0 2px rgba(199,164,74,0.12);
     }
     .navbtn[hidden]{ display:none !important; }
 
@@ -145,6 +160,10 @@
       gap: 14px;
       align-items:start;
     }
+    /* single-column layout for normal views */
+    .grid.single{ grid-template-columns: 1fr; }
+    .grid.single #homeCard{ display:none; }
+
     .grid.toolmode{ grid-template-columns: 1fr; }
     .grid.toolmode #homeCard{ display:none; }
 
@@ -235,8 +254,170 @@
     }
     .newsItem .t{ font-weight: 800; color: rgba(255,255,255,0.92); }
     .newsItem .d{ font-size: 12px; color: rgba(255,255,255,0.75); }
-    .newsItem .b{ margin-top: 6px; color: rgba(255,255,255,0.86); font-size: 13px; line-height: 1.35; white-space: pre-wrap; }
+    .newsItem .b{
+      margin-top: 6px;
+      color: rgba(255,255,255,0.86);
+      font-size: 13px;
+      line-height: 1.35;
+      white-space: normal;
+    }
 
+    /* formatted news rendering */
+    .newsItem .b p{ margin: 6px 0; }
+    .newsItem .b ul, .newsItem .b ol{ margin: 6px 0 6px 18px; }
+    .newsItem .b a{ color: rgba(110,231,183,0.95); text-decoration: underline; }
+    .newsItem .b code{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+      font-size: 12.5px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      padding: 1px 6px;
+      border-radius: 999px;
+    }
+    .newsItem .b pre{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+      font-size: 12.5px;
+      background: rgba(0,0,0,0.25);
+      border: 1px solid rgba(255,255,255,0.12);
+      padding: 10px 12px;
+      border-radius: 12px;
+      overflow:auto;
+    }
+    .newsItem .b blockquote{
+      margin: 8px 0;
+      padding: 8px 10px;
+      border-left: 3px solid rgba(199,164,74,0.55);
+      background: rgba(199,164,74,0.08);
+      border-radius: 10px;
+    }
+
+    /* ========= Rich text editor (admin) ========= */
+    .rte{
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(0,0,0,0.18);
+      border-radius: 12px;
+      overflow:hidden;
+    }
+    .rtebar{
+      display:flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items:center;
+      padding: 10px 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.25);
+    }
+    .rtebar .group{
+      display:flex;
+      gap: 8px;
+      align-items:center;
+      padding-right: 10px;
+      margin-right: 10px;
+      border-right: 1px solid rgba(255,255,255,0.10);
+    }
+    .rtebar .group:last-child{ border-right:none; margin-right:0; padding-right:0; }
+    .rtbtn{
+      appearance:none;
+      border:1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.92);
+      border-radius: 10px;
+      padding: 7px 10px;
+      font-size: 12px;
+      font-weight: 750;
+      cursor:pointer;
+      transition: transform .06s ease, background .15s ease, border-color .15s ease;
+      user-select:none;
+      white-space: nowrap;
+    }
+    .rtbtn:hover{ background: rgba(255,255,255,0.09); border-color: rgba(199,164,74,0.32); }
+    .rtbtn:active{ transform: translateY(1px); }
+    .rtsep{ width: 1px; height: 26px; background: rgba(255,255,255,0.10); }
+    .rtebody{
+      min-height: 170px;
+      padding: 10px 12px;
+      outline: none;
+      color: rgba(255,255,255,0.92);
+      font-size: 14px;
+      line-height: 1.35;
+      white-space: normal;
+    }
+    .rtebody:empty:before{
+      content: attr(data-placeholder);
+      color: rgba(255,255,255,0.45);
+    }
+    .rtebar input[type="color"]{
+      width: 34px;
+      height: 30px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.06);
+      padding: 2px;
+      cursor:pointer;
+    }
+    .rtebar .hint{
+      font-size: 12px;
+      color: rgba(255,255,255,0.70);
+      font-weight: 650;
+    }
+
+    /* ========= Vendetta-only Special Effects ========= */
+    /* Uses CSS variables so colors can be changed live */
+    .fx-glow{
+      color: var(--fx-color, #ffffff);
+      text-shadow:
+        0 0 8px color-mix(in srgb, var(--fx-color, #fff) 55%, transparent),
+        0 0 22px color-mix(in srgb, var(--fx-color, #fff) 35%, transparent);
+    }
+    .fx-neon{
+      color: var(--fx-color, #6ee7b7);
+      text-shadow:
+        0 0 2px #000,
+        0 0 10px color-mix(in srgb, var(--fx-color, #6ee7b7) 60%, transparent),
+        0 0 26px color-mix(in srgb, var(--fx-color, #6ee7b7) 40%, transparent);
+    }
+    .fx-flicker{
+      color: var(--fx-color, #c7a44a);
+      text-shadow: 0 0 14px color-mix(in srgb, var(--fx-color, #c7a44a) 55%, transparent);
+      animation: fxFlicker 2.1s infinite;
+    }
+    @keyframes fxFlicker{
+      0%, 100% { opacity: 1; filter: brightness(1.05); }
+      6% { opacity: .85; }
+      8% { opacity: .95; }
+      10% { opacity: .75; }
+      12% { opacity: 1; }
+      33% { opacity: .92; }
+      35% { opacity: .55; }
+      37% { opacity: 1; }
+      65% { opacity: .88; }
+      66% { opacity: .62; }
+      67% { opacity: 1; }
+    }
+    .fx-rainbow{
+      background: linear-gradient(90deg, #ff4d4d, #ffb84d, #fff04d, #4dff8a, #4db8ff, #9a4dff);
+      background-size: 220% 220%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent !important;
+      animation: fxRainbow 2.2s linear infinite;
+      text-shadow: 0 0 10px rgba(255,255,255,0.08);
+    }
+    @keyframes fxRainbow{
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
+    }
+    .fx-wave{
+      color: var(--fx-color, #eaf0ff);
+      display:inline-block;
+      animation: fxWave 1.4s ease-in-out infinite;
+    }
+    @keyframes fxWave{
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-2px); }
+    }
+
+    /* terminal styles (unchanged) */
     .wrap{min-height:0;display:flex;align-items:flex-start;justify-content:center;padding:0;box-sizing:border-box;}
     .terminal{
       width:100%;
@@ -353,6 +534,7 @@
 
     @media (max-width: 980px){
       .grid{ grid-template-columns: 1fr; }
+      .grid.single{ grid-template-columns: 1fr; }
       .terminal{ height:auto; min-height: 700px; }
       .content{grid-template-columns:1fr;}
       .right{max-height:none;}
@@ -372,8 +554,8 @@
     <div class="header-inner">
       <div class="brand">
         <div class="brand-mark">
-  <img src="USACIDC_SSI.png" alt="Logo" />
-</div>
+          <img src="USACIDC_SSI.png" alt="Logo" />
+        </div>
         <div class="brand-title">
           <div class="top">Criminal Investigation Division</div>
           <div class="sub">Do what has to be done</div>
@@ -394,7 +576,9 @@
   </header>
 
   <main class="container">
-    <div class="grid" id="grid">
+    <div class="grid single" id="grid">
+
+      <!-- Kept exactly (IDs/names unchanged). We mount it into Login view via JS. -->
       <section class="card" id="homeCard">
         <div class="hd">
           <div class="title">Access Control</div>
@@ -433,15 +617,66 @@
           <div id="aboutView" hidden><div class="status">About page.</div></div>
           <div id="contactView" hidden><div class="status">Contact page.</div></div>
 
+          <!-- ✅ NEW: Dedicated Login view (so Login shows ONLY login) -->
+          <div id="loginView" hidden>
+            <div class="status" style="margin-bottom:10px;">
+              Sign in to access restricted tools.
+            </div>
+            <div id="loginMount"></div>
+          </div>
+
           <div id="adminView" hidden>
             <div class="field">
               <label for="newsTitle">Title</label>
               <input class="portal" id="newsTitle" type="text" />
             </div>
+
             <div class="field">
               <label for="newsBody">Body</label>
-              <textarea class="portal" id="newsBody"></textarea>
+
+              <!-- Keep original textarea (IDs unchanged) but hide it; editor writes into it. -->
+              <textarea class="portal" id="newsBody" style="display:none;"></textarea>
+
+              <!-- Rich text editor -->
+              <div class="rte" id="rte">
+                <div class="rtebar" id="rtebar">
+                  <div class="group">
+                    <button class="rtbtn" type="button" data-cmd="bold">B</button>
+                    <button class="rtbtn" type="button" data-cmd="italic"><i>I</i></button>
+                    <button class="rtbtn" type="button" data-cmd="underline"><u>U</u></button>
+                    <button class="rtbtn" type="button" data-cmd="strikeThrough"><s>S</s></button>
+                  </div>
+
+                  <div class="group">
+                    <button class="rtbtn" type="button" data-cmd="insertUnorderedList">• List</button>
+                    <button class="rtbtn" type="button" data-cmd="insertOrderedList">1. List</button>
+                    <button class="rtbtn" type="button" id="btnQuote" title="Blockquote">Quote</button>
+                    <button class="rtbtn" type="button" id="btnCode" title="Inline code">Code</button>
+                  </div>
+
+                  <div class="group">
+                    <button class="rtbtn" type="button" id="btnLink">Link</button>
+                    <button class="rtbtn" type="button" data-cmd="removeFormat">Clear</button>
+                  </div>
+
+                  <!-- Vendetta-only effects toolbar -->
+                  <div class="group" id="fxGroup" hidden>
+                    <span class="hint">Special Effects:</span>
+                    <button class="rtbtn" type="button" data-fx="fx-glow">Glow</button>
+                    <button class="rtbtn" type="button" data-fx="fx-neon">Neon</button>
+                    <button class="rtbtn" type="button" data-fx="fx-flicker">Flicker</button>
+                    <button class="rtbtn" type="button" data-fx="fx-rainbow">Rainbow</button>
+                    <button class="rtbtn" type="button" data-fx="fx-wave">Wave</button>
+                    <input type="color" id="fxColor" value="#6ee7b7" title="Effect color (where applicable)" />
+                    <button class="rtbtn" type="button" id="btnFxRemove">Remove FX</button>
+                  </div>
+                </div>
+
+                <div id="newsBodyEditor" class="rtebody" contenteditable="true"
+                     data-placeholder="Write formatted news here…"></div>
+              </div>
             </div>
+
             <div class="row">
               <button class="navbtn primary" id="btnAddNews" type="button">Add News</button>
               <div class="status" id="adminStatus"></div>
@@ -527,6 +762,99 @@
     const d = new Date(iso);
     if (isNaN(d.getTime())) return "";
     return d.toLocaleString(undefined, { year:"numeric", month:"short", day:"2-digit", hour:"2-digit", minute:"2-digit" });
+  }
+
+  /* =========================================================
+     SAFE-ish HTML sanitizer for formatted news (no scripts)
+     - Allows only a small allowlist of tags + safe attrs.
+     ========================================================= */
+  const ALLOWED_TAGS = new Set([
+    "B","STRONG","I","EM","U","S","BR","P","DIV","SPAN",
+    "UL","OL","LI","A","BLOCKQUOTE","CODE","PRE","H1","H2","H3","HR"
+  ]);
+  const ALLOWED_ATTR = {
+    "A": new Set(["href","target","rel"]),
+    "SPAN": new Set(["class","style"]),
+    "DIV": new Set(["class","style"]),
+    "P": new Set(["class","style"]),
+    "CODE": new Set(["class"]),
+    "PRE": new Set(["class"])
+  };
+
+  function sanitizeHtml(inputHtml){
+    const tpl = document.createElement("template");
+    tpl.innerHTML = (inputHtml ?? "").toString();
+
+    const walk = (node) => {
+      const children = Array.from(node.childNodes);
+      for (const child of children){
+        if (child.nodeType === Node.ELEMENT_NODE){
+          const tag = child.tagName.toUpperCase();
+
+          // remove disallowed tags entirely (keep their text content)
+          if (!ALLOWED_TAGS.has(tag)){
+            const txt = document.createTextNode(child.textContent || "");
+            child.replaceWith(txt);
+            continue;
+          }
+
+          // remove unsafe attributes
+          const allowed = ALLOWED_ATTR[tag] || new Set();
+          for (const attr of Array.from(child.attributes)){
+            const name = attr.name.toLowerCase();
+            const val = attr.value || "";
+
+            // strip any event handlers, srcdoc, etc.
+            if (name.startsWith("on") || name === "srcdoc"){
+              child.removeAttribute(attr.name);
+              continue;
+            }
+            if (!allowed.has(attr.name)){
+              child.removeAttribute(attr.name);
+              continue;
+            }
+
+            // lock down links
+            if (tag === "A" && name === "href"){
+              const href = val.trim();
+              if (!href || /^javascript:/i.test(href) || /^data:/i.test(href)){
+                child.removeAttribute("href");
+              } else {
+                child.setAttribute("target","_blank");
+                child.setAttribute("rel","noopener noreferrer");
+              }
+            }
+
+            // strip style to only allow CSS variables + color-related safe bits
+            if ((tag === "SPAN" || tag === "DIV" || tag === "P") && name === "style"){
+              // allow only: --fx-color: ..., color: ..., background: ..., text-shadow: ...
+              const safe = [];
+              const parts = val.split(";").map(x=>x.trim()).filter(Boolean);
+              for (const p of parts){
+                const [kRaw, ...rest] = p.split(":");
+                const k = (kRaw || "").trim().toLowerCase();
+                const v = rest.join(":").trim();
+                if (!k) continue;
+                if (k === "--fx-color" || k === "color" || k === "background" || k === "text-shadow"){
+                  safe.push(`${k}:${v}`);
+                }
+              }
+              child.setAttribute("style", safe.join(";"));
+            }
+          }
+
+          // recurse
+          walk(child);
+        } else if (child.nodeType === Node.COMMENT_NODE){
+          child.remove();
+        } else {
+          // text nodes are fine
+        }
+      }
+    };
+
+    walk(tpl.content);
+    return tpl.innerHTML;
   }
 
   // TOOL WORKER
@@ -622,15 +950,17 @@
       return;
     }
     newsEmptyEl.style.display = "none";
+
     for (const n of items.slice(0, 10)){
       const div = document.createElement("div");
       div.className = "newsItem";
+      const safeBody = sanitizeHtml(n.text || "");
       div.innerHTML = `
         <div class="h">
           <div class="t">${escapeHtml(n.title || "Untitled")}</div>
           <div class="d">${escapeHtml(fmtDate(n.createdAt))}</div>
         </div>
-        <div class="b">${escapeHtml(n.text || "")}</div>
+        <div class="b">${safeBody || ""}</div>
       `;
       newsListEl.appendChild(div);
     }
@@ -641,12 +971,13 @@
     for (const n of items){
       const div = document.createElement("div");
       div.className = "newsItem";
+      const safeBody = sanitizeHtml(n.text || "");
       div.innerHTML = `
         <div class="h">
           <div class="t">${escapeHtml(n.title || "Untitled")}</div>
           <div class="d">${escapeHtml(fmtDate(n.createdAt))}</div>
         </div>
-        <div class="b">${escapeHtml(n.text || "")}</div>
+        <div class="b">${safeBody || ""}</div>
         <div style="margin-top:10px; display:flex; justify-content:flex-end;">
           <button class="navbtn" data-del="${escapeHtml(n.id)}">Delete</button>
         </div>
@@ -718,6 +1049,29 @@
   const contactView = $("contactView");
   const adminView = $("adminView");
   const toolView = $("toolView");
+  const loginView = $("loginView");
+
+  const homeCard = $("homeCard");
+  const contentCard = $("contentCard");
+  const loginMount = $("loginMount");
+
+  // mount login card into the Login view so "Login" shows ONLY login
+  let loginMounted = false;
+  function ensureLoginMounted(){
+    if (loginMounted) return;
+    loginMounted = true;
+    try{
+      loginMount.appendChild(homeCard);
+      homeCard.style.display = "";
+    } catch {}
+  }
+
+  function setActiveNav(btn){
+    [navHome, navAbout, navContact, navLogin, navTool, navAdmin].forEach(b=>{
+      if (!b) return;
+      b.classList.toggle("active", b === btn);
+    });
+  }
 
   function setView(which){
     homeView.hidden = true;
@@ -725,12 +1079,16 @@
     contactView.hidden = true;
     adminView.hidden = true;
     toolView.hidden = true;
+    loginView.hidden = true;
+
     grid.classList.remove("toolmode");
+    grid.classList.add("single");
 
     if (which === "home"){
       contentTitle.textContent = "Home";
       contentTag.textContent = "Portal Overview";
       homeView.hidden = false;
+      setActiveNav(navHome);
       refreshNewsEverywhere().catch(()=>{});
       return;
     }
@@ -738,18 +1096,30 @@
       contentTitle.textContent = "About";
       contentTag.textContent = "Info";
       aboutView.hidden = false;
+      setActiveNav(navAbout);
       return;
     }
     if (which === "contact"){
       contentTitle.textContent = "Contact";
       contentTag.textContent = "Info";
       contactView.hidden = false;
+      setActiveNav(navContact);
+      return;
+    }
+    if (which === "login"){
+      ensureLoginMounted();
+      contentTitle.textContent = "Login";
+      contentTag.textContent = "Access Control";
+      loginView.hidden = false;
+      setActiveNav(navLogin);
+      setTimeout(()=>{ try{ $("loginUser").focus(); }catch{} }, 0);
       return;
     }
     if (which === "admin"){
       contentTitle.textContent = "Admin";
       contentTag.textContent = "Front Page";
       adminView.hidden = false;
+      setActiveNav(navAdmin);
       refreshNewsEverywhere().catch(()=>{});
       refreshAudit().catch(()=>{});
       return;
@@ -758,6 +1128,7 @@
       contentTitle.textContent = "CID Terminal";
       contentTag.textContent = "Restricted Tool";
       toolView.hidden = false;
+      setActiveNav(navTool);
       grid.classList.add("toolmode");
       if (!chart) initChart();
       consoleLoop();
@@ -779,11 +1150,18 @@
     navTool.hidden = !loggedIn;
     navLogout.hidden = !loggedIn;
     navAdmin.hidden = !(loggedIn && LOGGED_IN_USER === ADMIN_USERNAME);
+
+    // Vendetta-only editor effects toolbar visibility
+    const fxGroup = $("fxGroup");
+    if (fxGroup){
+      fxGroup.hidden = !(loggedIn && LOGGED_IN_USER === ADMIN_USERNAME);
+    }
   }
 
   navHome.addEventListener("click", ()=> setView("home"));
   navAbout.addEventListener("click", ()=> setView("about"));
   navContact.addEventListener("click", ()=> setView("contact"));
+  navLogin.addEventListener("click", ()=> setView("login"));
   navTool.addEventListener("click", ()=> setView("tool"));
   navAdmin.addEventListener("click", ()=> {
     if (LOGGED_IN_USER !== ADMIN_USERNAME) return;
@@ -798,12 +1176,6 @@
     if (screen) screen.textContent = "";
     updateNav();
     setView("home");
-  });
-
-  navLogin.addEventListener("click", ()=>{
-    setView("home");
-    $("loginUser").focus();
-    $("homeCard").scrollIntoView({ behavior: "smooth", block: "start" });
   });
 
   $("btnLoadAudit").addEventListener("click", ()=> refreshAudit());
@@ -846,6 +1218,178 @@
     }
   });
 
+  /* =========================
+     Rich Text Editor behavior
+     ========================= */
+  const newsBodyEditor = $("newsBodyEditor");
+  const newsBodyTextarea = $("newsBody");
+  const rteBar = $("rtebar");
+
+  function rteSyncToTextarea(){
+    // Store sanitized HTML into textarea (still using same ID for backend field)
+    const html = newsBodyEditor ? newsBodyEditor.innerHTML : "";
+    if (newsBodyTextarea) newsBodyTextarea.value = html;
+  }
+
+  function rteExec(cmd, value=null){
+    try{
+      document.execCommand(cmd, false, value);
+      rteSyncToTextarea();
+      newsBodyEditor && newsBodyEditor.focus();
+    } catch {}
+  }
+
+  function wrapSelectionWithSpan(className, styleObj={}){
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+
+    const range = sel.getRangeAt(0);
+    if (range.collapsed) return;
+
+    const span = document.createElement("span");
+    span.className = className;
+
+    for (const [k,v] of Object.entries(styleObj)){
+      span.style.setProperty(k, v);
+    }
+
+    try{
+      // Surround contents; if it fails due to partial selections, fallback with extract/insert
+      range.surroundContents(span);
+    } catch {
+      const frag = range.extractContents();
+      span.appendChild(frag);
+      range.insertNode(span);
+    }
+
+    sel.removeAllRanges();
+    const newRange = document.createRange();
+    newRange.selectNodeContents(span);
+    sel.addRange(newRange);
+
+    rteSyncToTextarea();
+    newsBodyEditor && newsBodyEditor.focus();
+  }
+
+  function removeFxFromSelection(){
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    const range = sel.getRangeAt(0);
+    if (range.collapsed) return;
+
+    // Wrap selection into a temp span, then strip fx classes within it
+    const tmp = document.createElement("span");
+    try{
+      range.surroundContents(tmp);
+    } catch {
+      const frag = range.extractContents();
+      tmp.appendChild(frag);
+      range.insertNode(tmp);
+    }
+
+    // Remove fx classes from spans inside tmp
+    tmp.querySelectorAll("span").forEach(sp=>{
+      sp.classList.remove("fx-glow","fx-neon","fx-flicker","fx-rainbow","fx-wave");
+      // keep other classes, but strip fx color var if present
+      try{ sp.style.removeProperty("--fx-color"); } catch {}
+      if (!sp.className.trim() && !sp.getAttribute("style")) {
+        // unwrap empty span if it's just a wrapper
+        const parent = sp.parentNode;
+        while (sp.firstChild) parent.insertBefore(sp.firstChild, sp);
+        parent.removeChild(sp);
+      }
+    });
+
+    // Also if tmp itself is span, unwrap it
+    const parent = tmp.parentNode;
+    while (tmp.firstChild) parent.insertBefore(tmp.firstChild, tmp);
+    parent.removeChild(tmp);
+
+    rteSyncToTextarea();
+    newsBodyEditor && newsBodyEditor.focus();
+  }
+
+  if (rteBar){
+    rteBar.addEventListener("click", (e)=>{
+      const t = e.target.closest("button");
+      if (!t) return;
+
+      const cmd = t.getAttribute("data-cmd");
+      const fx = t.getAttribute("data-fx");
+
+      if (cmd){
+        rteExec(cmd);
+        return;
+      }
+
+      if (t.id === "btnLink"){
+        const url = prompt("Enter link URL (https://...)");
+        if (!url) return;
+        rteExec("createLink", url);
+        // force safe target/rel for newly created links
+        setTimeout(()=>{
+          if (!newsBodyEditor) return;
+          newsBodyEditor.querySelectorAll("a").forEach(a=>{
+            a.setAttribute("target","_blank");
+            a.setAttribute("rel","noopener noreferrer");
+          });
+          rteSyncToTextarea();
+        }, 0);
+        return;
+      }
+
+      if (t.id === "btnQuote"){
+        rteExec("formatBlock", "blockquote");
+        return;
+      }
+
+      if (t.id === "btnCode"){
+        // wrap selection in <code> by using a span classless + style? better to insert <code>
+        const sel = window.getSelection();
+        if (!sel || sel.rangeCount === 0) return;
+        const range = sel.getRangeAt(0);
+        if (range.collapsed) return;
+        const code = document.createElement("code");
+        try{
+          range.surroundContents(code);
+        } catch {
+          const frag = range.extractContents();
+          code.appendChild(frag);
+          range.insertNode(code);
+        }
+        rteSyncToTextarea();
+        newsBodyEditor && newsBodyEditor.focus();
+        return;
+      }
+
+      if (fx){
+        const fxColor = $("fxColor") ? $("fxColor").value : "#6ee7b7";
+        // rainbow ignores color; others use --fx-color
+        const styleObj = (fx === "fx-rainbow") ? {} : { "--fx-color": fxColor };
+        wrapSelectionWithSpan(fx, styleObj);
+        return;
+      }
+
+      if (t.id === "btnFxRemove"){
+        removeFxFromSelection();
+        return;
+      }
+    });
+  }
+
+  if (newsBodyEditor){
+    newsBodyEditor.addEventListener("input", ()=> rteSyncToTextarea());
+    // paste as plain-ish: strip dangerous tags after paste
+    newsBodyEditor.addEventListener("paste", ()=>{
+      setTimeout(()=>{
+        // sanitize inside editor to keep it clean
+        const clean = sanitizeHtml(newsBodyEditor.innerHTML);
+        newsBodyEditor.innerHTML = clean;
+        rteSyncToTextarea();
+      }, 0);
+    });
+  }
+
   // ADMIN ADD NEWS
   $("btnAddNews").addEventListener("click", async ()=>{
     if (LOGGED_IN_USER !== ADMIN_USERNAME){
@@ -855,12 +1399,15 @@
     }
 
     const titleEl = $("newsTitle");
-    const bodyEl  = $("newsBody");
+    const bodyEl  = $("newsBody"); // keep same ID usage
 
     const title = (titleEl.value || "").trim();
-    const text  = (bodyEl.value || "").trim();
 
-    if (!title || !text){
+    // pull from editor (HTML). Keep same field name "text" in API.
+    const htmlRaw = (newsBodyEditor ? newsBodyEditor.innerHTML : (bodyEl.value || "")).trim();
+    const htmlClean = sanitizeHtml(htmlRaw); // sanitize before sending/storing
+
+    if (!title || !htmlClean){
       adminStatusEl.textContent = "Title and body required.";
       adminStatusEl.className = "status danger";
       return;
@@ -869,9 +1416,14 @@
     try{
       adminStatusEl.textContent = "";
       adminStatusEl.className = "status";
-      await createNews(title, text);
+
+      // store HTML in "text" field (same API)
+      await createNews(title, htmlClean);
+
       titleEl.value = "";
+      if (newsBodyEditor) newsBodyEditor.innerHTML = "";
       bodyEl.value = "";
+
       adminStatusEl.textContent = "News added.";
       adminStatusEl.className = "status ok";
       await refreshNewsEverywhere();
@@ -1292,8 +1844,3 @@
 </script>
 </body>
 </html>
-
-
-
-
-
