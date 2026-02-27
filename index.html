@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Criminal Investigation Division</title>
+  <title>Criminal Investigation Division Board</title>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3"></script>
@@ -153,13 +153,8 @@
       gap: 14px;
       align-items:start;
     }
-
-    .grid.toolmode{
-      grid-template-columns: 1fr;
-    }
-    .grid.toolmode #homeCard{
-      display:none;
-    }
+    .grid.toolmode{ grid-template-columns: 1fr; }
+    .grid.toolmode #homeCard{ display:none; }
 
     .card{
       background: rgba(255,255,255,0.06);
@@ -377,8 +372,8 @@
 
 <body>
   <div class="banner">
-    <div><b>Secure Investigations Portal</b> — demo/internal tool UI</div>
-    <div class="pill">Contact VendettaPyrex for any issues.</div>
+    <div><b>Criminal Investigation Division</b> — Official Page</div>
+    <div class="pill">Contact BGEN VendettaPyrex for any issues.</div>
   </div>
 
   <header>
@@ -387,7 +382,7 @@
         <div class="brand-mark">SI</div>
         <div class="brand-title">
           <div class="top">Criminal Investigation Division</div>
-          <div class="sub">Do What Has To Be Done</div>
+          <div class="sub">Do what has to be done</div>
         </div>
       </div>
 
@@ -396,8 +391,9 @@
         <button class="navbtn" id="navAbout">About</button>
         <button class="navbtn" id="navContact">Contact</button>
         <button class="navbtn" id="navLogin">Login</button>
-        <button class="navbtn primary" id="navTool" hidden>CID Terminal</button>
-        <button class="navbtn primary" id="navAdmin" hidden>Admin Page</button>
+
+        <button class="navbtn primary" id="navTool" hidden>Terminal [CID ONLY]</button>
+        <button class="navbtn primary" id="navAdmin" hidden>Admin</button>
         <button class="navbtn" id="navLogout" hidden>Logout</button>
       </nav>
     </div>
@@ -408,7 +404,7 @@
       <section class="card" id="homeCard">
         <div class="hd">
           <div class="title">Access Control</div>
-          <div class="tag">CID Staff Only</div>
+          <div class="tag">Authorized Users Only</div>
         </div>
         <div class="bd">
           <form id="loginForm" autocomplete="off">
@@ -431,7 +427,7 @@
       <section class="card" id="contentCard">
         <div class="hd">
           <div class="title" id="contentTitle">Home</div>
-          <div class="tag" id="contentTag">Portal Overview</div>
+          <div class="tag" id="contentTag">Overview</div>
         </div>
 
         <div class="bd" id="contentBody">
@@ -456,7 +452,17 @@
               <button class="navbtn primary" id="btnAddNews" type="button">Add News</button>
               <div class="status" id="adminStatus"></div>
             </div>
+
             <div class="news" id="adminNewsList" style="margin-top:14px;"></div>
+
+            <div style="margin-top:18px; border-top:1px solid rgba(255,255,255,0.10); padding-top:14px;">
+              <div class="row" style="margin-top:0;">
+                <div class="status" style="font-weight:800; color:rgba(255,255,255,0.92);">Audit Logs</div>
+                <button class="navbtn" id="btnLoadAudit" type="button">Refresh</button>
+              </div>
+              <div class="status" id="auditStatus"></div>
+              <div class="news" id="auditList"></div>
+            </div>
           </div>
 
           <div id="toolView" hidden style="margin-top:0;">
@@ -490,7 +496,7 @@
                   </div>
                 </div>
 
-                <div class="watermark">Criminal Investigations Division</div>
+                <div class="watermark">Criminal Investigation Division</div>
               </div>
             </div>
           </div>
@@ -501,733 +507,794 @@
   </main>
 
 <script>
-const TOOL_API_BASE = "https://the.chastiefola.workers.dev";
-const NEWS_API_BASE = "https://dawn-cell-038d.chastiefola.workers.dev";
-const ADMIN_USERNAME = "VendettaPyrex";
+(() => {
+  "use strict";
 
-let TOOL_TOKEN = null;
-let TOOL_IS_ADMIN = false;
-let LOGGED_IN_USER = null;
+  // SET THESE:
+  const TOOL_API_BASE = "https://the.chastiefola.workers.dev";
+  const NEWS_API_BASE = "https://dawn-cell-038d.chastiefola.workers.dev";
+  const ADMIN_USERNAME = "VendettaPyrex";
 
-let NEWS_TOKEN = null;
+  let TOOL_TOKEN = null;
+  let LOGGED_IN_USER = null;
+  let NEWS_TOKEN = null;
 
-function escapeHtml(s){
-  return (s ?? "").toString()
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-}
-function fmtDate(iso){
-  const d = new Date(iso);
-  if (isNaN(d.getTime())) return "";
-  return d.toLocaleString(undefined, { year:"numeric", month:"short", day:"2-digit", hour:"2-digit", minute:"2-digit" });
-}
+  const $ = (id) => document.getElementById(id);
 
-function toolAuthHeaders(extra={}) {
-  return { ...(TOOL_TOKEN ? { "Authorization": `Bearer ${TOOL_TOKEN}` } : {}), ...extra };
-}
+  function escapeHtml(s){
+    return (s ?? "").toString()
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+  function fmtDate(iso){
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return "";
+    return d.toLocaleString(undefined, { year:"numeric", month:"short", day:"2-digit", hour:"2-digit", minute:"2-digit" });
+  }
 
-async function toolApi(path, opts={}){
-  const res = await fetch(`${TOOL_API_BASE}${path}`, opts);
-  const data = await res.json().catch(()=> ({}));
-  if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
-  if (data && data.ok === false) throw new Error(data.error || "Request failed");
-  return data;
-}
+  // TOOL WORKER
+  function toolAuthHeaders(extra={}) {
+    return { ...(TOOL_TOKEN ? { "Authorization": `Bearer ${TOOL_TOKEN}` } : {}), ...extra };
+  }
+  async function toolApi(path, opts={}){
+    const res = await fetch(`${TOOL_API_BASE}${path}`, opts);
+    const data = await res.json().catch(()=> ({}));
+    if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+    if (data && data.ok === false) throw new Error(data.error || "Request failed");
+    return data;
+  }
+  async function toolLogin(username, password){
+    const data = await toolApi(`/auth/login`, {
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({ username, password })
+    });
+    TOOL_TOKEN = data.token;
+    LOGGED_IN_USER = username;
+  }
+  async function toolLogCommand(cmdString){
+    try{
+      await toolApi(`/log/command`, {
+        method:"POST",
+        headers: toolAuthHeaders({ "Content-Type":"application/json" }),
+        body: JSON.stringify({ command: cmdString })
+      });
+    } catch {}
+  }
 
-async function toolLogin(username, password){
-  const data = await toolApi(`/auth/login`, {
-    method:"POST",
-    headers:{ "Content-Type":"application/json" },
-    body: JSON.stringify({ username, password })
+  // NEWS WORKER
+  function newsAuthHeaders(extra={}) {
+    return { ...(NEWS_TOKEN ? { "Authorization": `Bearer ${NEWS_TOKEN}` } : {}), ...extra };
+  }
+  async function newsApi(path, opts={}){
+    const res = await fetch(`${NEWS_API_BASE}${path}`, opts);
+    const data = await res.json().catch(()=> ({}));
+    if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+    if (data && data.ok === false) throw new Error(data.error || "Request failed");
+    return data;
+  }
+  async function newsLogin(username, password){
+    const data = await newsApi(`/auth/login`, {
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({ username, password })
+    });
+    NEWS_TOKEN = data.token;
+  }
+  async function fetchNewsPublic(){
+    const res = await fetch(`${NEWS_API_BASE}/news`);
+    const data = await res.json().catch(()=> ({}));
+    if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+    return data.items || [];
+  }
+  async function createNews(title, text){
+    const data = await newsApi(`/news`, {
+      method:"POST",
+      headers: newsAuthHeaders({ "Content-Type":"application/json" }),
+      body: JSON.stringify({ title, text })
+    });
+    return data.item;
+  }
+  async function deleteNews(id){
+    const data = await newsApi(`/news/${encodeURIComponent(id)}`, {
+      method: "DELETE",
+      headers: newsAuthHeaders()
+    });
+    return !!data.removed;
+  }
+  async function fetchAudit(limit=80){
+    const data = await newsApi(`/audit?limit=${encodeURIComponent(limit)}`, {
+      method:"GET",
+      headers: newsAuthHeaders()
+    });
+    return data.items || [];
+  }
+
+  // NEWS UI
+  const newsListEl = $("newsList");
+  const newsEmptyEl = $("newsEmpty");
+  const adminNewsListEl = $("adminNewsList");
+  const adminStatusEl = $("adminStatus");
+  const auditListEl = $("auditList");
+  const auditStatusEl = $("auditStatus");
+
+  function renderNewsHome(items){
+    newsListEl.innerHTML = "";
+    if (!items.length){
+      newsEmptyEl.style.display = "block";
+      return;
+    }
+    newsEmptyEl.style.display = "none";
+    for (const n of items.slice(0, 10)){
+      const div = document.createElement("div");
+      div.className = "newsItem";
+      div.innerHTML = `
+        <div class="h">
+          <div class="t">${escapeHtml(n.title || "Untitled")}</div>
+          <div class="d">${escapeHtml(fmtDate(n.createdAt))}</div>
+        </div>
+        <div class="b">${escapeHtml(n.text || "")}</div>
+      `;
+      newsListEl.appendChild(div);
+    }
+  }
+
+  function renderNewsAdmin(items){
+    adminNewsListEl.innerHTML = "";
+    for (const n of items){
+      const div = document.createElement("div");
+      div.className = "newsItem";
+      div.innerHTML = `
+        <div class="h">
+          <div class="t">${escapeHtml(n.title || "Untitled")}</div>
+          <div class="d">${escapeHtml(fmtDate(n.createdAt))}</div>
+        </div>
+        <div class="b">${escapeHtml(n.text || "")}</div>
+        <div style="margin-top:10px; display:flex; justify-content:flex-end;">
+          <button class="navbtn" data-del="${escapeHtml(n.id)}">Delete</button>
+        </div>
+      `;
+      adminNewsListEl.appendChild(div);
+    }
+
+    adminNewsListEl.querySelectorAll("button[data-del]").forEach(btn=>{
+      btn.addEventListener("click", async ()=>{
+        const id = btn.getAttribute("data-del");
+        if (!id) return;
+        try{
+          btn.disabled = true;
+          await deleteNews(id);
+          await refreshNewsEverywhere();
+        } catch(e){
+          adminStatusEl.textContent = e.message;
+          adminStatusEl.className = "status danger";
+        } finally{
+          btn.disabled = false;
+        }
+      });
+    });
+  }
+
+  function renderAudit(items){
+    auditListEl.innerHTML = "";
+    for (const a of items){
+      const div = document.createElement("div");
+      div.className = "newsItem";
+      div.innerHTML = `
+        <div class="h">
+          <div class="t">${escapeHtml(a.type || "AUDIT")}</div>
+          <div class="d">${escapeHtml(fmtDate(a.ts))}</div>
+        </div>
+        <div class="b">${escapeHtml(JSON.stringify({
+          actor: a.actor, ip: a.ip, detail: a.detail
+        }, null, 2))}</div>
+      `;
+      auditListEl.appendChild(div);
+    }
+  }
+
+  async function refreshNewsEverywhere(){
+    const items = await fetchNewsPublic();
+    renderNewsHome(items);
+    if (LOGGED_IN_USER === ADMIN_USERNAME) renderNewsAdmin(items);
+  }
+
+  async function refreshAudit(){
+    auditStatusEl.textContent = "";
+    auditStatusEl.className = "status";
+    try{
+      const items = await fetchAudit(80);
+      renderAudit(items);
+    } catch(e){
+      auditStatusEl.textContent = e.message;
+      auditStatusEl.className = "status danger";
+    }
+  }
+
+  // NAV/VIEWS
+  const grid = $("grid");
+  const contentTitle = $("contentTitle");
+  const contentTag = $("contentTag");
+
+  const homeView = $("homeView");
+  const aboutView = $("aboutView");
+  const contactView = $("contactView");
+  const adminView = $("adminView");
+  const toolView = $("toolView");
+
+  function setView(which){
+    homeView.hidden = true;
+    aboutView.hidden = true;
+    contactView.hidden = true;
+    adminView.hidden = true;
+    toolView.hidden = true;
+    grid.classList.remove("toolmode");
+
+    if (which === "home"){
+      contentTitle.textContent = "Home";
+      contentTag.textContent = "Portal Overview";
+      homeView.hidden = false;
+      refreshNewsEverywhere().catch(()=>{});
+      return;
+    }
+    if (which === "about"){
+      contentTitle.textContent = "About";
+      contentTag.textContent = "Info";
+      aboutView.hidden = false;
+      return;
+    }
+    if (which === "contact"){
+      contentTitle.textContent = "Contact";
+      contentTag.textContent = "Info";
+      contactView.hidden = false;
+      return;
+    }
+    if (which === "admin"){
+      contentTitle.textContent = "Admin";
+      contentTag.textContent = "Front Page";
+      adminView.hidden = false;
+      refreshNewsEverywhere().catch(()=>{});
+      refreshAudit().catch(()=>{});
+      return;
+    }
+    if (which === "tool"){
+      contentTitle.textContent = "CID Terminal";
+      contentTag.textContent = "Restricted Tool";
+      toolView.hidden = false;
+      grid.classList.add("toolmode");
+      if (!chart) initChart();
+      consoleLoop();
+      setTimeout(()=>{ try{ chart.resize(); }catch{} }, 50);
+      return;
+    }
+  }
+
+  const navHome = $("navHome");
+  const navAbout = $("navAbout");
+  const navContact = $("navContact");
+  const navLogin = $("navLogin");
+  const navTool = $("navTool");
+  const navAdmin = $("navAdmin");
+  const navLogout = $("navLogout");
+
+  function updateNav(){
+    const loggedIn = !!TOOL_TOKEN;
+    navTool.hidden = !loggedIn;
+    navLogout.hidden = !loggedIn;
+    navAdmin.hidden = !(loggedIn && LOGGED_IN_USER === ADMIN_USERNAME);
+  }
+
+  navHome.addEventListener("click", ()=> setView("home"));
+  navAbout.addEventListener("click", ()=> setView("about"));
+  navContact.addEventListener("click", ()=> setView("contact"));
+  navTool.addEventListener("click", ()=> setView("tool"));
+  navAdmin.addEventListener("click", ()=> {
+    if (LOGGED_IN_USER !== ADMIN_USERNAME) return;
+    setView("admin");
   });
-  TOOL_TOKEN = data.token;
-  TOOL_IS_ADMIN = !!data.isAdmin;
-  LOGGED_IN_USER = username;
-}
 
-async function toolLogCommand(cmdString){
-  try{
-    await toolApi(`/log/command`, {
+  navLogout.addEventListener("click", ()=>{
+    TOOL_TOKEN = null;
+    LOGGED_IN_USER = null;
+    NEWS_TOKEN = null;
+    consoleRunning = false;
+    if (screen) screen.textContent = "";
+    updateNav();
+    setView("home");
+  });
+
+  navLogin.addEventListener("click", ()=>{
+    setView("home");
+    $("loginUser").focus();
+    $("homeCard").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  $("btnLoadAudit").addEventListener("click", ()=> refreshAudit());
+
+  // LOGIN FORM
+  const loginForm   = $("loginForm");
+  const loginUser   = $("loginUser");
+  const loginPass   = $("loginPass");
+  const loginStatus = $("loginStatus");
+  const loginBtn    = $("loginBtn");
+
+  loginForm.addEventListener("submit", async (e)=>{
+    e.preventDefault();
+    loginStatus.textContent = "";
+    loginStatus.className = "status";
+    loginBtn.disabled = true;
+
+    try{
+      const u = (loginUser.value || "").trim();
+      const p = (loginPass.value || "");
+      await toolLogin(u, p);
+
+      // Only Vendetta logs into News worker (admin only)
+      if (u === ADMIN_USERNAME){
+        await newsLogin(u, p);
+      } else {
+        NEWS_TOKEN = null;
+      }
+
+      loginStatus.textContent = "Access granted.";
+      loginStatus.className = "status ok";
+      updateNav();
+      setView("tool");
+    } catch(err){
+      loginStatus.textContent = err?.message || "Login failed";
+      loginStatus.className = "status danger";
+    } finally{
+      loginBtn.disabled = false;
+      loginPass.value = "";
+    }
+  });
+
+  // ADMIN ADD NEWS
+  $("btnAddNews").addEventListener("click", async ()=>{
+    if (LOGGED_IN_USER !== ADMIN_USERNAME){
+      adminStatusEl.textContent = "Not authorized.";
+      adminStatusEl.className = "status danger";
+      return;
+    }
+
+    const titleEl = $("newsTitle");
+    const bodyEl  = $("newsBody");
+
+    const title = (titleEl.value || "").trim();
+    const text  = (bodyEl.value || "").trim();
+
+    if (!title || !text){
+      adminStatusEl.textContent = "Title and body required.";
+      adminStatusEl.className = "status danger";
+      return;
+    }
+
+    try{
+      adminStatusEl.textContent = "";
+      adminStatusEl.className = "status";
+      await createNews(title, text);
+      titleEl.value = "";
+      bodyEl.value = "";
+      adminStatusEl.textContent = "News added.";
+      adminStatusEl.className = "status ok";
+      await refreshNewsEverywhere();
+      await refreshAudit();
+    } catch(e){
+      adminStatusEl.textContent = e.message;
+      adminStatusEl.className = "status danger";
+    }
+  });
+
+  /* =========================
+     CID TERMINAL (your tool)
+     ========================= */
+  const TRELLO_SOURCES = [
+    { key: "USAR WIDE", json: "https://trello.com/b/zVRnrvhb/usar-management-mainframe.json", list_name: "USAR Blacklists" },
+    { key: "FORSCOM",   json: "https://trello.com/b/YncjLEbF/forces-command-information-trello.json", list_name: "Blacklists" },
+    { key: "ASOC",      json: "https://trello.com/b/TwIxsGvt/army-special-operations-information.json", list_name: "ASOC Blacklists" },
+    { key: "MPC",       json: "https://trello.com/b/IeGd7MBr/military-police-corps-information-board.json", list_name: "Unit Blacklists" },
+    { key: "TRADOC",    json: "https://trello.com/b/fUwjef3b/training-and-doctrine-command-information.json", list_name: "PERMANENT TRADOC BLACKLISTS" },
+  ];
+  const DISPLAY_ORDER = ["USAR WIDE", "FORSCOM", "ASOC", "MPC", "TRADOC"];
+
+  const INVENTORY_CATEGORIES = {
+    "T-Shirts": 2,
+    "Classic Shirts": 11,
+    "Classic Pants": 12,
+    "Hats": 8,
+    "Face": 18,
+    "Gear": 19,
+    "Hair Accessories": 41,
+    "Face Accessories": 42,
+    "Neck Accessories": 43,
+    "Shoulder Accessories": 44,
+    "Front Accessories": 45,
+    "Back Accessories": 46,
+    "Waist Accessories": 47,
+  };
+
+  const BASE_DELAY_MS = 250;
+  const JITTER_MS = 200;
+  const BATCH_DELAY_MS = 900;
+  const PHASE_DELAY_MS = 900;
+  const MAX_RETRIES_429 = 7;
+
+  function sleep(ms){ return new Promise(r=>setTimeout(r, ms)); }
+  async function nap(base=BASE_DELAY_MS){ await sleep(base + Math.random()*JITTER_MS); }
+
+  const screen = $("screen");
+  function termPrint(text="", cls=null){
+    const div = document.createElement("div");
+    if (cls) div.className = cls;
+    div.textContent = text;
+    screen.appendChild(div);
+    screen.scrollTop = screen.scrollHeight;
+  }
+
+  function promptLine(label, isPassword=false){
+    const row = document.createElement("div");
+    row.className = "promptline";
+
+    const p = document.createElement("span");
+    p.className = "prompt";
+    p.textContent = label;
+    row.appendChild(p);
+
+    const input = document.createElement("input");
+    input.className = "term";
+    input.autocomplete = "off";
+    input.spellcheck = false;
+    input.type = isPassword ? "password" : "text";
+    row.appendChild(input);
+
+    screen.appendChild(row);
+    input.focus();
+    screen.scrollTop = screen.scrollHeight;
+
+    return new Promise((resolve)=>{
+      input.addEventListener("keydown", (e)=>{
+        if (e.key === "Enter"){
+          const val = input.value;
+          row.removeChild(input);
+          const shown = document.createElement("span");
+          shown.textContent = isPassword ? "•".repeat(Math.min(16, val.length)) : val;
+          row.appendChild(shown);
+          resolve(val);
+        }
+      });
+    });
+  }
+
+  async function fetchRL(url, opts={}){
+    await nap();
+    let res = await fetch(url, opts);
+    if (res.status !== 429) return res;
+
+    let backoff = 2000;
+    for (let i=0; i<MAX_RETRIES_429; i++){
+      termPrint(`Rate limited. Sleeping ${(backoff/1000).toFixed(1)}s...`, "muted");
+      await sleep(backoff);
+      backoff = Math.floor(backoff * 1.55);
+      await nap(50);
+      res = await fetch(url, opts);
+      if (res.status !== 429) return res;
+    }
+    return res;
+  }
+
+  async function toolApiRL(path, opts={}){
+    const res = await fetchRL(`${TOOL_API_BASE}${path}`, opts);
+    const data = await res.json().catch(()=> ({}));
+    if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+    if (data && data.ok === false) throw new Error(data.error || "Request failed");
+    return data;
+  }
+
+  async function trelloFetchBoardJson(trelloUrl){
+    const res = await fetchRL(`${TOOL_API_BASE}/trello?url=${encodeURIComponent(trelloUrl)}`, { headers: toolAuthHeaders() });
+    const data = await res.json().catch(()=> ({}));
+    if (!res.ok) throw new Error(data.error || `Trello HTTP ${res.status}`);
+    return data;
+  }
+
+  async function robloxUserId(username){
+    const data = await toolApiRL(`/roblox/userid`, {
       method:"POST",
       headers: toolAuthHeaders({ "Content-Type":"application/json" }),
-      body: JSON.stringify({ command: cmdString })
+      body: JSON.stringify({ username })
     });
-  } catch {}
-}
-
-function newsAuthHeaders(extra={}) {
-  return { ...(NEWS_TOKEN ? { "Authorization": `Bearer ${NEWS_TOKEN}` } : {}), ...extra };
-}
-
-async function newsApi(path, opts={}){
-  const res = await fetch(`${NEWS_API_BASE}${path}`, opts);
-  const data = await res.json().catch(()=> ({}));
-  if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
-  if (data && data.ok === false) throw new Error(data.error || "Request failed");
-  return data;
-}
-
-async function newsLogin(username, password){
-  const data = await newsApi(`/auth/login`, {
-    method:"POST",
-    headers:{ "Content-Type":"application/json" },
-    body: JSON.stringify({ username, password })
-  });
-  NEWS_TOKEN = data.token;
-}
-
-async function fetchNewsPublic(){
-  const res = await fetch(`${NEWS_API_BASE}/news`);
-  const data = await res.json().catch(()=> ({}));
-  if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
-  return data.items || [];
-}
-
-async function createNews(title, text){
-  const data = await newsApi(`/news`, {
-    method:"POST",
-    headers: newsAuthHeaders({ "Content-Type":"application/json" }),
-    body: JSON.stringify({ title, text })
-  });
-  return data.item;
-}
-
-async function deleteNews(id){
-  const data = await newsApi(`/news/${encodeURIComponent(id)}`, {
-    method:"DELETE",
-    headers: newsAuthHeaders()
-  });
-  return !!data.removed;
-}
-
-const newsListEl = document.getElementById("newsList");
-const newsEmptyEl = document.getElementById("newsEmpty");
-const adminNewsListEl = document.getElementById("adminNewsList");
-const adminStatusEl = document.getElementById("adminStatus");
-
-function renderNewsHome(items){
-  newsListEl.innerHTML = "";
-  if (!items.length){
-    newsEmptyEl.style.display = "block";
-    return;
-  }
-  newsEmptyEl.style.display = "none";
-
-  for (const n of items.slice(0, 8)){
-    const div = document.createElement("div");
-    div.className = "newsItem";
-    div.innerHTML = `
-      <div class="h">
-        <div class="t">${escapeHtml(n.title || "Untitled")}</div>
-        <div class="d">${escapeHtml(fmtDate(n.createdAt))}</div>
-      </div>
-      <div class="b">${escapeHtml(n.text || "")}</div>
-    `;
-    newsListEl.appendChild(div);
-  }
-}
-
-function renderNewsAdmin(items){
-  adminNewsListEl.innerHTML = "";
-
-  for (const n of items){
-    const div = document.createElement("div");
-    div.className = "newsItem";
-    div.innerHTML = `
-      <div class="h">
-        <div class="t">${escapeHtml(n.title || "Untitled")}</div>
-        <div class="d">${escapeHtml(fmtDate(n.createdAt))}</div>
-      </div>
-      <div class="b">${escapeHtml(n.text || "")}</div>
-      <div style="margin-top:10px; display:flex; justify-content:flex-end;">
-        <button class="navbtn" data-del="${escapeHtml(n.id)}">Delete</button>
-      </div>
-    `;
-    adminNewsListEl.appendChild(div);
+    if (data?.data?.length) return String(data.data[0].id);
+    throw new Error("User not found");
   }
 
-  adminNewsListEl.querySelectorAll("button[data-del]").forEach(btn=>{
-    btn.addEventListener("click", async ()=>{
-      const id = btn.getAttribute("data-del");
-      if (!id) return;
+  async function robloxBadges(userId){
+    const out = [];
+    let cursor = "";
+    while(true){
+      const url = cursor ? `/roblox/badges?userId=${encodeURIComponent(userId)}&cursor=${encodeURIComponent(cursor)}`
+                         : `/roblox/badges?userId=${encodeURIComponent(userId)}`;
+      const data = await toolApiRL(url, { headers: toolAuthHeaders() });
+      out.push(...(data.data || []));
+      cursor = data.nextPageCursor || "";
+      if (!cursor) break;
+      await sleep(BATCH_DELAY_MS);
+    }
+    return out;
+  }
+
+  async function robloxAwardedDates(userId, badgeIds){
+    const STEP = 100;
+    const dates = [];
+    for (let i=0; i<badgeIds.length; i+=STEP){
+      const batch = badgeIds.slice(i, i+STEP);
+      const data = await toolApiRL(`/roblox/awardedDates`, {
+        method:"POST",
+        headers: toolAuthHeaders({ "Content-Type":"application/json" }),
+        body: JSON.stringify({ userId, badgeIds: batch })
+      });
+      (data.data || []).forEach(x => dates.push(x.awardedDate));
+      await sleep(BATCH_DELAY_MS);
+    }
+    return dates;
+  }
+
+  async function canViewInventory(userId){
+    const data = await toolApiRL(`/roblox/canViewInventory?userId=${encodeURIComponent(userId)}`, { headers: toolAuthHeaders() });
+    return !!data.canView;
+  }
+
+  async function inventoryItems(userId, assetTypeId){
+    const out = [];
+    let cursor = "";
+    while(true){
+      const path =
+        `/roblox/inventory?userId=${encodeURIComponent(userId)}&assetTypeId=${encodeURIComponent(assetTypeId)}` +
+        (cursor ? `&cursor=${encodeURIComponent(cursor)}` : "");
+      const data = await toolApiRL(path, { headers: toolAuthHeaders() });
+      out.push(...(data.data || []));
+      cursor = data.nextPageCursor || "";
+      if (!cursor) break;
+      await sleep(BATCH_DELAY_MS);
+    }
+    return out;
+  }
+
+  function normalize(s){ return (s ?? "").toString().trim().toLowerCase(); }
+  function usernameInCardName(username, cardName){
+    const u = (username ?? "").trim();
+    if (!u) return false;
+    const cn = (cardName ?? "").trim();
+    if (normalize(cn) === "[username]") return false;
+
+    const escaped = u.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    try {
+      const re = new RegExp(`(?<![A-Za-z0-9_])${escaped}(?![A-Za-z0-9_])`, "i");
+      return re.test(cn);
+    } catch {
+      const low = cn.toLowerCase();
+      const uu = u.toLowerCase();
+      const idx = low.indexOf(uu);
+      if (idx === -1) return false;
+      const before = low[idx-1] || "";
+      const after = low[idx+uu.length] || "";
+      const word = /[a-z0-9_]/i;
+      return !word.test(before) && !word.test(after);
+    }
+  }
+
+  async function trelloBlacklistStatus(username){
+    const results = {};
+    TRELLO_SOURCES.forEach(s => results[s.key] = false);
+
+    for (const src of TRELLO_SOURCES){
       try{
-        btn.disabled = true;
-        await deleteNews(id);
-        await refreshNewsEverywhere();
+        const board = await trelloFetchBoardJson(src.json);
+        const lists = board.lists || [];
+        const cards = board.cards || [];
+        const listIds = lists.filter(l => normalize(l.name) === normalize(src.list_name)).map(l => l.id);
+        if (!listIds.length) { results[src.key] = false; continue; }
+
+        let found = false;
+        for (const c of cards){
+          if (listIds.includes(c.idList) && usernameInCardName(username, c.name || "")) { found = true; break; }
+        }
+        results[src.key] = found;
       } catch(e){
-        adminStatusEl.textContent = e.message;
-        adminStatusEl.className = "status danger";
-      } finally{
-        btn.disabled = false;
+        termPrint(`Trello check failed for ${src.key}: ${e.message}`, "muted");
+        results[src.key] = false;
+      }
+      await nap(250);
+    }
+    return results;
+  }
+
+  const chartStatus = $("chartStatus");
+  const blStatus = $("blStatus");
+  const invStatus = $("invStatus");
+  const blacklistsBox = $("blacklistsBox");
+  const inventoryBox = $("inventoryBox");
+
+  let chart;
+  function initChart(){
+    const ctx = $("chart").getContext("2d");
+    chart = new Chart(ctx, {
+      type: "scatter",
+      data: { datasets: [{ label: "Badges over Time", data: [], pointRadius: 2 }] },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        parsing: false,
+        scales: {
+          x: { type: "time", time: { unit: "year" }, ticks: { color: "#8fb3a3" }, grid: { color: "rgba(215,251,230,0.08)" } },
+          y: { ticks: { color: "#8fb3a3" }, grid: { color: "rgba(215,251,230,0.08)" } }
+        },
+        plugins: { legend: { labels: { color: "#8fb3a3" } } }
       }
     });
-  });
-}
-
-async function refreshNewsEverywhere(){
-  const items = await fetchNewsPublic();
-  renderNewsHome(items);
-  if (LOGGED_IN_USER === ADMIN_USERNAME) renderNewsAdmin(items);
-}
-
-const grid = document.getElementById("grid");
-const contentTitle = document.getElementById("contentTitle");
-const contentTag = document.getElementById("contentTag");
-
-const homeView = document.getElementById("homeView");
-const aboutView = document.getElementById("aboutView");
-const contactView = document.getElementById("contactView");
-const adminView = document.getElementById("adminView");
-const toolView = document.getElementById("toolView");
-
-function setView(which){
-  homeView.hidden = true;
-  aboutView.hidden = true;
-  contactView.hidden = true;
-  adminView.hidden = true;
-  toolView.hidden = true;
-  grid.classList.remove("toolmode");
-
-  if (which === "home"){
-    contentTitle.textContent = "Home";
-    contentTag.textContent = "Portal Overview";
-    homeView.hidden = false;
-    refreshNewsEverywhere().catch(()=>{});
-    return;
   }
-  if (which === "about"){
-    contentTitle.textContent = "About";
-    contentTag.textContent = "Info";
-    aboutView.hidden = false;
-    return;
-  }
-  if (which === "contact"){
-    contentTitle.textContent = "Contact";
-    contentTag.textContent = "Info";
-    contactView.hidden = false;
-    return;
-  }
-  if (which === "admin"){
-    contentTitle.textContent = "Admin";
-    contentTag.textContent = "Front Page";
-    adminView.hidden = false;
-    refreshNewsEverywhere().catch(()=>{});
-    return;
-  }
-  if (which === "tool"){
-    contentTitle.textContent = "CID Terminal";
-    contentTag.textContent = "Restricted Tool";
-    toolView.hidden = false;
-    grid.classList.add("toolmode");
-    if (!chart) initChart();
-    consoleLoop();
-    setTimeout(()=>{ try{ chart.resize(); }catch{} }, 50);
-    return;
-  }
-}
 
-const navHome = document.getElementById("navHome");
-const navAbout = document.getElementById("navAbout");
-const navContact = document.getElementById("navContact");
-const navLogin = document.getElementById("navLogin");
-const navTool = document.getElementById("navTool");
-const navAdmin = document.getElementById("navAdmin");
-const navLogout = document.getElementById("navLogout");
+  function renderBlacklists(statusMap){
+    const lines = DISPLAY_ORDER.map(k => `${k} BLACKLIST - ${statusMap[k] ? "YES" : "NO"}`);
+    blacklistsBox.textContent = lines.join("\n");
+    blStatus.textContent = DISPLAY_ORDER.some(k => statusMap[k]) ? "flags" : "clear";
+  }
 
-function updateNav(){
-  const loggedIn = !!TOOL_TOKEN;
-  navTool.hidden = !loggedIn;
-  navLogout.hidden = !loggedIn;
-  navAdmin.hidden = !(loggedIn && LOGGED_IN_USER === ADMIN_USERNAME);
-}
+  function renderInventory(report){
+    const frag = document.createDocumentFragment();
+    const kv = document.createElement("div");
+    kv.className = "kv";
+    const total = Object.values(report).reduce((a, arr)=>a + (arr?.length||0), 0);
+    kv.innerHTML = `<span class="chip">categories: ${Object.keys(report).length}</span>
+                    <span class="chip">items: ${total}</span>`;
+    frag.appendChild(kv);
 
-navHome.addEventListener("click", ()=> setView("home"));
-navAbout.addEventListener("click", ()=> setView("about"));
-navContact.addEventListener("click", ()=> setView("contact"));
-navTool.addEventListener("click", ()=> setView("tool"));
-navAdmin.addEventListener("click", ()=> {
-  if (LOGGED_IN_USER !== ADMIN_USERNAME) return;
-  setView("admin");
-});
+    Object.entries(report).forEach(([cat, items])=>{
+      const h = document.createElement("div");
+      h.style.marginTop = "10px";
+      h.innerHTML = `<span class="chip">${cat}</span> <span class="muted">(${items.length})</span>`;
+      frag.appendChild(h);
 
-navLogout.addEventListener("click", ()=>{
-  TOOL_TOKEN = null;
-  TOOL_IS_ADMIN = false;
-  LOGGED_IN_USER = null;
-  NEWS_TOKEN = null;
-  consoleRunning = false;
-  if (screen) screen.textContent = "";
+      const ul = document.createElement("ul");
+      ul.className = "list";
+      items.slice(0, 60).forEach(it=>{
+        const li = document.createElement("li");
+        li.textContent = `${it.name ?? "Unknown"} (AssetId: ${it.assetId ?? "?"})`;
+        ul.appendChild(li);
+      });
+      if (items.length > 60){
+        const li = document.createElement("li");
+        li.className = "muted";
+        li.textContent = `…and ${items.length - 60} more`;
+        ul.appendChild(li);
+      }
+      frag.appendChild(ul);
+    });
+
+    inventoryBox.innerHTML = "";
+    inventoryBox.appendChild(frag);
+  }
+
+  async function runCheck(username){
+    termPrint("");
+    termPrint(`Checking user: ${username}`);
+
+    chartStatus.textContent = "running";
+    blStatus.textContent = "…";
+    invStatus.textContent = "…";
+    blacklistsBox.textContent = "Running…";
+    inventoryBox.textContent = "Running…";
+
+    termPrint("Fetching Trello blacklists…");
+    const bl = await trelloBlacklistStatus(username);
+    DISPLAY_ORDER.forEach(k => termPrint(`${k} BLACKLIST - ${bl[k] ? "YES" : "NO"}`));
+    renderBlacklists(bl);
+
+    await sleep(PHASE_DELAY_MS);
+
+    termPrint("");
+    termPrint("Resolving Roblox user ID…");
+    const userId = await robloxUserId(username);
+    termPrint(`UserId: ${userId}`);
+
+    await sleep(PHASE_DELAY_MS);
+
+    termPrint("");
+    termPrint("Checking inventory visibility…");
+    const canView = await canViewInventory(userId);
+    if (!canView){
+      termPrint("Inventory: PRIVATE (cannot scan items).");
+      invStatus.textContent = "private";
+      inventoryBox.textContent = "Inventory is private.";
+    } else {
+      termPrint("Inventory: PUBLIC. Scanning categories (no prices)…");
+      const report = {};
+      for (const [cat, typeId] of Object.entries(INVENTORY_CATEGORIES)){
+        termPrint(`- Fetching ${cat}…`, "muted");
+        try{
+          const items = await inventoryItems(userId, typeId);
+          report[cat] = items.map(x => ({ name: x.name, assetId: x.assetId }));
+        } catch(e){
+          termPrint(`  Inventory category failed (${cat}): ${e.message}`, "muted");
+          report[cat] = [];
+        }
+        await sleep(250);
+      }
+      invStatus.textContent = "done";
+      renderInventory(report);
+    }
+
+    await sleep(PHASE_DELAY_MS);
+
+    termPrint("");
+    termPrint("Fetching badges…");
+    const badges = await robloxBadges(userId);
+    termPrint(`Badges found: ${badges.length}`);
+
+    termPrint("Fetching awarded dates…");
+    const badgeIds = badges.map(b=>b.id).filter(Boolean);
+    const dates = await robloxAwardedDates(userId, badgeIds);
+
+    const parsed = dates.map(s => new Date(s)).filter(d => !isNaN(d.getTime())).sort((a,b)=>a-b);
+    const points = parsed.map((d, idx)=>({ x: d, y: idx+1 }));
+    chart.data.datasets[0].data = points;
+    chart.update();
+
+    chartStatus.textContent = "done";
+    termPrint("Badge chart updated.");
+    termPrint("");
+  }
+
+  function printHelp(){
+    termPrint("Commands:");
+    termPrint("  check <roblox_username>");
+    termPrint("  logout");
+    termPrint("  help");
+  }
+
+  let consoleRunning = false;
+  async function consoleLoop(){
+    if (consoleRunning) return;
+    consoleRunning = true;
+
+    termPrint("CID Secure Console v1.0");
+    termPrint("Authorized personnel only.");
+    termPrint("");
+    printHelp();
+    termPrint("");
+
+    while(true){
+      const cmd = await promptLine("cid> ");
+      await toolLogCommand(cmd);
+
+      const parts = cmd.trim().split(/\s+/).filter(Boolean);
+      if (!parts.length) continue;
+
+      const base = parts[0].toLowerCase();
+
+      try{
+        if (base === "help"){ printHelp(); continue; }
+        if (base === "logout"){ navLogout.click(); return; }
+        if (base === "check"){
+          const user = parts.slice(1).join(" ");
+          if (!user){ termPrint("Usage: check <roblox_username>"); continue; }
+          await runCheck(user); continue;
+        }
+        termPrint(`Unknown command: ${base}`, "danger");
+      } catch(e){
+        termPrint(`ERROR: ${e.message}`, "danger");
+        chartStatus.textContent = "error";
+      }
+    }
+  }
+
+  // BOOT
   updateNav();
   setView("home");
-});
-
-navLogin.addEventListener("click", ()=>{
-  setView("home");
-  document.getElementById("loginUser").focus();
-  document.getElementById("homeCard").scrollIntoView({ behavior: "smooth", block: "start" });
-});
-
-const loginForm = document.getElementById("loginForm");
-const loginUser = document.getElementById("loginUser");
-const loginPass = document.getElementById("loginPass");
-const loginStatus = document.getElementById("loginStatus");
-const loginBtn = document.getElementById("loginBtn");
-
-loginForm.addEventListener("submit", async (e)=>{
-  e.preventDefault();
-  loginStatus.textContent = "";
-  loginStatus.className = "status";
-  loginBtn.disabled = true;
-
-  try{
-    const u = (loginUser.value || "").trim();
-    const p = (loginPass.value || "");
-    await toolLogin(u, p);
-
-    if (u === ADMIN_USERNAME){
-      await newsLogin(u, p);
-    } else {
-      NEWS_TOKEN = null;
-    }
-
-    loginStatus.textContent = "Access granted.";
-    loginStatus.className = "status ok";
-    updateNav();
-    setView("tool");
-  } catch(err){
-    loginStatus.textContent = err?.message || "Login failed";
-    loginStatus.className = "status danger";
-  } finally{
-    loginBtn.disabled = false;
-    loginPass.value = "";
-  }
-});
-
-document.getElementById("btnAddNews").addEventListener("click", async ()=>{
-  if (LOGGED_IN_USER !== ADMIN_USERNAME){
-    adminStatusEl.textContent = "Not authorized.";
-    adminStatusEl.className = "status danger";
-    return;
-  }
-  const titleEl = document.getElementById("newsTitle");
-  const bodyEl = document.getElementById("newsBody");
-  const title = (titleEl.value || "").trim();
-  const text = (bodyEl.value || "").trim();
-  if (!title || !text){
-    adminStatusEl.textContent = "Title and body required.";
-    adminStatusEl.className = "status danger";
-    return;
-  }
-  try{
-    adminStatusEl.textContent = "";
-    adminStatusEl.className = "status";
-    await createNews(title, text);
-    titleEl.value = "";
-    bodyEl.value = "";
-    adminStatusEl.textContent = "News added.";
-    adminStatusEl.className = "status ok";
-    await refreshNewsEverywhere();
-  } catch(e){
-    adminStatusEl.textContent = e.message;
-    adminStatusEl.className = "status danger";
-  }
-});
-
-/* Terminal tool logic remains same as your previous integrated version:
-   The terminal section assumes you already have the needed functions. */
-const TRELLO_SOURCES = [
-  { key: "USAR WIDE", json: "https://trello.com/b/zVRnrvhb/usar-management-mainframe.json", list_name: "USAR Blacklists" },
-  { key: "FORSCOM",   json: "https://trello.com/b/YncjLEbF/forces-command-information-trello.json", list_name: "Blacklists" },
-  { key: "ASOC",      json: "https://trello.com/b/TwIxsGvt/army-special-operations-information.json", list_name: "ASOC Blacklists" },
-  { key: "MPC",       json: "https://trello.com/b/IeGd7MBr/military-police-corps-information-board.json", list_name: "Unit Blacklists" },
-  { key: "TRADOC",    json: "https://trello.com/b/fUwjef3b/training-and-doctrine-command-information.json", list_name: "PERMANENT TRADOC BLACKLISTS" },
-];
-const DISPLAY_ORDER = ["USAR WIDE", "FORSCOM", "ASOC", "MPC", "TRADOC"];
-const INVENTORY_CATEGORIES = {
-  "T-Shirts": 2, "Classic Shirts": 11, "Classic Pants": 12, "Hats": 8, "Face": 18, "Gear": 19,
-  "Hair Accessories": 41, "Face Accessories": 42, "Neck Accessories": 43, "Shoulder Accessories": 44,
-  "Front Accessories": 45, "Back Accessories": 46, "Waist Accessories": 47,
-};
-const BASE_DELAY_MS = 250;
-const JITTER_MS = 200;
-const BATCH_DELAY_MS = 900;
-const PHASE_DELAY_MS = 900;
-const MAX_RETRIES_429 = 7;
-
-function sleep(ms){ return new Promise(r=>setTimeout(r, ms)); }
-async function nap(base=BASE_DELAY_MS){ await sleep(base + Math.random()*JITTER_MS); }
-
-const screen = document.getElementById("screen");
-function termPrint(text="", cls=null){
-  const div = document.createElement("div");
-  if (cls) div.className = cls;
-  div.textContent = text;
-  screen.appendChild(div);
-  screen.scrollTop = screen.scrollHeight;
-}
-function promptLine(label, isPassword=false){
-  const row = document.createElement("div");
-  row.className = "promptline";
-  const p = document.createElement("span");
-  p.className = "prompt";
-  p.textContent = label;
-  row.appendChild(p);
-  const input = document.createElement("input");
-  input.className = "term";
-  input.autocomplete = "off";
-  input.spellcheck = false;
-  input.type = isPassword ? "password" : "text";
-  row.appendChild(input);
-  screen.appendChild(row);
-  input.focus();
-  screen.scrollTop = screen.scrollHeight;
-
-  return new Promise((resolve)=>{
-    input.addEventListener("keydown", (e)=>{
-      if (e.key === "Enter"){
-        const val = input.value;
-        row.removeChild(input);
-        const shown = document.createElement("span");
-        shown.textContent = isPassword ? "•".repeat(Math.min(16, val.length)) : val;
-        row.appendChild(shown);
-        resolve(val);
-      }
-    });
-  });
-}
-
-async function fetchRL(url, opts={}){
-  await nap();
-  let res = await fetch(url, opts);
-  if (res.status !== 429) return res;
-  let backoff = 2000;
-  for (let i=0; i<MAX_RETRIES_429; i++){
-    termPrint(`Rate limited. Sleeping ${(backoff/1000).toFixed(1)}s...`, "muted");
-    await sleep(backoff);
-    backoff = Math.floor(backoff * 1.55);
-    await nap(50);
-    res = await fetch(url, opts);
-    if (res.status !== 429) return res;
-  }
-  return res;
-}
-
-async function toolApiRL(path, opts={}){
-  const res = await fetchRL(`${TOOL_API_BASE}${path}`, opts);
-  const data = await res.json().catch(()=> ({}));
-  if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
-  if (data && data.ok === false) throw new Error(data.error || "Request failed");
-  return data;
-}
-
-async function trelloFetchBoardJson(trelloUrl){
-  const res = await fetchRL(`${TOOL_API_BASE}/trello?url=${encodeURIComponent(trelloUrl)}`, { headers: toolAuthHeaders() });
-  const data = await res.json().catch(()=> ({}));
-  if (!res.ok) throw new Error(data.error || `Trello HTTP ${res.status}`);
-  return data;
-}
-
-async function robloxUserId(username){
-  const data = await toolApiRL(`/roblox/userid`, {
-    method:"POST",
-    headers: toolAuthHeaders({ "Content-Type":"application/json" }),
-    body: JSON.stringify({ username })
-  });
-  if (data?.data?.length) return String(data.data[0].id);
-  throw new Error("User not found");
-}
-
-async function robloxBadges(userId){
-  const out = [];
-  let cursor = "";
-  while(true){
-    const url = cursor ? `/roblox/badges?userId=${encodeURIComponent(userId)}&cursor=${encodeURIComponent(cursor)}`
-                       : `/roblox/badges?userId=${encodeURIComponent(userId)}`;
-    const data = await toolApiRL(url, { headers: toolAuthHeaders() });
-    out.push(...(data.data || []));
-    cursor = data.nextPageCursor || "";
-    if (!cursor) break;
-    await sleep(BATCH_DELAY_MS);
-  }
-  return out;
-}
-
-async function robloxAwardedDates(userId, badgeIds){
-  const STEP = 100;
-  const dates = [];
-  for (let i=0; i<badgeIds.length; i+=STEP){
-    const batch = badgeIds.slice(i, i+STEP);
-    const data = await toolApiRL(`/roblox/awardedDates`, {
-      method:"POST",
-      headers: toolAuthHeaders({ "Content-Type":"application/json" }),
-      body: JSON.stringify({ userId, badgeIds: batch })
-    });
-    (data.data || []).forEach(x => dates.push(x.awardedDate));
-    await sleep(BATCH_DELAY_MS);
-  }
-  return dates;
-}
-
-async function canViewInventory(userId){
-  const data = await toolApiRL(`/roblox/canViewInventory?userId=${encodeURIComponent(userId)}`, { headers: toolAuthHeaders() });
-  return !!data.canView;
-}
-
-async function inventoryItems(userId, assetTypeId){
-  const out = [];
-  let cursor = "";
-  while(true){
-    const path =
-      `/roblox/inventory?userId=${encodeURIComponent(userId)}&assetTypeId=${encodeURIComponent(assetTypeId)}` +
-      (cursor ? `&cursor=${encodeURIComponent(cursor)}` : "");
-    const data = await toolApiRL(path, { headers: toolAuthHeaders() });
-    out.push(...(data.data || []));
-    cursor = data.nextPageCursor || "";
-    if (!cursor) break;
-    await sleep(BATCH_DELAY_MS);
-  }
-  return out;
-}
-
-function normalize(s){ return (s ?? "").toString().trim().toLowerCase(); }
-function usernameInCardName(username, cardName){
-  const u = (username ?? "").trim();
-  if (!u) return false;
-  const cn = (cardName ?? "").trim();
-  if (normalize(cn) === "[username]") return false;
-
-  const escaped = u.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  try {
-    const re = new RegExp(`(?<![A-Za-z0-9_])${escaped}(?![A-Za-z0-9_])`, "i");
-    return re.test(cn);
-  } catch {
-    const low = cn.toLowerCase();
-    const uu = u.toLowerCase();
-    const idx = low.indexOf(uu);
-    if (idx === -1) return false;
-    const before = low[idx-1] || "";
-    const after = low[idx+uu.length] || "";
-    const word = /[a-z0-9_]/i;
-    return !word.test(before) && !word.test(after);
-  }
-}
-
-async function trelloBlacklistStatus(username){
-  const results = {};
-  TRELLO_SOURCES.forEach(s => results[s.key] = false);
-
-  for (const src of TRELLO_SOURCES){
-    try{
-      const board = await trelloFetchBoardJson(src.json);
-      const lists = board.lists || [];
-      const cards = board.cards || [];
-      const listIds = lists.filter(l => normalize(l.name) === normalize(src.list_name)).map(l => l.id);
-      if (!listIds.length) { results[src.key] = false; continue; }
-
-      let found = false;
-      for (const c of cards){
-        if (listIds.includes(c.idList) && usernameInCardName(username, c.name || "")) { found = true; break; }
-      }
-      results[src.key] = found;
-    } catch(e){
-      termPrint(`Trello check failed for ${src.key}: ${e.message}`, "muted");
-      results[src.key] = false;
-    }
-    await nap(250);
-  }
-  return results;
-}
-
-const chartStatus = document.getElementById("chartStatus");
-const blStatus = document.getElementById("blStatus");
-const invStatus = document.getElementById("invStatus");
-const blacklistsBox = document.getElementById("blacklistsBox");
-const inventoryBox = document.getElementById("inventoryBox");
-
-let chart;
-function initChart(){
-  const ctx = document.getElementById("chart").getContext("2d");
-  chart = new Chart(ctx, {
-    type: "scatter",
-    data: { datasets: [{ label: "Badges over Time", data: [], pointRadius: 2 }] },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      parsing: false,
-      scales: {
-        x: { type: "time", time: { unit: "year" }, ticks: { color: "#8fb3a3" }, grid: { color: "rgba(215,251,230,0.08)" } },
-        y: { ticks: { color: "#8fb3a3" }, grid: { color: "rgba(215,251,230,0.08)" } }
-      },
-      plugins: { legend: { labels: { color: "#8fb3a3" } } }
-    }
-  });
-}
-
-function renderBlacklists(statusMap){
-  const lines = DISPLAY_ORDER.map(k => `${k} BLACKLIST - ${statusMap[k] ? "YES" : "NO"}`);
-  blacklistsBox.textContent = lines.join("\n");
-  blStatus.textContent = DISPLAY_ORDER.some(k => statusMap[k]) ? "flags" : "clear";
-}
-
-function renderInventory(report){
-  const frag = document.createDocumentFragment();
-  const kv = document.createElement("div");
-  kv.className = "kv";
-  const total = Object.values(report).reduce((a, arr)=>a + (arr?.length||0), 0);
-  kv.innerHTML = `<span class="chip">categories: ${Object.keys(report).length}</span>
-                  <span class="chip">items: ${total}</span>`;
-  frag.appendChild(kv);
-
-  Object.entries(report).forEach(([cat, items])=>{
-    const h = document.createElement("div");
-    h.style.marginTop = "10px";
-    h.innerHTML = `<span class="chip">${cat}</span> <span class="muted">(${items.length})</span>`;
-    frag.appendChild(h);
-
-    const ul = document.createElement("ul");
-    ul.className = "list";
-    items.slice(0, 60).forEach(it=>{
-      const li = document.createElement("li");
-      li.textContent = `${it.name ?? "Unknown"} (AssetId: ${it.assetId ?? "?"})`;
-      ul.appendChild(li);
-    });
-    if (items.length > 60){
-      const li = document.createElement("li");
-      li.className = "muted";
-      li.textContent = `…and ${items.length - 60} more`;
-      ul.appendChild(li);
-    }
-    frag.appendChild(ul);
-  });
-
-  inventoryBox.innerHTML = "";
-  inventoryBox.appendChild(frag);
-}
-
-async function runCheck(username){
-  termPrint("");
-  termPrint(`Checking user: ${username}`);
-
-  chartStatus.textContent = "running";
-  blStatus.textContent = "…";
-  invStatus.textContent = "…";
-  blacklistsBox.textContent = "Running…";
-  inventoryBox.textContent = "Running…";
-
-  termPrint("Fetching Trello blacklists…");
-  const bl = await trelloBlacklistStatus(username);
-  DISPLAY_ORDER.forEach(k => termPrint(`${k} BLACKLIST - ${bl[k] ? "YES" : "NO"}`));
-  renderBlacklists(bl);
-
-  await sleep(PHASE_DELAY_MS);
-
-  termPrint("");
-  termPrint("Resolving Roblox user ID…");
-  const userId = await robloxUserId(username);
-  termPrint(`UserId: ${userId}`);
-
-  await sleep(PHASE_DELAY_MS);
-
-  termPrint("");
-  termPrint("Checking inventory visibility…");
-  const canView = await canViewInventory(userId);
-  if (!canView){
-    termPrint("Inventory: PRIVATE (cannot scan items).");
-    invStatus.textContent = "private";
-    inventoryBox.textContent = "Inventory is private.";
-  } else {
-    termPrint("Inventory: PUBLIC. Scanning categories (no prices)…");
-    const report = {};
-    for (const [cat, typeId] of Object.entries(INVENTORY_CATEGORIES)){
-      termPrint(`- Fetching ${cat}…`, "muted");
-      try{
-        const items = await inventoryItems(userId, typeId);
-        report[cat] = items.map(x => ({ name: x.name, assetId: x.assetId }));
-      } catch(e){
-        termPrint(`  Inventory category failed (${cat}): ${e.message}`, "muted");
-        report[cat] = [];
-      }
-      await sleep(250);
-    }
-    invStatus.textContent = "done";
-    renderInventory(report);
-  }
-
-  await sleep(PHASE_DELAY_MS);
-
-  termPrint("");
-  termPrint("Fetching badges…");
-  const badges = await robloxBadges(userId);
-  termPrint(`Badges found: ${badges.length}`);
-
-  termPrint("Fetching awarded dates…");
-  const badgeIds = badges.map(b=>b.id).filter(Boolean);
-  const dates = await robloxAwardedDates(userId, badgeIds);
-
-  const parsed = dates.map(s => new Date(s)).filter(d => !isNaN(d.getTime())).sort((a,b)=>a-b);
-  const points = parsed.map((d, idx)=>({ x: d, y: idx+1 }));
-  chart.data.datasets[0].data = points;
-  chart.update();
-
-  chartStatus.textContent = "done";
-  termPrint("Badge chart updated.");
-  termPrint("");
-}
-
-function printHelp(){
-  termPrint("Commands:");
-  termPrint("  check <roblox_username>");
-  termPrint("  logout");
-  termPrint("  help");
-}
-
-let consoleRunning = false;
-async function consoleLoop(){
-  if (consoleRunning) return;
-  consoleRunning = true;
-
-  termPrint("CID Secure Console v1.0");
-  termPrint("Authorized personnel only.");
-  termPrint("");
-  printHelp();
-  termPrint("");
-
-  while(true){
-    const cmd = await promptLine("cid> ");
-    await toolLogCommand(cmd);
-
-    const parts = cmd.trim().split(/\s+/).filter(Boolean);
-    if (!parts.length) continue;
-
-    const base = parts[0].toLowerCase();
-
-    try{
-      if (base === "help"){ printHelp(); continue; }
-      if (base === "logout"){ navLogout.click(); return; }
-      if (base === "check"){
-        const user = parts.slice(1).join(" ");
-        if (!user){ termPrint("Usage: check <roblox_username>"); continue; }
-        await runCheck(user); continue;
-      }
-      termPrint(`Unknown command: ${base}`, "danger");
-    } catch(e){
-      termPrint(`ERROR: ${e.message}`, "danger");
-      chartStatus.textContent = "error";
-    }
-  }
-}
-
-updateNav();
-setView("home");
-refreshNewsEverywhere().catch(()=>{});
-</script>
-</body>
-</html>
-setView("home");
-refreshNewsEverywhere().catch(()=>{});
+  refreshNewsEverywhere().catch(()=>{});
+})();
 </script>
 </body>
 </html>
