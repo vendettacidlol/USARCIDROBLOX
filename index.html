@@ -30,10 +30,9 @@
       color: var(--portal-text);
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans";
       overflow:auto;
-      background: transparent; /* ✅ prevents “re-applied gradient” look on scroll */
+      background: transparent;
       position: relative;
     }
-    /* ✅ background becomes a fixed layer (no scroll repaint weirdness) */
     body::before{
       content:"";
       position: fixed;
@@ -142,7 +141,6 @@
       user-select:none;
       white-space: nowrap;
     }
-    /* ✅ white outline glow */
     .navbtn:hover{
       background: rgba(255,255,255,0.09);
       border-color: rgba(255,255,255,0.70);
@@ -294,7 +292,6 @@
       border-radius: 10px;
     }
 
-    /* ========= Rich text editor ========= */
     .rte{
       border: 1px solid rgba(255,255,255,0.16);
       background: rgba(0,0,0,0.18);
@@ -355,7 +352,6 @@
       color: rgba(255,255,255,0.45);
     }
 
-    /* terminal styles (kept) */
     .wrap{min-height:0;display:flex;align-items:flex-start;justify-content:center;padding:0;box-sizing:border-box;}
     .terminal{
       width:100%;
@@ -528,19 +524,14 @@
       </div>
 
       <div class="bd" id="contentBody">
-        <!-- HOME -->
         <div id="homeView">
           <div class="news" id="newsList"></div>
           <div class="status" id="newsEmpty" style="display:none;">No news posted.</div>
         </div>
 
-        <!-- ABOUT -->
         <div id="aboutView" hidden></div>
-
-        <!-- CONTACT -->
         <div id="contactView" hidden></div>
 
-        <!-- LOGIN -->
         <div id="loginView" hidden>
           <section class="card" id="homeCard">
             <div class="hd">
@@ -566,7 +557,6 @@
           </section>
         </div>
 
-        <!-- ADMIN (✅ fixed + About/Contact editor added) -->
         <div id="adminView" hidden>
           <div class="row" style="margin-top:0;">
             <div class="status" style="font-weight:800; color:rgba(255,255,255,0.92);">Website Editor</div>
@@ -579,7 +569,6 @@
             <button class="navbtn" id="tabContact" type="button">Contact</button>
           </div>
 
-          <!-- NEWS PANEL -->
           <div id="adminPanelNews">
             <div class="field">
               <label for="newsTitle">Title</label>
@@ -629,7 +618,6 @@
             </div>
           </div>
 
-          <!-- ABOUT PANEL -->
           <div id="adminPanelAbout" hidden>
             <div class="field">
               <label>About Content</label>
@@ -661,7 +649,6 @@
             </div>
           </div>
 
-          <!-- CONTACT PANEL -->
           <div id="adminPanelContact" hidden>
             <div class="field">
               <label>Contact Content</label>
@@ -694,7 +681,6 @@
           </div>
         </div>
 
-        <!-- BACKGROUND CHECK TOOL (existing terminal kept) -->
         <div id="toolView" hidden style="margin-top:0;">
           <div class="wrap">
             <div class="terminal">
@@ -731,7 +717,6 @@
           </div>
         </div>
 
-        <!-- Placeholder pages you already have elsewhere -->
         <div id="recruitView" hidden><div class="status">Recruitment page.</div></div>
         <div id="docsView" hidden><div class="status">Documents page.</div></div>
         <div id="accessView" hidden><div class="status">Access Control page.</div></div>
@@ -756,6 +741,65 @@
   let NEWS_TOKEN = null;
 
   const $ = (id) => document.getElementById(id);
+
+  /* =========================
+     UI Modal (replaces prompt())
+     ========================= */
+  const uiModal = $("uiModal");
+  const uiModalBg = $("uiModalBg");
+  const uiModalTitle = $("uiModalTitle");
+  const uiModalTag = $("uiModalTag");
+  const uiModalLabel = $("uiModalLabel");
+  const uiModalInput = $("uiModalInput");
+  const uiModalCancel = $("uiModalCancel");
+  const uiModalOk = $("uiModalOk");
+  const uiModalStatus = $("uiModalStatus");
+
+  function uiAsk({ title="Input", tag="Required", label="Value", placeholder="", type="text", value="" } = {}) {
+    return new Promise((resolve) => {
+      uiModalTitle.textContent = title;
+      uiModalTag.textContent = tag;
+      uiModalLabel.textContent = label;
+      uiModalInput.type = type;
+      uiModalInput.placeholder = placeholder;
+      uiModalInput.value = value || "";
+      uiModalStatus.textContent = "";
+      uiModalStatus.className = "status";
+
+      uiModal.hidden = false;
+      setTimeout(()=> uiModalInput.focus(), 0);
+
+      const close = (out) => {
+        uiModal.hidden = true;
+        cleanup();
+        resolve(out);
+      };
+
+      const onKey = (e) => {
+        if (e.key === "Escape") close(null);
+        if (e.key === "Enter") ok();
+      };
+
+      const ok = () => {
+        const v = (uiModalInput.value || "").trim();
+        close(v || null);
+      };
+
+      const cancel = () => close(null);
+
+      const cleanup = () => {
+        uiModalBg.removeEventListener("click", cancel);
+        uiModalCancel.removeEventListener("click", cancel);
+        uiModalOk.removeEventListener("click", ok);
+        document.removeEventListener("keydown", onKey);
+      };
+
+      uiModalBg.addEventListener("click", cancel);
+      uiModalCancel.addEventListener("click", cancel);
+      uiModalOk.addEventListener("click", ok);
+      document.addEventListener("keydown", onKey);
+    });
+  }
 
   function escapeHtml(s){
     return (s ?? "").toString()
@@ -923,16 +967,16 @@
     return data.items || [];
   }
 
-  // ✅ About/Contact (public read + admin save)
+  // ✅ About/Contact (public read + admin save) — FIXED endpoint + method
   async function fetchPagePublic(name){
-    const res = await fetch(`${NEWS_API_BASE}/page/${encodeURIComponent(name)}`);
+    const res = await fetch(`${NEWS_API_BASE}/pages/${encodeURIComponent(name)}`);
     const data = await res.json().catch(()=> ({}));
     if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
     return (data.html || "");
   }
   async function savePageAdmin(name, html){
-    const data = await newsApi(`/page/${encodeURIComponent(name)}`, {
-      method:"POST",
+    const data = await newsApi(`/pages/${encodeURIComponent(name)}`, {
+      method:"PUT",
       headers: newsAuthHeaders({ "Content-Type":"application/json" }),
       body: JSON.stringify({ html })
     });
@@ -1196,7 +1240,6 @@
   function updateNav(){
     const loggedIn = !!TOOL_TOKEN;
 
-    // ✅ hide Login button after logged in
     navLogin.hidden = loggedIn;
     navLogout.hidden = !loggedIn;
 
@@ -1259,7 +1302,6 @@
 
       await toolLogin(u, p);
 
-      // ✅ only admins log into News Worker
       if (ADMIN_USERS.has(u)){
         await newsLogin(u, p);
       } else {
@@ -1269,7 +1311,7 @@
       loginStatus.textContent = "Access granted.";
       loginStatus.className = "status ok";
       updateNav();
-      setView("home"); // ✅ first page after login is Home
+      setView("home");
     } catch(err){
       loginStatus.textContent = err?.message || "Login failed";
       loginStatus.className = "status danger";
@@ -1316,10 +1358,9 @@
   function wireRTE(barId, editorId, onSpecial){
     const bar = $(barId);
     const editor = $(editorId);
-
     if (!bar || !editor) return;
 
-    bar.addEventListener("click", (e)=>{
+    bar.addEventListener("click", async (e)=>{
       const btn = e.target.closest("button");
       if (!btn) return;
 
@@ -1330,7 +1371,7 @@
         return;
       }
 
-      if (onSpecial) onSpecial(btn, editor);
+      if (onSpecial) await onSpecial(btn, editor);
       editor.focus();
     });
 
@@ -1341,10 +1382,15 @@
     });
   }
 
-  // NEWS editor special buttons
-  wireRTE("rtebarNews", "newsBodyEditor", (btn, editor)=>{
+  // NEWS editor special buttons (✅ Link uses UI modal)
+  wireRTE("rtebarNews", "newsBodyEditor", async (btn, editor)=>{
     if (btn.id === "btnLinkNews"){
-      const url = prompt("Enter link URL (https://...)");
+      const url = await uiAsk({
+        title: "Insert Link",
+        tag: "https only",
+        label: "URL",
+        placeholder: "https://example.com"
+      });
       if (!url) return;
       rteExec("createLink", url);
       setTimeout(()=>{
@@ -1368,10 +1414,15 @@
     }
   });
 
-  // ABOUT editor special buttons
-  wireRTE("rtebarAbout", "aboutEditor", (btn, editor)=>{
+  // ABOUT editor special buttons (✅ Link uses UI modal)
+  wireRTE("rtebarAbout", "aboutEditor", async (btn, editor)=>{
     if (btn.id === "btnLinkAbout"){
-      const url = prompt("Enter link URL (https://...)");
+      const url = await uiAsk({
+        title: "Insert Link",
+        tag: "https only",
+        label: "URL",
+        placeholder: "https://example.com"
+      });
       if (!url) return;
       rteExec("createLink", url);
       setTimeout(()=>{
@@ -1395,10 +1446,15 @@
     }
   });
 
-  // CONTACT editor special buttons
-  wireRTE("rtebarContact", "contactEditor", (btn, editor)=>{
+  // CONTACT editor special buttons (✅ Link uses UI modal)
+  wireRTE("rtebarContact", "contactEditor", async (btn, editor)=>{
     if (btn.id === "btnLinkContact"){
-      const url = prompt("Enter link URL (https://...)");
+      const url = await uiAsk({
+        title: "Insert Link",
+        tag: "https only",
+        label: "URL",
+        placeholder: "https://example.com"
+      });
       if (!url) return;
       rteExec("createLink", url);
       setTimeout(()=>{
@@ -1502,7 +1558,6 @@
   async function bootAdminEditors(){
     if (!ADMIN_USERS.has(LOGGED_IN_USER) || !NEWS_TOKEN) return;
 
-    // load existing pages into editors
     try{
       const aboutHtml = await fetchPagePublic("about");
       $("aboutEditor").innerHTML = sanitizeHtml(aboutHtml || "");
@@ -1916,9 +1971,37 @@
 
   // BOOT
   updateNav();
-  setView("home");          // ✅ first page is always Home
+  setView("home");
   refreshNewsEverywhere().catch(()=>{});
 })();
 </script>
+
+<!-- ✅ UI Modal (replaces browser prompt()) -->
+<div id="uiModal" hidden style="position:fixed; inset:0; z-index:9999;">
+  <div id="uiModalBg" style="position:absolute; inset:0; background:rgba(0,0,0,0.65); backdrop-filter: blur(6px);"></div>
+
+  <div style="position:relative; max-width:520px; margin:10vh auto; padding:0 14px;">
+    <div class="card">
+      <div class="hd">
+        <div class="title" id="uiModalTitle">Input</div>
+        <div class="tag" id="uiModalTag">Required</div>
+      </div>
+      <div class="bd">
+        <div class="field" style="margin-top:0;">
+          <label id="uiModalLabel" for="uiModalInput">Value</label>
+          <input class="portal" id="uiModalInput" type="text" />
+        </div>
+
+        <div class="row" style="margin-top:14px;">
+          <button class="navbtn" id="uiModalCancel" type="button">Cancel</button>
+          <button class="navbtn primary" id="uiModalOk" type="button">OK</button>
+        </div>
+
+        <div class="status" id="uiModalStatus"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
