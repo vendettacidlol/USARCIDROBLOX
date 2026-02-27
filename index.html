@@ -360,6 +360,11 @@ nav {
     padding: 20px;
     box-shadow: 0 0 50px rgba(0,0,0,0.8);
 }
+
+/* Settings page uses modal-content styling but as a normal view */
+#settingsView{padding: 12px 0;}
+#settingsView .modal-content{max-width: 920px; max-height: none;}
+
 .modal-header {
     display: flex;
     justify-content: space-between;
@@ -613,7 +618,7 @@ tbody tr:hover td{ background: rgba(255,255,255,0.04); }
 <div class="tag" id="contentTag">Overview</div>
 </div>
 <div class="bd" id="contentBody">
-<div id="homeView">
+<div id="homeView" hidden>
 <div class="news" id="newsList"></div>
 <div class="status" id="newsEmpty" style="display:none;">No news posted.</div>
 </div>
@@ -714,14 +719,14 @@ tbody tr:hover td{ background: rgba(255,255,255,0.04); }
 </form>
 </div>
 </section>
-</div>
 
-<!-- SETTINGS MODAL (Hidden by default) -->
-<div class="modal-overlay" id="settingsModal">
+
+<!-- SETTINGS PAGE -->
+<div id="settingsView" hidden>
     <div class="modal-content">
         <div class="modal-header">
             <h2>Page Settings</h2>
-            <button class="close-modal" id="closeSettings">&times;</button>
+            <button class="close-modal" id="closeSettings" type="button">Back</button>
         </div>
         
         <div class="settings-section">
@@ -805,6 +810,9 @@ tbody tr:hover td{ background: rgba(255,255,255,0.04); }
         <button class="btn-save" id="saveSettingsBtn">Save Changes</button>
     </div>
 </div>
+</div>
+
+
 
 <div id="adminView" hidden>
 <div class="status">Admin tools are unchanged on your setup.</div>
@@ -851,7 +859,7 @@ tbody tr:hover td{ background: rgba(255,255,255,0.04); }
   </div>
 </div>
 
-<div id="bgcView hidden style="margin-top:0;">
+<div id="bgcView" hidden style="margin-top:0;">
 <div class="cmdbar">
 <button class="navbtn primary" id="btnRunBGC" type="button">Run Background Check</button>
 <button class="navbtn" id="btnClearBGC" type="button">Clear</button>
@@ -1274,25 +1282,21 @@ b.classList.toggle("active", b === btn);
 });
 }
 function closeTransientUI(){
-  // Close any modal/overlay UI so pages never stack/glitch
-  try{
-    const m = document.getElementById("settingsModal");
-    if (m) m.classList.remove("open");
-  }catch(e){}
-  // Collapse any programmatic "open" UI states, if present
-  try{
-    document.querySelectorAll('[data-overlay].open,.overlay.open,.modal.open,.modal-overlay.open,.popover.open').forEach(el=>el.classList.remove("open"));
-  }catch(e){}
-  // Blur focused inputs to prevent weird scrolling when switching views
-  try{ if (document.activeElement && typeof document.activeElement.blur === "function") document.activeElement.blur(); }catch(e){}
+  // Close any dropdown/overlay UI so pages never stack/glitch
+  try{ closeSettingsMenu(); }catch(e){}
 }
+
 
 function setView(which){
 closeTransientUI();
+const loggedIn = !!TOOL_TOKEN;
+const protectedViews = new Set(["home","bgc","recruit","docs","access","blacklist","admin","adminNews","settings"]); 
+if (!loggedIn && protectedViews.has(which)) which = "login";
 homeView.hidden = true;
 aboutView.hidden = true;
 contactView.hidden = true;
 loginView.hidden = true;
+settingsView.hidden = true;
 adminView.hidden = true;
 adminNewsView.hidden = true;
 bgcView.hidden = true;
@@ -1320,6 +1324,13 @@ contentTitle.textContent = "Contact";
 contentTag.textContent = "Info";
 contactView.hidden = false;
 setActiveNav(navContact);
+return;
+}
+if (which === "settings"){
+contentTitle.textContent = "Settings";
+contentTag.textContent = "Page Settings";
+settingsView.hidden = false;
+setActiveNav(null);
 return;
 }
 if (which === "login"){
@@ -1427,7 +1438,7 @@ setView("home");
 });
 
 // --- SETTINGS LOGIC ---
-const settingsModal = $("settingsModal");
+const settingsView = $("settingsView");
 const closeSettings = $("closeSettings");
 const saveSettingsBtn = $("saveSettingsBtn");
 
@@ -1453,7 +1464,7 @@ function openPageSettingsModal(){
     $("setContactDiscord2").value = $("contactDiscord2").textContent;
     $("setContactUser2").value = $("contactUser2").textContent;
 
-    settingsModal.classList.add("open");
+    setView("settings");
 }
 function closeSettingsMenu(){
   if (settingsMenu) settingsMenu.classList.remove("open");
@@ -1493,7 +1504,7 @@ document.addEventListener("click", () => {
 
 
 closeSettings.addEventListener("click", () => {
-    settingsModal.classList.remove("open");
+    setView("home");
 });
 
 saveSettingsBtn.addEventListener("click", () => {
@@ -1533,8 +1544,8 @@ saveSettingsBtn.addEventListener("click", () => {
     };
     localStorage.setItem('cid_settings', JSON.stringify(settingsData));
     
-    settingsModal.classList.remove("open");
-    alert("Settings saved!");
+    setView("home");
+alert("Settings saved!");
 });
 
 // Load settings on startup
@@ -2247,7 +2258,11 @@ blStatusMsg.className = "status danger";
 }
 });
 updateNav();
-setView("home");
+if (!!TOOL_TOKEN) {
+  setView("home");
+} else {
+  setView("login");
+}
 refreshNews().catch(()=>{});
 loadSavedSettings(); // Load settings on startup
 })();
