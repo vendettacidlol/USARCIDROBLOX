@@ -12,27 +12,33 @@
     :root{
       --bg:#050607; --fg:#d7fbe6; --muted:#8fb3a3; --accent:#6ee7b7; --danger:#ff6b6b;
       --border:rgba(215,251,230,0.14);
-
       --portal-ink:#0a1626;
       --portal-ink-2:#0e223a;
       --portal-gold:#c7a44a;
       --portal-line:rgba(255,255,255,0.14);
       --portal-text:#eaf0ff;
       --portal-sub:#b7c4df;
-
-      --glow: rgba(255,255,255,0.70);
-      --glowSoft: rgba(255,255,255,0.26);
+      --whiteglow: rgba(255,255,255,0.55);
+      --whiteglow2: rgba(255,255,255,0.25);
     }
 
     html, body { height:100%; }
     body{
       margin:0;
-      background: radial-gradient(1200px 900px at 20% -10%, rgba(199,164,74,0.18), transparent 55%),
-                  radial-gradient(900px 700px at 110% 20%, rgba(82,140,255,0.14), transparent 55%),
-                  linear-gradient(180deg, var(--portal-ink), #06080c 65%, var(--bg));
+      background: transparent;
       color: var(--portal-text);
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans";
       overflow:auto;
+    }
+    body::before{
+      content:"";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        radial-gradient(1200px 900px at 20% -10%, rgba(199,164,74,0.18), transparent 55%),
+        radial-gradient(900px 700px at 110% 20%, rgba(82,140,255,0.14), transparent 55%),
+        linear-gradient(180deg, var(--portal-ink), #06080c 65%, var(--bg));
     }
 
     .banner{
@@ -82,12 +88,6 @@
       gap: 10px;
       flex: 0 0 auto;
     }
-    .brand-mark{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      flex: 0 0 auto;
-    }
     .brand-mark img{
       width: 64px;
       height: 64px;
@@ -117,10 +117,9 @@
       margin-left: auto;
     }
 
-    /* WHITE OUTLINE GLOW */
-    .navbtn, .rtbtn, .actionbtn{
+    .navbtn{
       appearance:none;
-      border:1px solid rgba(255,255,255,0.16);
+      border:1px solid rgba(255,255,255,0.20);
       background: rgba(255,255,255,0.06);
       color: rgba(255,255,255,0.92);
       border-radius: 10px;
@@ -132,27 +131,22 @@
       transition: transform .06s ease, background .15s ease, border-color .15s ease, box-shadow .15s ease;
       user-select:none;
       white-space: nowrap;
-      box-shadow: 0 0 0 0 rgba(255,255,255,0);
     }
-    .navbtn:hover, .rtbtn:hover, .actionbtn:hover{
+    .navbtn:hover{
       background: rgba(255,255,255,0.09);
-      border-color: rgba(255,255,255,0.55);
-      box-shadow:
-        0 0 0 1px var(--glowSoft),
-        0 0 14px rgba(255,255,255,0.14);
+      border-color: rgba(255,255,255,0.75);
+      box-shadow: 0 0 0 1px var(--whiteglow), 0 0 16px var(--whiteglow2);
     }
-    .navbtn:active, .rtbtn:active, .actionbtn:active{ transform: translateY(1px); }
-    .navbtn.primary, .actionbtn.primary{
-      border-color: rgba(255,255,255,0.62);
+    .navbtn:active{ transform: translateY(1px); }
+    .navbtn.primary{
+      border-color: rgba(255,255,255,0.45);
       background: rgba(255,255,255,0.08);
-      box-shadow: 0 0 0 1px rgba(255,255,255,0.12);
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.18);
     }
     .navbtn.active{
       border-color: rgba(255,255,255,0.85);
       background: rgba(255,255,255,0.10);
-      box-shadow:
-        0 0 0 2px rgba(255,255,255,0.18),
-        0 0 18px rgba(255,255,255,0.14);
+      box-shadow: 0 0 0 1px var(--whiteglow), 0 0 18px var(--whiteglow2);
     }
     .navbtn[hidden]{ display:none !important; }
 
@@ -286,126 +280,15 @@
       border-radius: 10px;
     }
 
-    /* ========= Rich text editor (admin) ========= */
-    .rte{
-      border: 1px solid rgba(255,255,255,0.16);
-      background: rgba(0,0,0,0.18);
-      border-radius: 12px;
-      overflow:hidden;
-    }
-    .rtebar{
-      display:flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      align-items:center;
-      padding: 10px 10px;
-      border-bottom: 1px solid rgba(255,255,255,0.12);
-      background: rgba(0,0,0,0.25);
-    }
-    .rtebar .group{
-      display:flex;
-      gap: 8px;
-      align-items:center;
-      padding-right: 10px;
-      margin-right: 10px;
-      border-right: 1px solid rgba(255,255,255,0.10);
-    }
-    .rtebar .group:last-child{ border-right:none; margin-right:0; padding-right:0; }
-    .rtbtn{
-      padding: 7px 10px;
-      font-size: 12px;
-      font-weight: 750;
-    }
-    .rtebody{
-      min-height: 170px;
-      padding: 10px 12px;
-      outline: none;
-      color: rgba(255,255,255,0.92);
-      font-size: 14px;
-      line-height: 1.35;
-      white-space: normal;
-    }
-    .rtebody:empty:before{
-      content: attr(data-placeholder);
-      color: rgba(255,255,255,0.45);
-    }
-    .rtebar input[type="color"]{
-      width: 34px;
-      height: 30px;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.14);
-      background: rgba(255,255,255,0.06);
-      padding: 2px;
-      cursor:pointer;
-    }
-    .rtebar .hint{
-      font-size: 12px;
-      color: rgba(255,255,255,0.70);
-      font-weight: 650;
-    }
-
-    /* ========= Vendetta-only Special Effects ========= */
-    .fx-glow{
-      color: var(--fx-color, #ffffff);
-      text-shadow:
-        0 0 8px color-mix(in srgb, var(--fx-color, #fff) 55%, transparent),
-        0 0 22px color-mix(in srgb, var(--fx-color, #fff) 35%, transparent);
-    }
-    .fx-neon{
-      color: var(--fx-color, #6ee7b7);
-      text-shadow:
-        0 0 2px #000,
-        0 0 10px color-mix(in srgb, var(--fx-color, #6ee7b7) 60%, transparent),
-        0 0 26px color-mix(in srgb, var(--fx-color, #6ee7b7) 40%, transparent);
-    }
-    .fx-flicker{
-      color: var(--fx-color, #c7a44a);
-      text-shadow: 0 0 14px color-mix(in srgb, var(--fx-color, #c7a44a) 55%, transparent);
-      animation: fxFlicker 2.1s infinite;
-    }
-    @keyframes fxFlicker{
-      0%, 100% { opacity: 1; filter: brightness(1.05); }
-      6% { opacity: .85; }
-      10% { opacity: .75; }
-      12% { opacity: 1; }
-      35% { opacity: .55; }
-      37% { opacity: 1; }
-      66% { opacity: .62; }
-      67% { opacity: 1; }
-    }
-    .fx-rainbow{
-      background: linear-gradient(90deg, #ff4d4d, #ffb84d, #fff04d, #4dff8a, #4db8ff, #9a4dff);
-      background-size: 220% 220%;
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent !important;
-      animation: fxRainbow 2.2s linear infinite;
-      text-shadow: 0 0 10px rgba(255,255,255,0.08);
-    }
-    @keyframes fxRainbow{
-      0% { background-position: 0% 50%; }
-      100% { background-position: 100% 50%; }
-    }
-    .fx-wave{
-      color: var(--fx-color, #eaf0ff);
-      display:inline-block;
-      animation: fxWave 1.4s ease-in-out infinite;
-    }
-    @keyframes fxWave{
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-2px); }
-    }
-
-    /* ========= Shared “tool” layout (Image 5/6 style) ========= */
     .wrap{min-height:0;display:flex;align-items:flex-start;justify-content:center;padding:0;box-sizing:border-box;}
     .terminal{
       width:100%;
       height: min(860px, calc(100vh - 210px));
-      border:1px solid rgba(255,255,255,0.18);
+      border:1px solid var(--border);
       border-radius:14px;
       overflow:hidden;
       background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.00));
-      box-shadow: 0 0 0 1px rgba(255,255,255,0.10), 0 30px 80px rgba(0,0,0,0.55);
+      box-shadow: 0 0 0 1px rgba(110,231,183,0.08), 0 30px 80px rgba(0,0,0,0.55);
       position:relative;
       display:flex;
       flex-direction:column;
@@ -413,14 +296,14 @@
     .bar{
       display:flex;align-items:center;gap:10px;
       padding:10px 12px;
-      border-bottom:1px solid rgba(255,255,255,0.12);
+      border-bottom:1px solid rgba(215,251,230,0.12);
       background:rgba(0,0,0,0.35);
       flex:0 0 auto;
     }
     .dots{display:flex;gap:6px;}
     .dot{width:10px;height:10px;border-radius:999px;opacity:.75}
     .dot.red{background:#ff5f57}.dot.yellow{background:#febc2e}.dot.green{background:#28c840}
-    .title-mono{color:var(--portal-sub);font-size:13px;font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;}
+    .title-mono{color:var(--muted);font-size:13px;font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;}
     .content{
       flex:1 1 auto;
       min-height:0;
@@ -432,7 +315,7 @@
     }
     .screen{
       background:rgba(0,0,0,0.30);
-      border:1px solid rgba(255,255,255,0.12);
+      border:1px solid rgba(215,251,230,0.10);
       border-radius:10px;
       padding:12px;
       overflow:auto;
@@ -441,7 +324,7 @@
       font-size:14px;
       user-select:text;
       min-height:0;
-      color: rgba(255,255,255,0.92);
+      color: var(--fg);
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
     }
     .right{
@@ -455,7 +338,7 @@
     }
     .panel{
       background:rgba(0,0,0,0.30);
-      border:1px solid rgba(255,255,255,0.12);
+      border:1px solid rgba(215,251,230,0.10);
       border-radius:10px;
       overflow:hidden;
       min-width:0;
@@ -463,13 +346,13 @@
       flex-direction:column;
       min-height:0;
       flex:0 0 auto;
-      color: rgba(255,255,255,0.92);
+      color: var(--fg);
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
     }
     .panel .hd{
       padding:10px 12px;
-      border-bottom:1px solid rgba(255,255,255,0.10);
-      color: rgba(255,255,255,0.75);
+      border-bottom:1px solid rgba(215,251,230,0.10);
+      color:var(--muted);
       font-size:13px;
       background:rgba(0,0,0,0.18);
       display:flex;justify-content:space-between;align-items:center;
@@ -480,7 +363,7 @@
       overflow:auto;
       min-height:120px;
       max-height:240px;
-      color: rgba(255,255,255,0.92);
+      color: var(--fg);
     }
     .panel.chart .bd{
       min-height:260px;
@@ -488,191 +371,126 @@
     }
     .watermark{
       position:absolute;right:10px;bottom:10px;
-      color:rgba(255,255,255,0.14);
+      color:rgba(215,251,230,0.18);
       font-weight:800;
       pointer-events:none;
       user-select:none;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","CourierNew", monospace;
     }
-    .chip{
-      display:inline-block;padding:2px 8px;border:1px solid rgba(255,255,255,0.18);
-      border-radius:999px;font-size:12px;color:rgba(255,255,255,0.72);
-      white-space:nowrap;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
-      background: rgba(255,255,255,0.03);
-    }
-    .kv{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;}
-    .list{margin:0;padding-left:18px;}
-    .muted{color: rgba(255,255,255,0.70)}
-    .danger{color: var(--danger)}
 
-    .tool-actions{
+    .cmdbar{
       display:flex;
-      flex-wrap:wrap;
       gap:10px;
-      margin-top: 10px;
-    }
-    .actionbtn{
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
-      font-size: 12.5px;
-      padding: 9px 10px;
-      border-radius: 12px;
+      align-items:center;
+      justify-content:flex-start;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
     }
 
-    /* ========= Documents list ========= */
-    .docList{
-      display:flex;
-      flex-direction:column;
-      gap: 10px;
-      margin-top: 10px;
-    }
-    .docItem{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap: 12px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(0,0,0,0.18);
-      border-radius: 14px;
-      padding: 12px 12px;
-    }
-    .docItem .left{
-      display:flex;
-      flex-direction:column;
-      gap: 6px;
-      min-width:0;
-    }
-    .docItem .name{
-      font-weight: 850;
-      color: rgba(255,255,255,0.94);
-      letter-spacing: 0.2px;
-      white-space: nowrap;
-      overflow:hidden;
-      text-overflow: ellipsis;
-      max-width: 760px;
-    }
-    .docItem .meta{
-      display:flex;
-      gap: 10px;
-      flex-wrap:wrap;
-      color: rgba(255,255,255,0.70);
-      font-size: 12px;
-    }
-
-    /* ========= Modal ========= */
-    .modalBack{
-      position:fixed; inset:0;
-      background: rgba(0,0,0,0.55);
-      display:none;
-      align-items:center;
-      justify-content:center;
-      z-index: 100;
-      padding: 14px;
-    }
-    .modal{
-      width: min(900px, 100%);
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,0.14);
-      background: linear-gradient(180deg, rgba(14,34,58,0.92), rgba(10,22,38,0.92));
-      box-shadow: 0 30px 120px rgba(0,0,0,0.65);
-      overflow:hidden;
-    }
-    .modal .mh{
-      padding: 12px 14px;
-      border-bottom: 1px solid rgba(255,255,255,0.10);
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap: 10px;
-    }
-    .modal .mh .t{
-      font-weight: 900;
-      letter-spacing: 0.2px;
-      color: rgba(255,255,255,0.94);
-    }
-    .modal .mb{
-      padding: 12px 14px 14px;
-    }
-    .aclGrid{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap: 8px;
-      margin-top: 10px;
-    }
-    .aclRow{
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(0,0,0,0.18);
-      border-radius: 12px;
-      padding: 10px 12px;
-      display:flex;
-      justify-content:space-between;
-      gap: 10px;
-      flex-wrap:wrap;
-    }
-    .aclRow .e{
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
-      color: rgba(255,255,255,0.90);
-    }
-    .aclRow .a{
-      color: rgba(255,255,255,0.70);
-      font-size: 12px;
-    }
-
-    /* ========= Recruitment table ========= */
     .tableWrap{
-      margin-top: 10px;
-      overflow:auto;
-      border-radius: 14px;
       border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(0,0,0,0.18);
+      background: rgba(0,0,0,0.16);
+      border-radius: 14px;
+      overflow: hidden;
     }
     table{
-      width:100%;
+      width: 100%;
       border-collapse: collapse;
-      min-width: 760px;
-    }
-    th, td{
-      padding: 10px 12px;
-      border-bottom: 1px solid rgba(255,255,255,0.10);
-      text-align:left;
-      color: rgba(255,255,255,0.86);
       font-size: 13px;
-      vertical-align: top;
     }
-    th{
-      color: rgba(255,255,255,0.92);
-      font-weight: 850;
+    thead th{
+      text-align:left;
+      padding: 12px 12px;
+      background: rgba(0,0,0,0.28);
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+      color: rgba(255,255,255,0.90);
+      font-weight: 800;
+      letter-spacing: 0.2px;
+    }
+    tbody td{
+      padding: 12px 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.88);
+      vertical-align: middle;
+    }
+    tbody tr:hover td{
       background: rgba(255,255,255,0.04);
-      position: sticky;
-      top: 0;
-      z-index: 1;
     }
-    td .small{
+    .pillMini{
+      display:inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.06);
       font-size: 12px;
-      color: rgba(255,255,255,0.70);
-      margin-top: 4px;
+      font-weight: 750;
+      color: rgba(255,255,255,0.90);
+      letter-spacing: 0.2px;
     }
-    .pillTiny{
+    .pillMini.ok{
+      border-color: rgba(110,231,183,0.30);
+      background: rgba(110,231,183,0.10);
+    }
+    .pillMini.warn{
+      border-color: rgba(255,107,107,0.35);
+      background: rgba(255,107,107,0.10);
+      color: rgba(255,220,220,0.95);
+    }
+    .miniBtn{
+      padding: 7px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.92);
+      font-weight: 750;
+      cursor:pointer;
+      transition: transform .06s ease, background .15s ease, border-color .15s ease, box-shadow .15s ease;
+    }
+    .miniBtn:hover{
+      border-color: rgba(255,255,255,0.75);
+      box-shadow: 0 0 0 1px var(--whiteglow), 0 0 16px var(--whiteglow2);
+      background: rgba(255,255,255,0.09);
+    }
+    .miniBtn:active{ transform: translateY(1px); }
+    .miniBtn.danger{
+      border-color: rgba(255,107,107,0.35);
+      background: rgba(255,107,107,0.10);
+    }
+    .miniBtn.good{
+      border-color: rgba(110,231,183,0.35);
+      background: rgba(110,231,183,0.10);
+    }
+
+    .flagIcon{
       display:inline-flex;
       align-items:center;
-      gap:6px;
-      padding: 2px 10px;
+      justify-content:center;
+      width: 18px;
+      height: 18px;
       border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.18);
-      background: rgba(255,255,255,0.04);
-      color: rgba(255,255,255,0.75);
-      font-size: 12px;
+      border: 1px solid rgba(255,107,107,0.55);
+      background: rgba(255,107,107,0.12);
+      margin-left: 8px;
+      cursor: help;
+      position: relative;
+    }
+    .flagIcon svg{ width: 12px; height: 12px; fill: rgba(255,140,140,0.95); }
+    .flagIcon[data-tip]:hover::after{
+      content: attr(data-tip);
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      top: -10px;
+      translate: 0 -100%;
       white-space: nowrap;
-    }
-    .okMark{
-      border-color: rgba(110,231,183,0.55) !important;
-      color: rgba(110,231,183,0.92) !important;
-      box-shadow: 0 0 0 1px rgba(110,231,183,0.14), 0 0 18px rgba(110,231,183,0.10) !important;
-    }
-    .noMark{
-      border-color: rgba(255,107,107,0.55) !important;
-      color: rgba(255,107,107,0.92) !important;
-      box-shadow: 0 0 0 1px rgba(255,107,107,0.14), 0 0 18px rgba(255,107,107,0.10) !important;
+      background: rgba(0,0,0,0.85);
+      color: rgba(255,255,255,0.95);
+      border: 1px solid rgba(255,255,255,0.16);
+      padding: 6px 10px;
+      border-radius: 10px;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.55);
+      font-size: 12px;
+      z-index: 50;
     }
 
     @media (max-width: 980px){
@@ -680,7 +498,10 @@
       .content{grid-template-columns:1fr;}
       .right{max-height:none;}
       .panel .bd{max-height:none;}
-      .docItem .name{ max-width: 420px; }
+      thead{ display:none; }
+      table, tbody, tr, td{ display:block; width:100%; }
+      tbody td{ border-bottom: none; padding: 10px 12px; }
+      tbody tr{ border-bottom: 1px solid rgba(255,255,255,0.08); }
     }
   </style>
 </head>
@@ -711,9 +532,9 @@
 
         <button class="navbtn primary" id="navBGC" hidden>Background Checks</button>
         <button class="navbtn primary" id="navRecruit" hidden>Recruitment</button>
-
         <button class="navbtn primary" id="navDocs" hidden>Documents</button>
         <button class="navbtn primary" id="navAccess" hidden>Access Control</button>
+        <button class="navbtn primary" id="navBlacklist" hidden>Blacklist</button>
 
         <button class="navbtn primary" id="navAdmin" hidden>Admin</button>
         <button class="navbtn" id="navLogout" hidden>Logout</button>
@@ -729,21 +550,16 @@
       </div>
 
       <div class="bd" id="contentBody">
-        <!-- HOME -->
         <div id="homeView">
           <div class="news" id="newsList"></div>
           <div class="status" id="newsEmpty" style="display:none;">No news posted.</div>
         </div>
 
-        <!-- ABOUT -->
         <div id="aboutView" hidden><div class="status">About page.</div></div>
-
-        <!-- CONTACT -->
         <div id="contactView" hidden><div class="status">Contact page.</div></div>
 
-        <!-- LOGIN -->
         <div id="loginView" hidden>
-          <section class="card" id="homeCard">
+          <section class="card">
             <div class="hd">
               <div class="title">Access Control</div>
               <div class="tag">Authorized Users Only</div>
@@ -767,113 +583,42 @@
           </section>
         </div>
 
-        <!-- ADMIN -->
         <div id="adminView" hidden>
-          <div class="field">
-            <label for="newsTitle">Title</label>
-            <input class="portal" id="newsTitle" type="text" />
-          </div>
-
-          <div class="field">
-            <label for="newsBody">Body</label>
-            <textarea class="portal" id="newsBody" style="display:none;"></textarea>
-
-            <div class="rte" id="rte">
-              <div class="rtebar" id="rtebar">
-                <div class="group">
-                  <button class="rtbtn" type="button" data-cmd="bold">B</button>
-                  <button class="rtbtn" type="button" data-cmd="italic"><i>I</i></button>
-                  <button class="rtbtn" type="button" data-cmd="underline"><u>U</u></button>
-                  <button class="rtbtn" type="button" data-cmd="strikeThrough"><s>S</s></button>
-                </div>
-
-                <div class="group">
-                  <button class="rtbtn" type="button" data-cmd="insertUnorderedList">• List</button>
-                  <button class="rtbtn" type="button" data-cmd="insertOrderedList">1. List</button>
-                  <button class="rtbtn" type="button" id="btnQuote">Quote</button>
-                  <button class="rtbtn" type="button" id="btnCode">Code</button>
-                </div>
-
-                <div class="group">
-                  <button class="rtbtn" type="button" id="btnLink">Link</button>
-                  <button class="rtbtn" type="button" data-cmd="removeFormat">Clear</button>
-                </div>
-
-                <div class="group" id="fxGroup" hidden>
-                  <span class="hint">Special Effects:</span>
-                  <button class="rtbtn" type="button" data-fx="fx-glow">Glow</button>
-                  <button class="rtbtn" type="button" data-fx="fx-neon">Neon</button>
-                  <button class="rtbtn" type="button" data-fx="fx-flicker">Flicker</button>
-                  <button class="rtbtn" type="button" data-fx="fx-rainbow">Rainbow</button>
-                  <button class="rtbtn" type="button" data-fx="fx-wave">Wave</button>
-                  <input type="color" id="fxColor" value="#6ee7b7" title="Effect color" />
-                  <button class="rtbtn" type="button" id="btnFxRemove">Remove FX</button>
-                </div>
-              </div>
-
-              <div id="newsBodyEditor" class="rtebody" contenteditable="true"
-                   data-placeholder="Write formatted news here…"></div>
-            </div>
-          </div>
-
-          <div class="row">
-            <button class="navbtn primary" id="btnAddNews" type="button">Add News</button>
-            <div class="status" id="adminStatus"></div>
-          </div>
-
-          <div class="news" id="adminNewsList" style="margin-top:14px;"></div>
-
-          <div style="margin-top:18px; border-top:1px solid rgba(255,255,255,0.10); padding-top:14px;">
-            <div class="row" style="margin-top:0;">
-              <div class="status" style="font-weight:800; color:rgba(255,255,255,0.92);">Audit Logs</div>
-              <button class="navbtn" id="btnLoadAudit" type="button">Refresh</button>
-            </div>
-            <div class="status" id="auditStatus"></div>
-            <div class="news" id="auditList"></div>
-          </div>
+          <div class="status">Admin tools are unchanged on your setup.</div>
         </div>
 
-        <!-- BACKGROUND CHECKS (replaces terminal page; buttons for commands) -->
         <div id="bgcView" hidden style="margin-top:0;">
+          <div class="cmdbar">
+            <button class="navbtn primary" id="btnRunBGC" type="button">Run Background Check</button>
+            <button class="navbtn" id="btnClearBGC" type="button">Clear</button>
+          </div>
+
           <div class="wrap">
             <div class="terminal">
               <div class="bar">
                 <div class="dots">
                   <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
                 </div>
-                <div class="title-mono">Criminal Investigation Division — Background Check Console</div>
+                <div class="title-mono">Criminal Investigation Division — BGC Terminal</div>
               </div>
 
               <div class="content">
-                <div>
-                  <div class="field" style="margin-top:0;">
-                    <label for="bgcUser">Roblox Username</label>
-                    <input class="portal" id="bgcUser" type="text" placeholder="Enter username..." />
-                  </div>
-
-                  <div class="tool-actions">
-                    <button class="actionbtn primary" id="btnBgcRun" type="button">Run Background Check</button>
-                    <button class="actionbtn" id="btnBgcClear" type="button">Clear Output</button>
-                    <button class="actionbtn" id="btnBgcCopy" type="button">Copy Report</button>
-                  </div>
-
-                  <div id="screen" class="screen" style="margin-top:12px;"></div>
-                </div>
+                <div id="screen" class="screen"></div>
 
                 <div class="right">
                   <div class="panel chart">
-                    <div class="hd"><span>Badge Chart</span><span id="chartStatus" class="chip">idle</span></div>
+                    <div class="hd"><span>Badge Chart</span><span id="chartStatus" class="pillMini">idle</span></div>
                     <div class="bd"><canvas id="chart" height="240"></canvas></div>
                   </div>
 
                   <div class="panel">
-                    <div class="hd"><span>Blacklist Status</span><span id="blStatus" class="chip">—</span></div>
-                    <div class="bd" id="blacklistsBox" class="muted">Enter a username and run the check.</div>
+                    <div class="hd"><span>Blacklist Status</span><span id="blStatus" class="pillMini">—</span></div>
+                    <div class="bd" id="blacklistsBox">Run a check.</div>
                   </div>
 
                   <div class="panel">
-                    <div class="hd"><span>Inventory (No Prices)</span><span id="invStatus" class="chip">—</span></div>
-                    <div class="bd" id="inventoryBox" class="muted">Enter a username and run the check.</div>
+                    <div class="hd"><span>Inventory</span><span id="invStatus" class="pillMini">—</span></div>
+                    <div class="bd" id="inventoryBox">Run a check.</div>
                   </div>
                 </div>
               </div>
@@ -883,48 +628,21 @@
           </div>
         </div>
 
-        <!-- DOCUMENTS LIST (only for 3 users) -->
-        <div id="docsView" hidden>
-          <div class="row" style="margin-top:0;">
-            <div class="status" style="font-weight:850; color:rgba(255,255,255,0.92);">Organization Documents</div>
-            <button class="navbtn" id="btnDocsRefresh" type="button">Refresh</button>
-          </div>
-          <div class="status" id="docsStatus"></div>
-          <div class="docList" id="docList"></div>
-        </div>
-
-        <!-- ACCESS CONTROL (grant/revoke; only for 3 users) -->
-        <div id="accessView" hidden>
-          <div class="row" style="margin-top:0;">
-            <div class="status" style="font-weight:850; color:rgba(255,255,255,0.92);">Grant / Revoke Document Access</div>
-            <div style="display:flex; gap:10px; flex-wrap:wrap;">
-              <button class="navbtn" id="btnAccessRefresh" type="button">Refresh Documents</button>
-              <button class="navbtn" id="btnRevokeAll" type="button">Remove Access From ALL Documents</button>
-            </div>
-          </div>
-
-          <div class="status" id="accessStatus"></div>
-          <div class="docList" id="accessDocList"></div>
-        </div>
-
-        <!-- RECRUITMENT BACKGROUND CHECK REQUESTS -->
         <div id="recruitView" hidden>
           <div class="row" style="margin-top:0;">
-            <div class="status" style="font-weight:850; color:rgba(255,255,255,0.92);">Recruitment — Background Check Requests</div>
-            <div style="display:flex; gap:10px; flex-wrap:wrap;">
-              <button class="navbtn" id="btnRecruitRefresh" type="button">Refresh</button>
-            </div>
+            <div class="status" style="font-weight:800; color:rgba(255,255,255,0.92);">Recruitment Background Checks</div>
+            <button class="navbtn" id="btnRecruitRefresh" type="button">Refresh</button>
           </div>
           <div class="status" id="recruitStatus"></div>
 
-          <div class="tableWrap">
+          <div class="tableWrap" style="margin-top:12px;">
             <table>
               <thead>
                 <tr>
-                  <th>Row</th>
                   <th>Username(s)</th>
                   <th>Entrance Method</th>
                   <th>Status</th>
+                  <th></th>
                   <th>Completed By</th>
                   <th>Date</th>
                   <th>Validation</th>
@@ -933,9 +651,95 @@
               <tbody id="recruitTbody"></tbody>
             </table>
           </div>
+        </div>
 
-          <div class="status" style="margin-top:10px; color:rgba(255,255,255,0.70);">
-            Note: Only authorized personnel can see and update this page. Validation is restricted to Crimson9952, VendettaPyrex, and PurelyGeon.
+        <div id="docsView" hidden>
+          <div class="row" style="margin-top:0;">
+            <div class="status" style="font-weight:800; color:rgba(255,255,255,0.92);">Documents</div>
+            <button class="navbtn" id="btnDocsRefresh" type="button">Refresh</button>
+          </div>
+          <div class="status" id="docsStatus"></div>
+          <div class="news" id="docsList" style="margin-top:12px;"></div>
+
+          <div class="card" id="docAclCard" style="margin-top:14px; display:none;">
+            <div class="hd">
+              <div class="title" id="docAclTitle">Access List</div>
+              <div class="tag">Restricted</div>
+            </div>
+            <div class="bd">
+              <div class="status" id="docAclStatus"></div>
+              <div class="tableWrap" style="margin-top:10px;">
+                <table>
+                  <thead><tr><th>Email</th><th>Role</th></tr></thead>
+                  <tbody id="docAclTbody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="accessView" hidden>
+          <div class="status" style="font-weight:800; color:rgba(255,255,255,0.92);">Access Control</div>
+          <div class="status" id="accessStatus" style="margin-top:8px;"></div>
+
+          <div class="row" style="margin-top:12px;">
+            <button class="navbtn primary" id="btnGrantOpen" type="button">Grant Access</button>
+            <button class="navbtn" id="btnRevokeOpen" type="button">Revoke Access</button>
+            <button class="navbtn danger" id="btnRevokeAllOpen" type="button" style="border-color: rgba(255,107,107,0.35); background: rgba(255,107,107,0.10);">Revoke All</button>
+          </div>
+
+          <div class="card" style="margin-top:14px;">
+            <div class="hd">
+              <div class="title">Documents</div>
+              <div class="tag">Select Target</div>
+            </div>
+            <div class="bd">
+              <div class="status" id="accessDocsStatus"></div>
+              <div class="news" id="accessDocsList"></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="blacklistView" hidden>
+          <div class="row" style="margin-top:0;">
+            <div class="status" style="font-weight:800; color:rgba(255,255,255,0.92);">Blacklist</div>
+            <button class="navbtn" id="btnBlRefresh" type="button">Refresh</button>
+          </div>
+          <div class="status" id="blStatusMsg"></div>
+
+          <div class="card" style="margin-top:12px;">
+            <div class="hd">
+              <div class="title">Add User</div>
+              <div class="tag">Restricted</div>
+            </div>
+            <div class="bd">
+              <div class="field">
+                <label>Username</label>
+                <input class="portal" id="blUser" type="text" />
+              </div>
+              <div class="field">
+                <label>Reason</label>
+                <input class="portal" id="blReason" type="text" />
+              </div>
+              <div class="row">
+                <button class="navbtn primary" id="btnBlAdd" type="button">Add</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:14px;">
+            <div class="hd">
+              <div class="title">Entries</div>
+              <div class="tag">Restricted</div>
+            </div>
+            <div class="bd">
+              <div class="tableWrap">
+                <table>
+                  <thead><tr><th>Username</th><th>Reason</th><th></th></tr></thead>
+                  <tbody id="blTbody"></tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -943,34 +747,19 @@
     </section>
   </main>
 
-  <!-- ACL MODAL -->
-  <div class="modalBack" id="modalBack" role="dialog" aria-modal="true">
-    <div class="modal">
-      <div class="mh">
-        <div class="t" id="modalTitle">Document</div>
-        <button class="navbtn" id="btnModalClose" type="button">Close</button>
-      </div>
-      <div class="mb">
-        <div class="status" id="modalStatus"></div>
-        <div class="aclGrid" id="aclGrid"></div>
-      </div>
-    </div>
-  </div>
-
 <script>
 (() => {
   "use strict";
 
-  /* =========================================================
-     CONFIG
-     ========================================================= */
   const TOOL_API_BASE = "https://the.chastiefola.workers.dev";
   const NEWS_API_BASE = "https://dawn-cell-038d.chastiefola.workers.dev";
   const ADMIN_USERNAME = "VendettaPyrex";
-  const PRIV_USERS = new Set(["Crimson9952","VendettaPyrex","PurelyGeon"]); // UI-level gating (server must enforce too)
+  const PRIV_SET = new Set(["Crimson9952","VendettaPyrex","PurelyGeon"]);
 
   let TOOL_TOKEN = null;
   let LOGGED_IN_USER = null;
+  let IS_ADMIN = false;
+  let IS_PRIV = false;
   let NEWS_TOKEN = null;
 
   const $ = (id) => document.getElementById(id);
@@ -989,21 +778,8 @@
     return d.toLocaleString(undefined, { year:"numeric", month:"short", day:"2-digit", hour:"2-digit", minute:"2-digit" });
   }
 
-  /* =========================================================
-     HTML sanitizer (formatted news)
-     ========================================================= */
-  const ALLOWED_TAGS = new Set([
-    "B","STRONG","I","EM","U","S","BR","P","DIV","SPAN",
-    "UL","OL","LI","A","BLOCKQUOTE","CODE","PRE","H1","H2","H3","HR"
-  ]);
-  const ALLOWED_ATTR = {
-    "A": new Set(["href","target","rel"]),
-    "SPAN": new Set(["class","style"]),
-    "DIV": new Set(["class","style"]),
-    "P": new Set(["class","style"]),
-    "CODE": new Set(["class"]),
-    "PRE": new Set(["class"])
-  };
+  const ALLOWED_TAGS = new Set(["B","STRONG","I","EM","U","S","BR","P","DIV","SPAN","UL","OL","LI","A","BLOCKQUOTE","CODE","PRE","H1","H2","H3","HR"]);
+  const ALLOWED_ATTR = { "A": new Set(["href","target","rel"]) };
 
   function sanitizeHtml(inputHtml){
     const tpl = document.createElement("template");
@@ -1014,27 +790,17 @@
       for (const child of children){
         if (child.nodeType === Node.ELEMENT_NODE){
           const tag = child.tagName.toUpperCase();
-
           if (!ALLOWED_TAGS.has(tag)){
             const txt = document.createTextNode(child.textContent || "");
             child.replaceWith(txt);
             continue;
           }
-
-          const allowed = ALLOWED_ATTR[tag] || new Set();
           for (const attr of Array.from(child.attributes)){
             const name = attr.name.toLowerCase();
             const val = attr.value || "";
-
-            if (name.startsWith("on") || name === "srcdoc"){
-              child.removeAttribute(attr.name);
-              continue;
-            }
-            if (!allowed.has(attr.name)){
-              child.removeAttribute(attr.name);
-              continue;
-            }
-
+            if (name.startsWith("on") || name === "srcdoc"){ child.removeAttribute(attr.name); continue; }
+            const allowed = ALLOWED_ATTR[tag] || new Set();
+            if (!allowed.has(attr.name)){ child.removeAttribute(attr.name); continue; }
             if (tag === "A" && name === "href"){
               const href = val.trim();
               if (!href || /^javascript:/i.test(href) || /^data:/i.test(href)){
@@ -1044,37 +810,17 @@
                 child.setAttribute("rel","noopener noreferrer");
               }
             }
-
-            if ((tag === "SPAN" || tag === "DIV" || tag === "P") && name === "style"){
-              const safe = [];
-              const parts = val.split(";").map(x=>x.trim()).filter(Boolean);
-              for (const p of parts){
-                const [kRaw, ...rest] = p.split(":");
-                const k = (kRaw || "").trim().toLowerCase();
-                const v = rest.join(":").trim();
-                if (!k) continue;
-                if (k === "--fx-color" || k === "color" || k === "background" || k === "text-shadow"){
-                  safe.push(`${k}:${v}`);
-                }
-              }
-              child.setAttribute("style", safe.join(";"));
-            }
           }
-
           walk(child);
         } else if (child.nodeType === Node.COMMENT_NODE){
           child.remove();
         }
       }
     };
-
     walk(tpl.content);
     return tpl.innerHTML;
   }
 
-  /* =========================================================
-     TOOL WORKER / AUTH HELPERS
-     ========================================================= */
   function toolAuthHeaders(extra={}) {
     return { ...(TOOL_TOKEN ? { "Authorization": `Bearer ${TOOL_TOKEN}` } : {}), ...extra };
   }
@@ -1093,6 +839,8 @@
     });
     TOOL_TOKEN = data.token;
     LOGGED_IN_USER = username;
+    IS_ADMIN = !!data.isAdmin;
+    IS_PRIV = !!data.isPriv || PRIV_SET.has(username);
   }
   async function toolLogCommand(cmdString){
     try{
@@ -1104,9 +852,6 @@
     } catch {}
   }
 
-  /* =========================================================
-     NEWS WORKER
-     ========================================================= */
   function newsAuthHeaders(extra={}) {
     return { ...(NEWS_TOKEN ? { "Authorization": `Bearer ${NEWS_TOKEN}` } : {}), ...extra };
   }
@@ -1131,38 +876,9 @@
     if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
     return data.items || [];
   }
-  async function createNews(title, text){
-    const data = await newsApi(`/news`, {
-      method:"POST",
-      headers: newsAuthHeaders({ "Content-Type":"application/json" }),
-      body: JSON.stringify({ title, text })
-    });
-    return data.item;
-  }
-  async function deleteNews(id){
-    const data = await newsApi(`/news/${encodeURIComponent(id)}`, {
-      method: "DELETE",
-      headers: newsAuthHeaders()
-    });
-    return !!data.removed;
-  }
-  async function fetchAudit(limit=80){
-    const data = await newsApi(`/audit?limit=${encodeURIComponent(limit)}`, {
-      method:"GET",
-      headers: newsAuthHeaders()
-    });
-    return data.items || [];
-  }
 
-  /* =========================================================
-     NEWS UI
-     ========================================================= */
   const newsListEl = $("newsList");
   const newsEmptyEl = $("newsEmpty");
-  const adminNewsListEl = $("adminNewsList");
-  const adminStatusEl = $("adminStatus");
-  const auditListEl = $("auditList");
-  const auditStatusEl = $("auditStatus");
 
   function renderNewsHome(items){
     newsListEl.innerHTML = "";
@@ -1171,7 +887,6 @@
       return;
     }
     newsEmptyEl.style.display = "none";
-
     for (const n of items.slice(0, 10)){
       const div = document.createElement("div");
       div.className = "newsItem";
@@ -1187,82 +902,11 @@
     }
   }
 
-  function renderNewsAdmin(items){
-    adminNewsListEl.innerHTML = "";
-    for (const n of items){
-      const div = document.createElement("div");
-      div.className = "newsItem";
-      const safeBody = sanitizeHtml(n.text || "");
-      div.innerHTML = `
-        <div class="h">
-          <div class="t">${escapeHtml(n.title || "Untitled")}</div>
-          <div class="d">${escapeHtml(fmtDate(n.createdAt))}</div>
-        </div>
-        <div class="b">${safeBody || ""}</div>
-        <div style="margin-top:10px; display:flex; justify-content:flex-end;">
-          <button class="navbtn" data-del="${escapeHtml(n.id)}">Delete</button>
-        </div>
-      `;
-      adminNewsListEl.appendChild(div);
-    }
-
-    adminNewsListEl.querySelectorAll("button[data-del]").forEach(btn=>{
-      btn.addEventListener("click", async ()=>{
-        const id = btn.getAttribute("data-del");
-        if (!id) return;
-        try{
-          btn.disabled = true;
-          await deleteNews(id);
-          await refreshNewsEverywhere();
-        } catch(e){
-          adminStatusEl.textContent = e.message;
-          adminStatusEl.className = "status danger";
-        } finally{
-          btn.disabled = false;
-        }
-      });
-    });
-  }
-
-  function renderAudit(items){
-    auditListEl.innerHTML = "";
-    for (const a of items){
-      const div = document.createElement("div");
-      div.className = "newsItem";
-      div.innerHTML = `
-        <div class="h">
-          <div class="t">${escapeHtml(a.type || "AUDIT")}</div>
-          <div class="d">${escapeHtml(fmtDate(a.ts))}</div>
-        </div>
-        <div class="b">${escapeHtml(JSON.stringify({
-          actor: a.actor, ip: a.ip, detail: a.detail
-        }, null, 2))}</div>
-      `;
-      auditListEl.appendChild(div);
-    }
-  }
-
-  async function refreshNewsEverywhere(){
+  async function refreshNews(){
     const items = await fetchNewsPublic();
     renderNewsHome(items);
-    if (LOGGED_IN_USER === ADMIN_USERNAME) renderNewsAdmin(items);
   }
 
-  async function refreshAudit(){
-    auditStatusEl.textContent = "";
-    auditStatusEl.className = "status";
-    try{
-      const items = await fetchAudit(80);
-      renderAudit(items);
-    } catch(e){
-      auditStatusEl.textContent = e.message;
-      auditStatusEl.className = "status danger";
-    }
-  }
-
-  /* =========================================================
-     NAV / VIEWS
-     ========================================================= */
   const contentTitle = $("contentTitle");
   const contentTag = $("contentTag");
 
@@ -1271,27 +915,26 @@
   const contactView = $("contactView");
   const loginView = $("loginView");
   const adminView = $("adminView");
-
   const bgcView = $("bgcView");
+  const recruitView = $("recruitView");
   const docsView = $("docsView");
   const accessView = $("accessView");
-  const recruitView = $("recruitView");
+  const blacklistView = $("blacklistView");
 
   const navHome = $("navHome");
   const navAbout = $("navAbout");
   const navContact = $("navContact");
   const navLogin = $("navLogin");
-
   const navBGC = $("navBGC");
   const navRecruit = $("navRecruit");
   const navDocs = $("navDocs");
   const navAccess = $("navAccess");
-
+  const navBlacklist = $("navBlacklist");
   const navAdmin = $("navAdmin");
   const navLogout = $("navLogout");
 
   function setActiveNav(btn){
-    [navHome, navAbout, navContact, navLogin, navBGC, navRecruit, navDocs, navAccess, navAdmin].forEach(b=>{
+    [navHome, navAbout, navContact, navLogin, navBGC, navRecruit, navDocs, navAccess, navBlacklist, navAdmin].forEach(b=>{
       if (!b) return;
       b.classList.toggle("active", b === btn);
     });
@@ -1303,18 +946,18 @@
     contactView.hidden = true;
     loginView.hidden = true;
     adminView.hidden = true;
-
     bgcView.hidden = true;
+    recruitView.hidden = true;
     docsView.hidden = true;
     accessView.hidden = true;
-    recruitView.hidden = true;
+    blacklistView.hidden = true;
 
     if (which === "home"){
       contentTitle.textContent = "Home";
       contentTag.textContent = "Portal Overview";
       homeView.hidden = false;
       setActiveNav(navHome);
-      refreshNewsEverywhere().catch(()=>{});
+      refreshNews().catch(()=>{});
       return;
     }
     if (which === "about"){
@@ -1341,11 +984,9 @@
     }
     if (which === "admin"){
       contentTitle.textContent = "Admin";
-      contentTag.textContent = "Front Page";
+      contentTag.textContent = "Website Editor";
       adminView.hidden = false;
       setActiveNav(navAdmin);
-      refreshNewsEverywhere().catch(()=>{});
-      refreshAudit().catch(()=>{});
       return;
     }
     if (which === "bgc"){
@@ -1354,22 +995,7 @@
       bgcView.hidden = false;
       setActiveNav(navBGC);
       if (!chart) initChart();
-      return;
-    }
-    if (which === "docs"){
-      contentTitle.textContent = "Documents";
-      contentTag.textContent = "Restricted";
-      docsView.hidden = false;
-      setActiveNav(navDocs);
-      refreshDocs().catch(()=>{});
-      return;
-    }
-    if (which === "access"){
-      contentTitle.textContent = "Access Control";
-      contentTag.textContent = "Restricted";
-      accessView.hidden = false;
-      setActiveNav(navAccess);
-      refreshAccessDocs().catch(()=>{});
+      setTimeout(()=>{ try{ chart.resize(); }catch{} }, 50);
       return;
     }
     if (which === "recruit"){
@@ -1377,67 +1003,71 @@
       contentTag.textContent = "Requests";
       recruitView.hidden = false;
       setActiveNav(navRecruit);
-      refreshRecruit().catch(()=>{});
+      loadRecruit().catch(()=>{});
+      return;
+    }
+    if (which === "docs"){
+      contentTitle.textContent = "Documents";
+      contentTag.textContent = "Restricted";
+      docsView.hidden = false;
+      setActiveNav(navDocs);
+      loadDocs().catch(()=>{});
+      return;
+    }
+    if (which === "access"){
+      contentTitle.textContent = "Access Control";
+      contentTag.textContent = "Restricted";
+      accessView.hidden = false;
+      setActiveNav(navAccess);
+      loadAccessDocs().catch(()=>{});
+      return;
+    }
+    if (which === "blacklist"){
+      contentTitle.textContent = "Blacklist";
+      contentTag.textContent = "Restricted";
+      blacklistView.hidden = false;
+      setActiveNav(navBlacklist);
+      loadBlacklist().catch(()=>{});
       return;
     }
   }
 
   function updateNav(){
     const loggedIn = !!TOOL_TOKEN;
-    navLogout.hidden = !loggedIn;
 
+    navLogin.hidden = loggedIn;
     navBGC.hidden = !loggedIn;
     navRecruit.hidden = !loggedIn;
+    navDocs.hidden = !(loggedIn && IS_PRIV);
+    navAccess.hidden = !(loggedIn && IS_PRIV);
+    navBlacklist.hidden = !(loggedIn && IS_PRIV);
 
-    const isPriv = loggedIn && PRIV_USERS.has(LOGGED_IN_USER || "");
-    navDocs.hidden = !isPriv;
-    navAccess.hidden = !isPriv;
-
+    navLogout.hidden = !loggedIn;
     navAdmin.hidden = !(loggedIn && LOGGED_IN_USER === ADMIN_USERNAME);
-
-    const fxGroup = $("fxGroup");
-    if (fxGroup){
-      fxGroup.hidden = !(loggedIn && LOGGED_IN_USER === ADMIN_USERNAME);
-    }
   }
 
   navHome.addEventListener("click", ()=> setView("home"));
   navAbout.addEventListener("click", ()=> setView("about"));
   navContact.addEventListener("click", ()=> setView("contact"));
   navLogin.addEventListener("click", ()=> setView("login"));
-
   navBGC.addEventListener("click", ()=> setView("bgc"));
   navRecruit.addEventListener("click", ()=> setView("recruit"));
-
-  navDocs.addEventListener("click", ()=> {
-    if (!PRIV_USERS.has(LOGGED_IN_USER || "")) return;
-    setView("docs");
-  });
-  navAccess.addEventListener("click", ()=> {
-    if (!PRIV_USERS.has(LOGGED_IN_USER || "")) return;
-    setView("access");
-  });
-
-  navAdmin.addEventListener("click", ()=> {
-    if (LOGGED_IN_USER !== ADMIN_USERNAME) return;
-    setView("admin");
-  });
+  navDocs.addEventListener("click", ()=> { if (IS_PRIV) setView("docs"); });
+  navAccess.addEventListener("click", ()=> { if (IS_PRIV) setView("access"); });
+  navBlacklist.addEventListener("click", ()=> { if (IS_PRIV) setView("blacklist"); });
+  navAdmin.addEventListener("click", ()=> { if (LOGGED_IN_USER === ADMIN_USERNAME) setView("admin"); });
 
   navLogout.addEventListener("click", ()=>{
     TOOL_TOKEN = null;
     LOGGED_IN_USER = null;
+    IS_ADMIN = false;
+    IS_PRIV = false;
     NEWS_TOKEN = null;
-
-    bgcClearUI();
+    if (screen) screen.textContent = "";
     updateNav();
     setView("home");
   });
 
-  $("btnLoadAudit").addEventListener("click", ()=> refreshAudit());
-
-  /* =========================================================
-     LOGIN FORM
-     ========================================================= */
   const loginForm   = $("loginForm");
   const loginUser   = $("loginUser");
   const loginPass   = $("loginPass");
@@ -1474,186 +1104,14 @@
     }
   });
 
-  /* =========================================================
-     RICH TEXT EDITOR
-     ========================================================= */
-  const newsBodyEditor = $("newsBodyEditor");
-  const newsBodyTextarea = $("newsBody");
-  const rteBar = $("rtebar");
-
-  function rteSyncToTextarea(){
-    const html = newsBodyEditor ? newsBodyEditor.innerHTML : "";
-    if (newsBodyTextarea) newsBodyTextarea.value = html;
-  }
-  function rteExec(cmd, value=null){
-    try{
-      document.execCommand(cmd, false, value);
-      rteSyncToTextarea();
-      newsBodyEditor && newsBodyEditor.focus();
-    } catch {}
+  const screen = $("screen");
+  function termPrint(text=""){
+    const div = document.createElement("div");
+    div.textContent = text;
+    screen.appendChild(div);
+    screen.scrollTop = screen.scrollHeight;
   }
 
-  function wrapSelectionWithSpan(className, styleObj={}){
-    const sel = window.getSelection();
-    if (!sel || sel.rangeCount === 0) return;
-    const range = sel.getRangeAt(0);
-    if (range.collapsed) return;
-
-    const span = document.createElement("span");
-    span.className = className;
-    for (const [k,v] of Object.entries(styleObj)){
-      span.style.setProperty(k, v);
-    }
-
-    try{ range.surroundContents(span); }
-    catch {
-      const frag = range.extractContents();
-      span.appendChild(frag);
-      range.insertNode(span);
-    }
-
-    rteSyncToTextarea();
-    newsBodyEditor && newsBodyEditor.focus();
-  }
-
-  function removeFxFromSelection(){
-    const sel = window.getSelection();
-    if (!sel || sel.rangeCount === 0) return;
-    const range = sel.getRangeAt(0);
-    if (range.collapsed) return;
-
-    const tmp = document.createElement("span");
-    try{ range.surroundContents(tmp); }
-    catch {
-      const frag = range.extractContents();
-      tmp.appendChild(frag);
-      range.insertNode(tmp);
-    }
-
-    tmp.querySelectorAll("span").forEach(sp=>{
-      sp.classList.remove("fx-glow","fx-neon","fx-flicker","fx-rainbow","fx-wave");
-      try{ sp.style.removeProperty("--fx-color"); } catch {}
-      if (!sp.className.trim() && !sp.getAttribute("style")) {
-        const parent = sp.parentNode;
-        while (sp.firstChild) parent.insertBefore(sp.firstChild, sp);
-        parent.removeChild(sp);
-      }
-    });
-
-    const parent = tmp.parentNode;
-    while (tmp.firstChild) parent.insertBefore(tmp.firstChild, tmp);
-    parent.removeChild(tmp);
-
-    rteSyncToTextarea();
-    newsBodyEditor && newsBodyEditor.focus();
-  }
-
-  if (rteBar){
-    rteBar.addEventListener("click", (e)=>{
-      const t = e.target.closest("button");
-      if (!t) return;
-
-      const cmd = t.getAttribute("data-cmd");
-      const fx = t.getAttribute("data-fx");
-
-      if (cmd){ rteExec(cmd); return; }
-
-      if (t.id === "btnLink"){
-        const url = prompt("Enter link URL (https://...)");
-        if (!url) return;
-        rteExec("createLink", url);
-        setTimeout(()=>{
-          if (!newsBodyEditor) return;
-          newsBodyEditor.querySelectorAll("a").forEach(a=>{
-            a.setAttribute("target","_blank");
-            a.setAttribute("rel","noopener noreferrer");
-          });
-          rteSyncToTextarea();
-        }, 0);
-        return;
-      }
-      if (t.id === "btnQuote"){ rteExec("formatBlock", "blockquote"); return; }
-
-      if (t.id === "btnCode"){
-        const sel = window.getSelection();
-        if (!sel || sel.rangeCount === 0) return;
-        const range = sel.getRangeAt(0);
-        if (range.collapsed) return;
-        const code = document.createElement("code");
-        try{ range.surroundContents(code); }
-        catch {
-          const frag = range.extractContents();
-          code.appendChild(frag);
-          range.insertNode(code);
-        }
-        rteSyncToTextarea();
-        newsBodyEditor && newsBodyEditor.focus();
-        return;
-      }
-
-      if (fx){
-        const fxColor = $("fxColor") ? $("fxColor").value : "#6ee7b7";
-        const styleObj = (fx === "fx-rainbow") ? {} : { "--fx-color": fxColor };
-        wrapSelectionWithSpan(fx, styleObj);
-        return;
-      }
-
-      if (t.id === "btnFxRemove"){ removeFxFromSelection(); return; }
-    });
-  }
-
-  if (newsBodyEditor){
-    newsBodyEditor.addEventListener("input", ()=> rteSyncToTextarea());
-    newsBodyEditor.addEventListener("paste", ()=>{
-      setTimeout(()=>{
-        const clean = sanitizeHtml(newsBodyEditor.innerHTML);
-        newsBodyEditor.innerHTML = clean;
-        rteSyncToTextarea();
-      }, 0);
-    });
-  }
-
-  $("btnAddNews").addEventListener("click", async ()=>{
-    if (LOGGED_IN_USER !== ADMIN_USERNAME){
-      adminStatusEl.textContent = "Not authorized.";
-      adminStatusEl.className = "status danger";
-      return;
-    }
-
-    const titleEl = $("newsTitle");
-    const title = (titleEl.value || "").trim();
-    const htmlRaw = (newsBodyEditor ? newsBodyEditor.innerHTML : (newsBodyTextarea.value || "")).trim();
-    const htmlClean = sanitizeHtml(htmlRaw);
-
-    if (!title || !htmlClean){
-      adminStatusEl.textContent = "Title and body required.";
-      adminStatusEl.className = "status danger";
-      return;
-    }
-
-    try{
-      adminStatusEl.textContent = "";
-      adminStatusEl.className = "status";
-
-      await createNews(title, htmlClean);
-
-      titleEl.value = "";
-      if (newsBodyEditor) newsBodyEditor.innerHTML = "";
-      newsBodyTextarea.value = "";
-
-      adminStatusEl.textContent = "News added.";
-      adminStatusEl.className = "status ok";
-      await refreshNewsEverywhere();
-      await refreshAudit();
-    } catch(e){
-      adminStatusEl.textContent = e.message;
-      adminStatusEl.className = "status danger";
-    }
-  });
-
-  /* =========================================================
-     BACKGROUND CHECK (uses your existing APIs + Trellos)
-     ========================================================= */
   const TRELLO_SOURCES = [
     { key: "USAR WIDE", json: "https://trello.com/b/zVRnrvhb/usar-management-mainframe.json", list_name: "USAR Blacklists" },
     { key: "FORSCOM",   json: "https://trello.com/b/YncjLEbF/forces-command-information-trello.json", list_name: "Blacklists" },
@@ -1664,54 +1122,20 @@
   const DISPLAY_ORDER = ["USAR WIDE", "FORSCOM", "ASOC", "MPC", "TRADOC"];
 
   const INVENTORY_CATEGORIES = {
-    "T-Shirts": 2,
-    "Classic Shirts": 11,
-    "Classic Pants": 12,
-    "Hats": 8,
-    "Face": 18,
-    "Gear": 19,
-    "Hair Accessories": 41,
-    "Face Accessories": 42,
-    "Neck Accessories": 43,
-    "Shoulder Accessories": 44,
-    "Front Accessories": 45,
-    "Back Accessories": 46,
-    "Waist Accessories": 47,
+    "T-Shirts": 2, "Classic Shirts": 11, "Classic Pants": 12, "Hats": 8,
+    "Face": 18, "Gear": 19, "Hair Accessories": 41, "Face Accessories": 42,
+    "Neck Accessories": 43, "Shoulder Accessories": 44, "Front Accessories": 45,
+    "Back Accessories": 46, "Waist Accessories": 47,
   };
 
-  /* Client-side pacing. Worker should ALSO enforce rate limits. */
   const BASE_DELAY_MS = 250;
-  const JITTER_MS = 220;
+  const JITTER_MS = 200;
   const BATCH_DELAY_MS = 900;
   const PHASE_DELAY_MS = 900;
   const MAX_RETRIES_429 = 7;
 
   function sleep(ms){ return new Promise(r=>setTimeout(r, ms)); }
   async function nap(base=BASE_DELAY_MS){ await sleep(base + Math.random()*JITTER_MS); }
-
-  const screen = $("screen");
-  function termPrint(text="", cls=null){
-    const div = document.createElement("div");
-    if (cls) div.className = cls;
-    div.textContent = text;
-    screen.appendChild(div);
-    screen.scrollTop = screen.scrollHeight;
-  }
-  function bgcClearUI(){
-    try{ screen.innerHTML = ""; } catch {}
-    try{ $("bgcUser").value = ""; } catch {}
-    try{ $("chartStatus").textContent = "idle"; } catch {}
-    try{ $("blStatus").textContent = "—"; } catch {}
-    try{ $("invStatus").textContent = "—"; } catch {}
-    try{ $("blacklistsBox").textContent = "Enter a username and run the check."; } catch {}
-    try{ $("inventoryBox").textContent = "Enter a username and run the check."; } catch {}
-    try{
-      if (chart){
-        chart.data.datasets[0].data = [];
-        chart.update();
-      }
-    } catch {}
-  }
 
   async function fetchRL(url, opts={}){
     await nap();
@@ -1720,10 +1144,10 @@
 
     let backoff = 2000;
     for (let i=0; i<MAX_RETRIES_429; i++){
-      termPrint(`Rate limited. Sleeping ${(backoff/1000).toFixed(1)}s...`, "muted");
+      termPrint(`Rate limited. Sleeping ${(backoff/1000).toFixed(1)}s...`);
       await sleep(backoff);
       backoff = Math.floor(backoff * 1.55);
-      await nap(60);
+      await nap(50);
       res = await fetch(url, opts);
       if (res.status !== 429) return res;
     }
@@ -1847,11 +1271,10 @@
           if (listIds.includes(c.idList) && usernameInCardName(username, c.name || "")) { found = true; break; }
         }
         results[src.key] = found;
-      } catch(e){
-        termPrint(`Trello check failed for ${src.key}: ${e.message}`, "muted");
+      } catch {
         results[src.key] = false;
       }
-      await nap(260);
+      await nap(250);
     }
     return results;
   }
@@ -1873,10 +1296,10 @@
         maintainAspectRatio: false,
         parsing: false,
         scales: {
-          x: { type: "time", time: { unit: "year" }, ticks: { color: "rgba(255,255,255,0.70)" }, grid: { color: "rgba(255,255,255,0.10)" } },
-          y: { ticks: { color: "rgba(255,255,255,0.70)" }, grid: { color: "rgba(255,255,255,0.10)" } }
+          x: { type: "time", time: { unit: "year" }, ticks: { color: "#8fb3a3" }, grid: { color: "rgba(215,251,230,0.08)" } },
+          y: { ticks: { color: "#8fb3a3" }, grid: { color: "rgba(215,251,230,0.08)" } }
         },
-        plugins: { legend: { labels: { color: "rgba(255,255,255,0.72)" } } }
+        plugins: { legend: { labels: { color: "#8fb3a3" } } }
       }
     });
   }
@@ -1889,21 +1312,21 @@
 
   function renderInventory(report){
     const frag = document.createDocumentFragment();
-    const kv = document.createElement("div");
-    kv.className = "kv";
     const total = Object.values(report).reduce((a, arr)=>a + (arr?.length||0), 0);
-    kv.innerHTML = `<span class="chip">categories: ${Object.keys(report).length}</span>
-                    <span class="chip">items: ${total}</span>`;
-    frag.appendChild(kv);
+    const head = document.createElement("div");
+    head.style.marginBottom = "10px";
+    head.innerHTML = `<span class="pillMini">items: ${total}</span>`;
+    frag.appendChild(head);
 
     Object.entries(report).forEach(([cat, items])=>{
       const h = document.createElement("div");
       h.style.marginTop = "10px";
-      h.innerHTML = `<span class="chip">${escapeHtml(cat)}</span> <span class="muted">(${items.length})</span>`;
+      h.innerHTML = `<span class="pillMini">${escapeHtml(cat)}</span> <span style="opacity:.75">(${items.length})</span>`;
       frag.appendChild(h);
 
       const ul = document.createElement("ul");
-      ul.className = "list";
+      ul.style.margin = "8px 0 0 18px";
+      ul.style.padding = "0";
       items.slice(0, 60).forEach(it=>{
         const li = document.createElement("li");
         li.textContent = `${it.name ?? "Unknown"} (AssetId: ${it.assetId ?? "?"})`;
@@ -1911,7 +1334,7 @@
       });
       if (items.length > 60){
         const li = document.createElement("li");
-        li.className = "muted";
+        li.style.opacity = ".75";
         li.textContent = `…and ${items.length - 60} more`;
         ul.appendChild(li);
       }
@@ -1922,578 +1345,501 @@
     inventoryBox.appendChild(frag);
   }
 
-  let bgcBusy = false;
-
   async function runCheck(username){
-    if (!TOOL_TOKEN) throw new Error("Not logged in.");
-    if (bgcBusy) throw new Error("A check is already running.");
-    bgcBusy = true;
+    termPrint("");
+    termPrint(`Checking user: ${username}`);
 
-    try{
-      const u = (username || "").trim();
-      if (!u) throw new Error("Username required.");
+    chartStatus.textContent = "running";
+    blStatus.textContent = "…";
+    invStatus.textContent = "…";
+    blacklistsBox.textContent = "Running…";
+    inventoryBox.textContent = "Running…";
 
-      await toolLogCommand(`check ${u}`);
+    await toolLogCommand(`check ${username}`);
 
-      termPrint("");
-      termPrint(`Checking user: ${u}`);
+    const bl = await trelloBlacklistStatus(username);
+    renderBlacklists(bl);
 
-      chartStatus.textContent = "running";
-      blStatus.textContent = "…";
-      invStatus.textContent = "…";
-      blacklistsBox.textContent = "Running…";
-      inventoryBox.textContent = "Running…";
+    await sleep(PHASE_DELAY_MS);
 
-      termPrint("Fetching Trello blacklists…");
-      const bl = await trelloBlacklistStatus(u);
-      DISPLAY_ORDER.forEach(k => termPrint(`${k} BLACKLIST - ${bl[k] ? "YES" : "NO"}`));
-      renderBlacklists(bl);
+    const userId = await robloxUserId(username);
+    termPrint(`UserId: ${userId}`);
 
-      await sleep(PHASE_DELAY_MS);
+    await sleep(PHASE_DELAY_MS);
 
-      termPrint("");
-      termPrint("Resolving Roblox user ID…");
-      const userId = await robloxUserId(u);
-      termPrint(`UserId: ${userId}`);
-
-      await sleep(PHASE_DELAY_MS);
-
-      termPrint("");
-      termPrint("Checking inventory visibility…");
-      const canView = await canViewInventory(userId);
-      if (!canView){
-        termPrint("Inventory: PRIVATE (cannot scan items).");
-        invStatus.textContent = "private";
-        inventoryBox.textContent = "Inventory is private.";
-      } else {
-        termPrint("Inventory: PUBLIC. Scanning categories (no prices)…");
-        const report = {};
-        for (const [cat, typeId] of Object.entries(INVENTORY_CATEGORIES)){
-          termPrint(`- Fetching ${cat}…`, "muted");
-          try{
-            const items = await inventoryItems(userId, typeId);
-            report[cat] = items.map(x => ({ name: x.name, assetId: x.assetId }));
-          } catch(e){
-            termPrint(`  Inventory category failed (${cat}): ${e.message}`, "muted");
-            report[cat] = [];
-          }
-          await sleep(260);
-        }
-        invStatus.textContent = "done";
-        renderInventory(report);
-      }
-
-      await sleep(PHASE_DELAY_MS);
-
-      termPrint("");
-      termPrint("Fetching badges…");
-      const badges = await robloxBadges(userId);
-      termPrint(`Badges found: ${badges.length}`);
-
-      termPrint("Fetching awarded dates…");
-      const badgeIds = badges.map(b=>b.id).filter(Boolean);
-      const dates = await robloxAwardedDates(userId, badgeIds);
-
-      const parsed = dates.map(s => new Date(s)).filter(d => !isNaN(d.getTime())).sort((a,b)=>a-b);
-      const points = parsed.map((d, idx)=>({ x: d, y: idx+1 }));
-      chart.data.datasets[0].data = points;
-      chart.update();
-
-      chartStatus.textContent = "done";
-      termPrint("Badge chart updated.");
-      termPrint("");
-    } finally {
-      bgcBusy = false;
-    }
-  }
-
-  $("btnBgcRun").addEventListener("click", async ()=>{
-    const btn = $("btnBgcRun");
-    btn.disabled = true;
-    try{
-      const u = $("bgcUser").value || "";
-      await runCheck(u);
-    } catch(e){
-      termPrint(`ERROR: ${e.message}`, "danger");
-      chartStatus.textContent = "error";
-    } finally {
-      btn.disabled = false;
-    }
-  });
-
-  $("btnBgcClear").addEventListener("click", ()=> bgcClearUI());
-
-  $("btnBgcCopy").addEventListener("click", async ()=>{
-    try{
-      const txt = (screen.textContent || "").trim();
-      if (!txt) return;
-      await navigator.clipboard.writeText(txt);
-      termPrint("Report copied to clipboard.", "muted");
-    } catch {
-      termPrint("Copy failed (browser permissions).", "muted");
-    }
-  });
-
-  /* =========================================================
-     DOCUMENTS (restricted to 3 users) — served by TOOL worker
-     ========================================================= */
-  const docsStatus = $("docsStatus");
-  const docListEl = $("docList");
-  const btnDocsRefresh = $("btnDocsRefresh");
-
-  const modalBack = $("modalBack");
-  const btnModalClose = $("btnModalClose");
-  const modalTitle = $("modalTitle");
-  const modalStatus = $("modalStatus");
-  const aclGrid = $("aclGrid");
-
-  function openModal(title){
-    modalTitle.textContent = title || "Document";
-    modalStatus.textContent = "";
-    modalStatus.className = "status";
-    aclGrid.innerHTML = "";
-    modalBack.style.display = "flex";
-  }
-  function closeModal(){
-    modalBack.style.display = "none";
-    modalTitle.textContent = "Document";
-    modalStatus.textContent = "";
-    aclGrid.innerHTML = "";
-  }
-  btnModalClose.addEventListener("click", closeModal);
-  modalBack.addEventListener("click", (e)=>{
-    if (e.target === modalBack) closeModal();
-  });
-
-  async function docsApi(path, opts={}){
-    if (!TOOL_TOKEN) throw new Error("Not logged in.");
-    const res = await fetch(`${TOOL_API_BASE}${path}`, {
-      ...opts,
-      headers: {
-        ...(opts.headers || {}),
-        ...toolAuthHeaders()
-      }
-    });
-    const data = await res.json().catch(()=> ({}));
-    if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
-    if (data && data.ok === false) throw new Error(data.error || "Request failed");
-    return data;
-  }
-
-  function renderDocList(items, targetEl, onClick){
-    targetEl.innerHTML = "";
-    if (!items.length){
-      const d = document.createElement("div");
-      d.className = "status";
-      d.textContent = "No documents found.";
-      targetEl.appendChild(d);
-      return;
-    }
-    for (const doc of items){
-      const div = document.createElement("div");
-      div.className = "docItem";
-      div.innerHTML = `
-        <div class="left">
-          <div class="name">${escapeHtml(doc.title || doc.name || "Untitled Document")}</div>
-          <div class="meta">
-            <span class="pillTiny">Clearance: ${escapeHtml(doc.clearance || "See Info")}</span>
-            <span class="pillTiny">ID: ${escapeHtml(doc.id || "—")}</span>
-          </div>
-        </div>
-        <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
-          <button class="navbtn" data-doc="${escapeHtml(doc.id || "")}">See Info</button>
-        </div>
-      `;
-      const btn = div.querySelector("button[data-doc]");
-      btn.addEventListener("click", ()=> onClick(doc));
-      targetEl.appendChild(div);
-    }
-  }
-
-  async function refreshDocs(){
-    docsStatus.textContent = "";
-    docsStatus.className = "status";
-    docListEl.innerHTML = "";
-    if (!PRIV_USERS.has(LOGGED_IN_USER || "")){
-      docsStatus.textContent = "Not authorized.";
-      docsStatus.className = "status danger";
-      return;
-    }
-    try{
-      const data = await docsApi(`/docs/list`, { method:"GET" });
-      const items = data.items || [];
-      renderDocList(items, docListEl, async (doc)=>{
-        openModal(doc.title || doc.name || "Document");
+    const canView = await canViewInventory(userId);
+    if (!canView){
+      invStatus.textContent = "private";
+      inventoryBox.textContent = "Inventory is private.";
+    } else {
+      const report = {};
+      for (const [cat, typeId] of Object.entries(INVENTORY_CATEGORIES)){
         try{
-          modalStatus.textContent = "Loading access list…";
-          modalStatus.className = "status";
-          const a = await docsApi(`/docs/acl?id=${encodeURIComponent(doc.id)}`, { method:"GET" });
-          const entries = a.entries || [];
-          modalStatus.textContent = entries.length ? "" : "No access entries.";
-          modalStatus.className = "status";
-          aclGrid.innerHTML = "";
-          for (const row of entries){
-            const div = document.createElement("div");
-            div.className = "aclRow";
-            div.innerHTML = `
-              <div class="e">${escapeHtml(row.email || "—")}</div>
-              <div class="a">${escapeHtml(row.alias ? `Alias: ${row.alias}` : "Alias: —")} · ${escapeHtml(row.role || "viewer")}</div>
-            `;
-            aclGrid.appendChild(div);
-          }
-        } catch(e){
-          modalStatus.textContent = e.message;
-          modalStatus.className = "status danger";
+          const items = await inventoryItems(userId, typeId);
+          report[cat] = items.map(x => ({ name: x.name, assetId: x.assetId }));
+        } catch {
+          report[cat] = [];
         }
-      });
-    } catch(e){
-      docsStatus.textContent = e.message;
-      docsStatus.className = "status danger";
+        await sleep(250);
+      }
+      invStatus.textContent = "done";
+      renderInventory(report);
     }
+
+    await sleep(PHASE_DELAY_MS);
+
+    const badges = await robloxBadges(userId);
+    const badgeIds = badges.map(b=>b.id).filter(Boolean);
+    const dates = await robloxAwardedDates(userId, badgeIds);
+
+    const parsed = dates.map(s => new Date(s)).filter(d => !isNaN(d.getTime())).sort((a,b)=>a-b);
+    const points = parsed.map((d, idx)=>({ x: d, y: idx+1 }));
+    chart.data.datasets[0].data = points;
+    chart.update();
+
+    chartStatus.textContent = "done";
+    termPrint("Done.");
   }
 
-  btnDocsRefresh.addEventListener("click", ()=> refreshDocs().catch(()=>{}));
-
-  /* =========================================================
-     ACCESS CONTROL (grant/revoke) — restricted to 3 users
-     ========================================================= */
-  const accessStatus = $("accessStatus");
-  const accessDocList = $("accessDocList");
-
-  async function refreshAccessDocs(){
-    accessStatus.textContent = "";
-    accessStatus.className = "status";
-    accessDocList.innerHTML = "";
-
-    if (!PRIV_USERS.has(LOGGED_IN_USER || "")){
-      accessStatus.textContent = "Not authorized.";
-      accessStatus.className = "status danger";
-      return;
-    }
-
+  $("btnRunBGC").addEventListener("click", async ()=>{
+    const u = prompt("Roblox Username:");
+    if (!u) return;
     try{
-      const data = await docsApi(`/docs/list`, { method:"GET" });
-      const items = data.items || [];
-      accessDocList.innerHTML = "";
-      if (!items.length){
-        accessDocList.innerHTML = `<div class="status">No documents found.</div>`;
-        return;
-      }
-
-      for (const doc of items){
-        const div = document.createElement("div");
-        div.className = "docItem";
-        div.innerHTML = `
-          <div class="left">
-            <div class="name">${escapeHtml(doc.title || doc.name || "Untitled Document")}</div>
-            <div class="meta">
-              <span class="pillTiny">Clearance: ${escapeHtml(doc.clearance || "See Info")}</span>
-              <span class="pillTiny">ID: ${escapeHtml(doc.id || "—")}</span>
-            </div>
-          </div>
-          <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
-            <button class="navbtn primary" data-act="grant" data-doc="${escapeHtml(doc.id || "")}">Grant</button>
-            <button class="navbtn" data-act="revoke" data-doc="${escapeHtml(doc.id || "")}">Revoke</button>
-          </div>
-        `;
-        div.querySelectorAll("button[data-act]").forEach(btn=>{
-          btn.addEventListener("click", async ()=>{
-            const act = btn.getAttribute("data-act");
-            const docId = btn.getAttribute("data-doc") || "";
-            if (!docId) return;
-
-            if (act === "grant"){
-              const email = (prompt("Grant access — Enter e-mail:") || "").trim();
-              if (!email) return;
-              const role = (prompt("Permission type (viewer/editor):", "viewer") || "").trim().toLowerCase();
-              if (role !== "viewer" && role !== "editor"){
-                alert("Invalid permission type. Use viewer or editor.");
-                return;
-              }
-              const sure = confirm(`Grant ${role.toUpperCase()} access to\n${email}\nfor this document?\n\nPress OK to confirm.`);
-              if (!sure) return;
-
-              try{
-                btn.disabled = true;
-                accessStatus.textContent = "Granting access…";
-                accessStatus.className = "status";
-                await docsApi(`/docs/grant`, {
-                  method:"POST",
-                  headers: { "Content-Type":"application/json" },
-                  body: JSON.stringify({ id: docId, email, role })
-                });
-                accessStatus.textContent = "Access granted.";
-                accessStatus.className = "status ok";
-              } catch(e){
-                accessStatus.textContent = e.message;
-                accessStatus.className = "status danger";
-              } finally{
-                btn.disabled = false;
-              }
-            }
-
-            if (act === "revoke"){
-              const email = (prompt("Revoke access — Enter e-mail:") || "").trim();
-              if (!email) return;
-              const reason = (prompt("Reason (will be logged):") || "").trim();
-              if (!reason) return;
-
-              const sure = confirm(`Revoke access for\n${email}\nfrom this document?\n\nReason:\n${reason}\n\nPress OK to confirm.`);
-              if (!sure) return;
-
-              try{
-                btn.disabled = true;
-                accessStatus.textContent = "Revoking access…";
-                accessStatus.className = "status";
-                await docsApi(`/docs/revoke`, {
-                  method:"POST",
-                  headers: { "Content-Type":"application/json" },
-                  body: JSON.stringify({ id: docId, email, reason })
-                });
-                accessStatus.textContent = "Access revoked.";
-                accessStatus.className = "status ok";
-              } catch(e){
-                accessStatus.textContent = e.message;
-                accessStatus.className = "status danger";
-              } finally{
-                btn.disabled = false;
-              }
-            }
-          });
-        });
-        accessDocList.appendChild(div);
-      }
+      await runCheck(u.trim());
     } catch(e){
-      accessStatus.textContent = e.message;
-      accessStatus.className = "status danger";
+      termPrint(`ERROR: ${e.message || "Failed"}`);
+      chartStatus.textContent = "error";
     }
-  }
-
-  $("btnAccessRefresh").addEventListener("click", ()=> refreshAccessDocs().catch(()=>{}));
-
-  $("btnRevokeAll").addEventListener("click", async ()=>{
-    if (!PRIV_USERS.has(LOGGED_IN_USER || "")) return;
-    const email = (prompt("Remove access from ALL documents — Enter e-mail:") || "").trim();
-    if (!email) return;
-    const reason = (prompt("Reason (will be logged):") || "").trim();
-    if (!reason) return;
-
-    const sure = confirm(`Remove ${email} from ALL documents?\n\nReason:\n${reason}\n\nPress OK to confirm.`);
-    if (!sure) return;
-
-    const btn = $("btnRevokeAll");
-    try{
-      btn.disabled = true;
-      accessStatus.textContent = "Removing access from all documents…";
-      accessStatus.className = "status";
-      await docsApi(`/docs/revokeAll`, {
-        method:"POST",
-        headers: { "Content-Type":"application/json" },
-        body: JSON.stringify({ email, reason })
-      });
-      accessStatus.textContent = "Removal completed.";
-      accessStatus.className = "status ok";
-    } catch(e){
-      accessStatus.textContent = e.message;
-      accessStatus.className = "status danger";
-    } finally{
-      btn.disabled = false;
+  });
+  $("btnClearBGC").addEventListener("click", ()=>{
+    screen.textContent = "";
+    blacklistsBox.textContent = "Run a check.";
+    inventoryBox.textContent = "Run a check.";
+    blStatus.textContent = "—";
+    invStatus.textContent = "—";
+    chartStatus.textContent = "idle";
+    if (chart){
+      chart.data.datasets[0].data = [];
+      chart.update();
     }
   });
 
-  /* =========================================================
-     RECRUITMENT REQUESTS (Google Sheet via worker; never public)
-     ========================================================= */
   const recruitStatus = $("recruitStatus");
   const recruitTbody = $("recruitTbody");
 
-  function canValidate(){
-    return PRIV_USERS.has(LOGGED_IN_USER || "");
+  function flagSvg(){
+    return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 1 21h22L12 2zm0 6c.6 0 1 .4 1 1v5a1 1 0 1 1-2 0V9c0-.6.4-1 1-1zm0 10a1.25 1.25 0 1 1 0 2.5A1.25 1.25 0 0 1 12 18z"/></svg>`;
   }
 
-  async function refreshRecruit(){
+  async function loadRecruit(){
     recruitStatus.textContent = "";
     recruitStatus.className = "status";
     recruitTbody.innerHTML = "";
 
-    if (!TOOL_TOKEN){
-      recruitStatus.textContent = "Not logged in.";
-      recruitStatus.className = "status danger";
-      return;
-    }
-
     try{
-      recruitStatus.textContent = "Loading requests…";
-      recruitStatus.className = "status";
-
-      const data = await docsApi(`/recruit/list`, { method:"GET" });
-      const items = data.items || []; // expected: [{rowIndex, usernames, entrance, status, completedBy, date, validation, validatedBy}]
-      recruitStatus.textContent = "";
-      recruitTbody.innerHTML = "";
-
-      if (!items.length){
-        recruitTbody.innerHTML = `<tr><td colspan="7">No requests found.</td></tr>`;
-        return;
-      }
+      const data = await toolApi(`/recruit/list`, { headers: toolAuthHeaders() });
+      const items = data.items || [];
 
       for (const it of items){
         const tr = document.createElement("tr");
 
-        const sel = document.createElement("select");
-        sel.className = "portal";
-        sel.style.minWidth = "180px";
-        ["PENDING","IN PROGRESS","COMPLETED","ON HOLD","REJECTED"].forEach(v=>{
-          const o = document.createElement("option");
-          o.value = v;
-          o.textContent = v;
-          if ((it.status || "").toUpperCase() === v) o.selected = true;
-          sel.appendChild(o);
-        });
+        const flagged = (it.flaggedReason || "").trim();
+        const userHtml = `${escapeHtml(it.usernames || "")}` + (flagged ? ` <span class="flagIcon" data-tip="${escapeHtml("RED FLAGGED: " + flagged)}">${flagSvg()}</span>` : "");
 
-        const btnSave = document.createElement("button");
-        btnSave.className = "navbtn primary";
-        btnSave.type = "button";
-        btnSave.textContent = "Update";
+        const statusVal = (it.status || "PENDING").toUpperCase();
+        const validationVal = (it.validation || "PENDING").toUpperCase();
+        const validationPill = (validationVal === "APPROVED")
+          ? `<span class="pillMini ok">APPROVED</span>`
+          : (validationVal === "REJECTED")
+            ? `<span class="pillMini warn">REJECTED</span>`
+            : `<span class="pillMini">PENDING</span>`;
 
-        btnSave.addEventListener("click", async ()=>{
-          try{
-            btnSave.disabled = true;
-            sel.disabled = true;
-            recruitStatus.textContent = "Updating sheet…";
-            recruitStatus.className = "status";
-
-            await docsApi(`/recruit/update`, {
-              method:"POST",
-              headers: { "Content-Type":"application/json" },
-              body: JSON.stringify({
-                rowIndex: it.rowIndex,
-                status: sel.value
-              })
-            });
-
-            recruitStatus.textContent = "Updated.";
-            recruitStatus.className = "status ok";
-            await refreshRecruit();
-          } catch(e){
-            recruitStatus.textContent = e.message;
-            recruitStatus.className = "status danger";
-          } finally{
-            btnSave.disabled = false;
-            sel.disabled = false;
-          }
-        });
-
-        const valBox = document.createElement("div");
-        valBox.style.display = "flex";
-        valBox.style.gap = "10px";
-        valBox.style.flexWrap = "wrap";
-
-        const canVal = canValidate();
-        const btnYes = document.createElement("button");
-        btnYes.type = "button";
-        btnYes.className = "navbtn okMark";
-        btnYes.textContent = "✓";
-
-        const btnNo = document.createElement("button");
-        btnNo.type = "button";
-        btnNo.className = "navbtn noMark";
-        btnNo.textContent = "✗";
-
-        const valText = document.createElement("div");
-        valText.className = "small";
-        valText.style.marginTop = "6px";
-        valText.textContent = (it.validation || it.validatedBy)
-          ? `Validation: ${it.validation || "—"} · By: ${it.validatedBy || "—"}`
-          : "Not validated";
-
-        const doValidate = async (approved)=>{
-          if (!canVal) return;
-          const sure = confirm(`Validate this check as ${approved ? "APPROVED" : "REJECTED"}?\n\nRow: ${it.rowIndex}`);
-          if (!sure) return;
-
-          try{
-            btnYes.disabled = true;
-            btnNo.disabled = true;
-            recruitStatus.textContent = "Updating validation…";
-            recruitStatus.className = "status";
-
-            await docsApi(`/recruit/validate`, {
-              method:"POST",
-              headers: { "Content-Type":"application/json" },
-              body: JSON.stringify({
-                rowIndex: it.rowIndex,
-                approved: !!approved
-              })
-            });
-
-            recruitStatus.textContent = "Validation updated.";
-            recruitStatus.className = "status ok";
-            await refreshRecruit();
-          } catch(e){
-            recruitStatus.textContent = e.message;
-            recruitStatus.className = "status danger";
-          } finally{
-            btnYes.disabled = false;
-            btnNo.disabled = false;
-          }
-        };
-
-        btnYes.disabled = !canVal;
-        btnNo.disabled = !canVal;
-        btnYes.addEventListener("click", ()=> doValidate(true));
-        btnNo.addEventListener("click", ()=> doValidate(false));
-
-        valBox.appendChild(btnYes);
-        valBox.appendChild(btnNo);
-        valBox.appendChild(valText);
-
-        tr.innerHTML = `
-          <td>${escapeHtml(String(it.rowIndex ?? "—"))}</td>
-          <td>
-            <div style="font-weight:850; color:rgba(255,255,255,0.92)">${escapeHtml(it.usernames || "—")}</div>
-            <div class="small">From sheet range C:D</div>
-          </td>
-          <td>
-            <div>${escapeHtml(it.entrance || "—")}</div>
-            <div class="small">From sheet range E</div>
-          </td>
+        const statusSelect = `
+          <select class="portal" data-row="${it.rowIndex}" style="max-width:180px;">
+            ${["PENDING","IN_PROGRESS","COMPLETED","HOLD"].map(x => `<option value="${x}" ${x===statusVal?"selected":""}>${x}</option>`).join("")}
+          </select>
         `;
 
-        const tdStatus = document.createElement("td");
-        tdStatus.appendChild(sel);
-        tdStatus.appendChild(document.createElement("div")).style.height="8px";
-        tdStatus.appendChild(btnSave);
+        const updateBtn = `<button class="miniBtn" data-upd="${it.rowIndex}">Update</button>`;
 
-        const tdDoneBy = document.createElement("td");
-        tdDoneBy.innerHTML = `<div>${escapeHtml(it.completedBy || "—")}</div><div class="small">Writes to L</div>`;
+        const validBtns = (IS_PRIV)
+          ? `<div style="display:flex; gap:8px; justify-content:flex-start;">
+                <button class="miniBtn good" data-ok="${it.rowIndex}">✓</button>
+                <button class="miniBtn danger" data-no="${it.rowIndex}">✕</button>
+             </div>`
+          : ``;
 
-        const tdDate = document.createElement("td");
-        tdDate.innerHTML = `<div>${escapeHtml(it.date || "—")}</div><div class="small">Writes to M</div>`;
-
-        const tdVal = document.createElement("td");
-        tdVal.appendChild(valBox);
-
-        tr.appendChild(tdStatus);
-        tr.appendChild(tdDoneBy);
-        tr.appendChild(tdDate);
-        tr.appendChild(tdVal);
-
+        tr.innerHTML = `
+          <td>${userHtml}</td>
+          <td>${escapeHtml(it.entrance || "")}</td>
+          <td>${statusSelect}</td>
+          <td>${updateBtn}</td>
+          <td>${escapeHtml(it.completedBy || "")}</td>
+          <td>${escapeHtml(it.date ? fmtDate(it.date) : "")}</td>
+          <td>
+            <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+              ${validationPill}
+              ${validBtns}
+              ${it.validatedBy ? `<span style="opacity:.85; font-size:12px;">${escapeHtml(it.validatedBy)}</span>` : ``}
+            </div>
+          </td>
+        `;
         recruitTbody.appendChild(tr);
       }
+
+      recruitTbody.querySelectorAll("button[data-upd]").forEach(btn=>{
+        btn.addEventListener("click", async ()=>{
+          const row = Number(btn.getAttribute("data-upd"));
+          const sel = recruitTbody.querySelector(`select[data-row="${row}"]`);
+          const status = sel ? sel.value : "PENDING";
+          try{
+            btn.disabled = true;
+            await toolApi(`/recruit/update`, {
+              method:"POST",
+              headers: toolAuthHeaders({ "Content-Type":"application/json" }),
+              body: JSON.stringify({ rowIndex: row, status })
+            });
+            await loadRecruit();
+          } catch(e){
+            recruitStatus.textContent = e.message || "Failed";
+            recruitStatus.className = "status danger";
+          } finally{
+            btn.disabled = false;
+          }
+        });
+      });
+
+      recruitTbody.querySelectorAll("button[data-ok]").forEach(btn=>{
+        btn.addEventListener("click", async ()=>{
+          const row = Number(btn.getAttribute("data-ok"));
+          try{
+            btn.disabled = true;
+            await toolApi(`/recruit/validate`, {
+              method:"POST",
+              headers: toolAuthHeaders({ "Content-Type":"application/json" }),
+              body: JSON.stringify({ rowIndex: row, approved: true })
+            });
+            await loadRecruit();
+          } catch(e){
+            recruitStatus.textContent = e.message || "Failed";
+            recruitStatus.className = "status danger";
+          } finally{ btn.disabled = false; }
+        });
+      });
+
+      recruitTbody.querySelectorAll("button[data-no]").forEach(btn=>{
+        btn.addEventListener("click", async ()=>{
+          const row = Number(btn.getAttribute("data-no"));
+          try{
+            btn.disabled = true;
+            await toolApi(`/recruit/validate`, {
+              method:"POST",
+              headers: toolAuthHeaders({ "Content-Type":"application/json" }),
+              body: JSON.stringify({ rowIndex: row, approved: false })
+            });
+            await loadRecruit();
+          } catch(e){
+            recruitStatus.textContent = e.message || "Failed";
+            recruitStatus.className = "status danger";
+          } finally{ btn.disabled = false; }
+        });
+      });
+
     } catch(e){
-      recruitStatus.textContent = e.message;
+      recruitStatus.textContent = e.message || "Failed";
       recruitStatus.className = "status danger";
     }
   }
 
-  $("btnRecruitRefresh").addEventListener("click", ()=> refreshRecruit().catch(()=>{}));
+  $("btnRecruitRefresh").addEventListener("click", ()=> loadRecruit());
 
-  /* =========================================================
-     BOOT
-     ========================================================= */
+  const docsStatus = $("docsStatus");
+  const docsList = $("docsList");
+  const docAclCard = $("docAclCard");
+  const docAclTitle = $("docAclTitle");
+  const docAclStatus = $("docAclStatus");
+  const docAclTbody = $("docAclTbody");
+
+  async function loadDocs(){
+    docsStatus.textContent = "";
+    docsStatus.className = "status";
+    docsList.innerHTML = "";
+    docAclCard.style.display = "none";
+
+    try{
+      const data = await toolApi(`/docs/list`, { headers: toolAuthHeaders() });
+      const items = data.items || [];
+
+      for (const d of items){
+        const box = document.createElement("div");
+        box.className = "newsItem";
+        box.innerHTML = `
+          <div class="h">
+            <div class="t">${escapeHtml(d.title || "Document")}</div>
+            <div class="d">${escapeHtml(d.clearance || "")}</div>
+          </div>
+          <div style="margin-top:10px; display:flex; justify-content:flex-end;">
+            <button class="navbtn" data-doc="${escapeHtml(d.id)}">See Access</button>
+          </div>
+        `;
+        docsList.appendChild(box);
+      }
+
+      docsList.querySelectorAll("button[data-doc]").forEach(btn=>{
+        btn.addEventListener("click", async ()=>{
+          const id = btn.getAttribute("data-doc");
+          if (!id) return;
+          try{
+            btn.disabled = true;
+            docAclCard.style.display = "block";
+            docAclStatus.textContent = "";
+            docAclStatus.className = "status";
+            docAclTbody.innerHTML = "";
+
+            const acl = await toolApi(`/docs/acl?id=${encodeURIComponent(id)}`, { headers: toolAuthHeaders() });
+            docAclTitle.textContent = acl.title || "Access List";
+
+            const entries = acl.entries || [];
+            for (const p of entries){
+              const tr = document.createElement("tr");
+              tr.innerHTML = `<td>${escapeHtml(p.email || "")}</td><td>${escapeHtml((p.role||"").toUpperCase())}</td>`;
+              docAclTbody.appendChild(tr);
+            }
+          } catch(e){
+            docAclStatus.textContent = e.message || "Failed";
+            docAclStatus.className = "status danger";
+          } finally{
+            btn.disabled = false;
+          }
+        });
+      });
+
+    } catch(e){
+      docsStatus.textContent = e.message || "Failed";
+      docsStatus.className = "status danger";
+    }
+  }
+
+  $("btnDocsRefresh").addEventListener("click", ()=> loadDocs());
+
+  const accessStatus = $("accessStatus");
+  const accessDocsStatus = $("accessDocsStatus");
+  const accessDocsList = $("accessDocsList");
+  let accessDocsCache = [];
+
+  async function loadAccessDocs(){
+    accessStatus.textContent = "";
+    accessStatus.className = "status";
+    accessDocsStatus.textContent = "";
+    accessDocsStatus.className = "status";
+    accessDocsList.innerHTML = "";
+    accessDocsCache = [];
+
+    try{
+      const data = await toolApi(`/docs/list`, { headers: toolAuthHeaders() });
+      accessDocsCache = data.items || [];
+      for (const d of accessDocsCache){
+        const box = document.createElement("div");
+        box.className = "newsItem";
+        box.innerHTML = `
+          <div class="h">
+            <div class="t">${escapeHtml(d.title || "Document")}</div>
+            <div class="d">${escapeHtml(d.clearance || "")}</div>
+          </div>
+          <div style="margin-top:10px; display:flex; justify-content:flex-end;">
+            <span class="pillMini" data-docsel="${escapeHtml(d.id)}">ID: ${escapeHtml(d.id)}</span>
+          </div>
+        `;
+        accessDocsList.appendChild(box);
+      }
+      accessDocsStatus.textContent = "Select a document ID when prompted.";
+    } catch(e){
+      accessDocsStatus.textContent = e.message || "Failed";
+      accessDocsStatus.className = "status danger";
+    }
+  }
+
+  async function promptDocId(){
+    const id = prompt("Document ID:");
+    if (!id) return null;
+    const ok = accessDocsCache.some(x => String(x.id) === String(id).trim());
+    if (!ok){
+      alert("Invalid document ID.");
+      return null;
+    }
+    return String(id).trim();
+  }
+
+  $("btnGrantOpen").addEventListener("click", async ()=>{
+    accessStatus.textContent = "";
+    accessStatus.className = "status";
+    const id = await promptDocId();
+    if (!id) return;
+
+    const email = prompt("Email:");
+    if (!email) return;
+
+    const role = prompt("Permissions (viewer/editor):");
+    if (!role) return;
+
+    const sure = confirm(`Grant ${role} to ${email} on document ${id}?`);
+    if (!sure) return;
+
+    try{
+      await toolApi(`/docs/grant`, {
+        method:"POST",
+        headers: toolAuthHeaders({ "Content-Type":"application/json" }),
+        body: JSON.stringify({ id, email, role: role.toLowerCase()==="editor" ? "writer" : "reader" })
+      });
+      accessStatus.textContent = "Done.";
+      accessStatus.className = "status ok";
+    } catch(e){
+      accessStatus.textContent = e.message || "Failed";
+      accessStatus.className = "status danger";
+    }
+  });
+
+  $("btnRevokeOpen").addEventListener("click", async ()=>{
+    accessStatus.textContent = "";
+    accessStatus.className = "status";
+    const id = await promptDocId();
+    if (!id) return;
+
+    const email = prompt("Email:");
+    if (!email) return;
+
+    const reason = prompt("Reason:");
+    if (!reason) return;
+
+    const sure = confirm(`Revoke access for ${email} on document ${id}?`);
+    if (!sure) return;
+
+    try{
+      await toolApi(`/docs/revoke`, {
+        method:"POST",
+        headers: toolAuthHeaders({ "Content-Type":"application/json" }),
+        body: JSON.stringify({ id, email, reason })
+      });
+      accessStatus.textContent = "Done.";
+      accessStatus.className = "status ok";
+    } catch(e){
+      accessStatus.textContent = e.message || "Failed";
+      accessStatus.className = "status danger";
+    }
+  });
+
+  $("btnRevokeAllOpen").addEventListener("click", async ()=>{
+    accessStatus.textContent = "";
+    accessStatus.className = "status";
+    const email = prompt("Email:");
+    if (!email) return;
+
+    const reason = prompt("Reason:");
+    if (!reason) return;
+
+    const sure = confirm(`Revoke ALL document access for ${email}?`);
+    if (!sure) return;
+
+    try{
+      await toolApi(`/docs/revokeAll`, {
+        method:"POST",
+        headers: toolAuthHeaders({ "Content-Type":"application/json" }),
+        body: JSON.stringify({ email, reason })
+      });
+      accessStatus.textContent = "Done.";
+      accessStatus.className = "status ok";
+    } catch(e){
+      accessStatus.textContent = e.message || "Failed";
+      accessStatus.className = "status danger";
+    }
+  });
+
+  const blStatusMsg = $("blStatusMsg");
+  const blTbody = $("blTbody");
+
+  async function loadBlacklist(){
+    blStatusMsg.textContent = "";
+    blStatusMsg.className = "status";
+    blTbody.innerHTML = "";
+
+    try{
+      const data = await toolApi(`/blacklist/list`, { headers: toolAuthHeaders() });
+      const items = data.items || [];
+
+      for (const it of items){
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${escapeHtml(it.username || "")}</td>
+          <td>${escapeHtml(it.reason || "")}</td>
+          <td style="text-align:right;">
+            <button class="miniBtn danger" data-del="${escapeHtml(it.username || "")}">Remove</button>
+          </td>
+        `;
+        blTbody.appendChild(tr);
+      }
+
+      blTbody.querySelectorAll("button[data-del]").forEach(btn=>{
+        btn.addEventListener("click", async ()=>{
+          const u = btn.getAttribute("data-del");
+          if (!u) return;
+          const sure = confirm(`Remove ${u} from blacklist?`);
+          if (!sure) return;
+          try{
+            btn.disabled = true;
+            await toolApi(`/blacklist/remove`, {
+              method:"POST",
+              headers: toolAuthHeaders({ "Content-Type":"application/json" }),
+              body: JSON.stringify({ username: u })
+            });
+            await loadBlacklist();
+            if (!recruitView.hidden) await loadRecruit();
+          } catch(e){
+            blStatusMsg.textContent = e.message || "Failed";
+            blStatusMsg.className = "status danger";
+          } finally{
+            btn.disabled = false;
+          }
+        });
+      });
+
+    } catch(e){
+      blStatusMsg.textContent = e.message || "Failed";
+      blStatusMsg.className = "status danger";
+    }
+  }
+
+  $("btnBlRefresh").addEventListener("click", ()=> loadBlacklist());
+  $("btnBlAdd").addEventListener("click", async ()=>{
+    blStatusMsg.textContent = "";
+    blStatusMsg.className = "status";
+    const u = ($("blUser").value || "").trim();
+    const r = ($("blReason").value || "").trim();
+    if (!u || !r){
+      blStatusMsg.textContent = "Username and reason required.";
+      blStatusMsg.className = "status danger";
+      return;
+    }
+    try{
+      await toolApi(`/blacklist/add`, {
+        method:"POST",
+        headers: toolAuthHeaders({ "Content-Type":"application/json" }),
+        body: JSON.stringify({ username: u, reason: r })
+      });
+      $("blUser").value = "";
+      $("blReason").value = "";
+      await loadBlacklist();
+      if (!recruitView.hidden) await loadRecruit();
+      blStatusMsg.textContent = "Added.";
+      blStatusMsg.className = "status ok";
+    } catch(e){
+      blStatusMsg.textContent = e.message || "Failed";
+      blStatusMsg.className = "status danger";
+    }
+  });
+
   updateNav();
   setView("home");
-  refreshNewsEverywhere().catch(()=>{});
+  refreshNews().catch(()=>{});
 })();
 </script>
 </body>
