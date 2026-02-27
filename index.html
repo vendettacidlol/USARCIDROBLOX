@@ -224,7 +224,7 @@ nav {
 }
 .org-connector::after {
     content: '';
-    position: absolute;
+    position: fixed;
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
@@ -535,6 +535,38 @@ tbody tr:hover td{ background: rgba(255,255,255,0.04); }
 .flagIcon svg{ width: 12px; height: 12px; fill: rgba(255,140,140,0.95); }
 .flagIcon[data-tip]:hover::after{ content: attr(data-tip); position: absolute; left: 50%; transform: translateX(-50%); top: -10px; translate: 0 -100%; white-space: nowrap; background: rgba(0,0,0,0.85); color: rgba(255,255,255,0.95); border: 1px solid rgba(255,255,255,0.16); padding: 6px 10px; border-radius: 10px; box-shadow: 0 18px 40px rgba(0,0,0,0.55); font-size: 12px; z-index: 50; }
 @media (max-width: 980px){ .terminal{ height:auto; min-height: 700px; } .content{grid-template-columns:1fr;} .right{max-height:none;} .panel .bd{max-height:none;} thead{ display:none; } table, tbody, tr, td{ display:block; width:100%; } tbody td{ border-bottom: none; padding: 10px 12px; } tbody tr{ border-bottom: 1px solid rgba(255,255,255,0.08); } }
+
+/* Settings submenu */
+.settings-menu{
+  position: absolute;
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 180px;
+  padding: 10px;
+  margin-top: 8px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+  z-index: 50;
+}
+.settings-menu.open{ display:flex; }
+.settings-menu .settings-item{
+  text-align: left;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.05);
+  color: var(--text);
+  cursor: pointer;
+  font-weight: 600;
+}
+.settings-menu .settings-item:hover{
+  background: rgba(255,255,255,0.09);
+}
+
 </style>
 </head>
 <body>
@@ -560,6 +592,10 @@ tbody tr:hover td{ background: rgba(255,255,255,0.04); }
 <button class="navbtn" id="navLogin">Login</button>
 <!-- SETTINGS BUTTON ADDED HERE -->
 <button class="navbtn settings-btn" id="navSettings">Settings</button>
+<div class="settings-menu" id="settingsMenu" data-overlay>
+  <button class="settings-item" id="settingsMenuPage" type="button">Page Settings</button>
+  <button class="settings-item" id="settingsMenuNews" type="button" hidden>Admin News</button>
+</div>
 <button class="navbtn primary" id="navBGC" hidden>Background Checks</button>
 <button class="navbtn primary" id="navRecruit" hidden>Recruitment</button>
 <button class="navbtn primary" id="navDocs" hidden>Documents</button>
@@ -773,7 +809,49 @@ tbody tr:hover td{ background: rgba(255,255,255,0.04); }
 <div id="adminView" hidden>
 <div class="status">Admin tools are unchanged on your setup.</div>
 </div>
-<div id="bgcView" hidden style="margin-top:0;">
+
+<div id="adminNewsView" hidden>
+  <div class="card">
+    <div class="card-h">
+      <div class="card-title">Admin News</div>
+      <div class="card-sub">Create and remove news posts shown on the Home page.</div>
+    </div>
+
+    <form id="newsCreateForm" class="form" style="margin-top:12px;">
+      <div class="grid2">
+        <div class="form-group">
+          <label>Title</label>
+          <input type="text" id="newsTitle" maxlength="120" placeholder="Headline" required />
+        </div>
+        <div class="form-group">
+          <label>Visibility</label>
+          <input type="text" value="Public (Home page)" disabled />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Text</label>
+        <textarea id="newsText" rows="5" placeholder="Write the update..." required></textarea>
+      </div>
+
+      <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+        <button class="navbtn primary" type="submit" id="newsPublishBtn">Publish</button>
+        <button class="navbtn" type="button" id="newsRefreshBtn">Refresh</button>
+        <div class="status" id="newsAdminStatus"></div>
+      </div>
+    </form>
+  </div>
+
+  <div class="card" style="margin-top:14px;">
+    <div class="card-h">
+      <div class="card-title">Existing posts</div>
+      <div class="card-sub">Newest first.</div>
+    </div>
+    <div class="news" id="newsAdminList" style="margin-top:12px;"></div>
+  </div>
+</div>
+
+<div id="bgcView hidden style="margin-top:0;">
 <div class="cmdbar">
 <button class="navbtn primary" id="btnRunBGC" type="button">Run Background Check</button>
 <button class="navbtn" id="btnClearBGC" type="button">Clear</button>
@@ -1062,6 +1140,105 @@ async function refreshNews(){
 const items = await fetchNewsPublic();
 renderNewsHome(items);
 }
+
+async function refreshAdminNews(){
+  if (!NEWS_TOKEN) {
+    $("newsAdminStatus").textContent = "News access not available.";
+    $("newsAdminStatus").className = "status danger";
+    return;
+  }
+  $("newsAdminStatus").textContent = "Loading...";
+  $("newsAdminStatus").className = "status";
+  try{
+    const data = await fetchNewsPublic();
+    renderNewsAdminList(data.items || []);
+    $("newsAdminStatus").textContent = "";
+  }catch(err){
+    $("newsAdminStatus").textContent = err?.message || "Failed to load news";
+    $("newsAdminStatus").className = "status danger";
+  }
+}
+
+function renderNewsAdminList(items){
+  const list = $("newsAdminList");
+  if (!list) return;
+  if (!items || !items.length){
+    list.innerHTML = '<div class="status">No posts yet.</div>';
+    return;
+  }
+  list.innerHTML = items.map(it => `
+    <div class="newsItem">
+      <div class="h">
+        <div><strong>${escapeHtml(it.title)}</strong></div>
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+          <span class="muted">${fmtDate(it.createdAt)}</span>
+          <button class="navbtn" type="button" data-delnews="${escapeHtml(it.id)}">Delete</button>
+        </div>
+      </div>
+      <div class="muted" style="margin-top:6px; white-space:pre-wrap;">${escapeHtml(it.text)}</div>
+      <div class="muted" style="margin-top:8px;">By ${escapeHtml(it.createdBy || "")}</div>
+    </div>
+  `).join("");
+  // Attach delete handlers
+  list.querySelectorAll("[data-delnews]").forEach(btn=>{
+    btn.addEventListener("click", async ()=>{
+      const id = btn.getAttribute("data-delnews");
+      if (!id) return;
+      if (!confirm("Delete this news post?")) return;
+      try{
+        btn.disabled = true;
+        await newsApi(`/news/${encodeURIComponent(id)}`, { method:"DELETE", headers: newsAuthHeaders() });
+        await refreshAdminNews();
+        await refreshNews().catch(()=>{});
+      }catch(err){
+        $("newsAdminStatus").textContent = err?.message || "Failed to delete";
+        $("newsAdminStatus").className = "status danger";
+      }finally{
+        btn.disabled = false;
+      }
+    });
+  });
+}
+
+// Admin news form handlers
+try{
+  const f = $("newsCreateForm");
+  if (f){
+    f.addEventListener("submit", async (e)=>{
+      e.preventDefault();
+      const title = ($("newsTitle").value || "").trim();
+      const textv = ($("newsText").value || "").trim();
+      if (!title || !textv) return;
+      const st = $("newsAdminStatus");
+      st.textContent = "Publishing...";
+      st.className = "status";
+      $("newsPublishBtn").disabled = true;
+      try{
+        await newsApi("/news", {
+          method:"POST",
+          headers: { ...newsAuthHeaders(), "Content-Type":"application/json" },
+          body: JSON.stringify({ title, text: textv })
+        });
+        $("newsTitle").value = "";
+        $("newsText").value = "";
+        st.textContent = "Published.";
+        st.className = "status ok";
+        await refreshAdminNews();
+        await refreshNews().catch(()=>{});
+      }catch(err){
+        st.textContent = err?.message || "Publish failed";
+        st.className = "status danger";
+      }finally{
+        $("newsPublishBtn").disabled = false;
+        setTimeout(()=>{ if (st.classList.contains("ok")) st.textContent = ""; }, 1500);
+      }
+    });
+
+    $("newsRefreshBtn").addEventListener("click", ()=>{
+      refreshAdminNews().catch(()=>{});
+    });
+  }
+}catch(e){}
 const contentTitle = $("contentTitle");
 const contentTag = $("contentTag");
 const homeView = $("homeView");
@@ -1069,6 +1246,7 @@ const aboutView = $("aboutView");
 const contactView = $("contactView");
 const loginView = $("loginView");
 const adminView = $("adminView");
+const adminNewsView = $("adminNewsView");
 const bgcView = $("bgcView");
 const recruitView = $("recruitView");
 const docsView = $("docsView");
@@ -1086,6 +1264,9 @@ const navBlacklist = $("navBlacklist");
 const navAdmin = $("navAdmin");
 const navLogout = $("navLogout");
 const navSettings = $("navSettings"); // New Nav Button
+const settingsMenu = $("settingsMenu");
+const settingsMenuPage = $("settingsMenuPage");
+const settingsMenuNews = $("settingsMenuNews");
 function setActiveNav(btn){
 [navHome, navAbout, navContact, navLogin, navBGC, navRecruit, navDocs, navAccess, navBlacklist, navAdmin].forEach(b=>{
 if (!b) return;
@@ -1100,7 +1281,7 @@ function closeTransientUI(){
   }catch(e){}
   // Collapse any programmatic "open" UI states, if present
   try{
-    document.querySelectorAll('[data-overlay].open,.overlay.open,.modal.open,.popover.open').forEach(el=>el.classList.remove("open"));
+    document.querySelectorAll('[data-overlay].open,.overlay.open,.modal.open,.modal-overlay.open,.popover.open').forEach(el=>el.classList.remove("open"));
   }catch(e){}
   // Blur focused inputs to prevent weird scrolling when switching views
   try{ if (document.activeElement && typeof document.activeElement.blur === "function") document.activeElement.blur(); }catch(e){}
@@ -1113,6 +1294,7 @@ aboutView.hidden = true;
 contactView.hidden = true;
 loginView.hidden = true;
 adminView.hidden = true;
+adminNewsView.hidden = true;
 bgcView.hidden = true;
 recruitView.hidden = true;
 docsView.hidden = true;
@@ -1154,6 +1336,20 @@ contentTag.textContent = "Website Editor";
 adminView.hidden = false;
 setActiveNav(navAdmin);
 return;
+}
+
+if (which === "adminnews"){
+  // Admin-only view; fallback to Home if not allowed
+  if (!TOOL_TOKEN || (LOGGED_IN_USER||"").toLowerCase() !== (ADMIN_USERNAME||"").toLowerCase()){
+    setView("home");
+    return;
+  }
+  contentTitle.textContent = "Admin News";
+  contentTag.textContent = "Management";
+  adminNewsView.hidden = false;
+  setActiveNav(null);
+  refreshAdminNews().catch(()=>{});
+  return;
 }
 if (which === "bgc"){
 contentTitle.textContent = "Background Checks";
@@ -1206,7 +1402,8 @@ navDocs.hidden = !(loggedIn && IS_PRIV);
 navAccess.hidden = !(loggedIn && IS_PRIV);
 navBlacklist.hidden = !(loggedIn && IS_PRIV);
 navLogout.hidden = !loggedIn;
-navAdmin.hidden = !(loggedIn && LOGGED_IN_USER === ADMIN_USERNAME);
+settingsMenuNews.hidden = !(loggedIn && (LOGGED_IN_USER||"").toLowerCase() === (ADMIN_USERNAME||"").toLowerCase());
+navAdmin.hidden = !(loggedIn && (LOGGED_IN_USER||"").toLowerCase() === (ADMIN_USERNAME||"").toLowerCase());
 }
 navHome.addEventListener("click", ()=> setView("home"));
 navAbout.addEventListener("click", ()=> setView("about"));
@@ -1234,7 +1431,7 @@ const settingsModal = $("settingsModal");
 const closeSettings = $("closeSettings");
 const saveSettingsBtn = $("saveSettingsBtn");
 
-navSettings.addEventListener("click", () => {
+function openPageSettingsModal(){
     // Load current values into inputs
     $("setAboutTitle").value = $("aboutMainTitle").textContent;
     $("setBox1Title").value = $("aboutBox1Title").textContent;
@@ -1257,7 +1454,43 @@ navSettings.addEventListener("click", () => {
     $("setContactUser2").value = $("contactUser2").textContent;
 
     settingsModal.classList.add("open");
+}
+function closeSettingsMenu(){
+  if (settingsMenu) settingsMenu.classList.remove("open");
+}
+function toggleSettingsMenu(){
+  if (!settingsMenu) return;
+  // Position under the Settings button
+  const r = navSettings.getBoundingClientRect();
+  // Ensure nav is the positioning context
+  settingsMenu.style.left = Math.max(12, r.left) + "px";
+  settingsMenu.style.top = (r.bottom + 6) + "px";
+  settingsMenu.classList.toggle("open");
+}
+
+navSettings.addEventListener("click", (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  toggleSettingsMenu();
 });
+
+settingsMenuPage.addEventListener("click", (e) => {
+  e.preventDefault();
+  closeSettingsMenu();
+  openPageSettingsModal();
+});
+
+settingsMenuNews.addEventListener("click", (e) => {
+  e.preventDefault();
+  closeSettingsMenu();
+  setView("adminnews");
+});
+
+// Click outside closes the submenu
+document.addEventListener("click", () => {
+  closeSettingsMenu();
+});
+
 
 closeSettings.addEventListener("click", () => {
     settingsModal.classList.remove("open");
