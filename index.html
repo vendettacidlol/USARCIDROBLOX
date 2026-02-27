@@ -73,12 +73,13 @@
       gap: 14px;
     }
 
-    /* ✅ FIX: bring title closer to logo, remove forced centering look */
+    /* ✅ FIX: keep logo + text together on the left */
     .brand{
       display:flex;
       align-items:center;
       gap: 10px;
       min-width: unset;
+      flex: 0 0 auto;
     }
     .brand-mark{
       display:flex;
@@ -154,19 +155,6 @@
       box-sizing: border-box;
     }
 
-    .grid{
-      display:grid;
-      grid-template-columns: 420px 1fr;
-      gap: 14px;
-      align-items:start;
-    }
-    /* single-column layout for normal views */
-    .grid.single{ grid-template-columns: 1fr; }
-    .grid.single #homeCard{ display:none; }
-
-    .grid.toolmode{ grid-template-columns: 1fr; }
-    .grid.toolmode #homeCard{ display:none; }
-
     .card{
       background: rgba(255,255,255,0.06);
       border: 1px solid rgba(255,255,255,0.12);
@@ -217,6 +205,7 @@
       box-sizing: border-box;
     }
     textarea.portal{ min-height: 110px; resize: vertical; }
+
     .row{
       display:flex;
       gap: 10px;
@@ -332,7 +321,6 @@
     }
     .rtbtn:hover{ background: rgba(255,255,255,0.09); border-color: rgba(199,164,74,0.32); }
     .rtbtn:active{ transform: translateY(1px); }
-    .rtsep{ width: 1px; height: 26px; background: rgba(255,255,255,0.10); }
     .rtebody{
       min-height: 170px;
       padding: 10px 12px;
@@ -362,7 +350,6 @@
     }
 
     /* ========= Vendetta-only Special Effects ========= */
-    /* Uses CSS variables so colors can be changed live */
     .fx-glow{
       color: var(--fx-color, #ffffff);
       text-shadow:
@@ -384,13 +371,10 @@
     @keyframes fxFlicker{
       0%, 100% { opacity: 1; filter: brightness(1.05); }
       6% { opacity: .85; }
-      8% { opacity: .95; }
       10% { opacity: .75; }
       12% { opacity: 1; }
-      33% { opacity: .92; }
       35% { opacity: .55; }
       37% { opacity: 1; }
-      65% { opacity: .88; }
       66% { opacity: .62; }
       67% { opacity: 1; }
     }
@@ -417,7 +401,7 @@
       50% { transform: translateY(-2px); }
     }
 
-    /* terminal styles (unchanged) */
+    /* terminal styles (kept) */
     .wrap{min-height:0;display:flex;align-items:flex-start;justify-content:center;padding:0;box-sizing:border-box;}
     .terminal{
       width:100%;
@@ -533,13 +517,10 @@
     .danger{color:var(--danger)}
 
     @media (max-width: 980px){
-      .grid{ grid-template-columns: 1fr; }
-      .grid.single{ grid-template-columns: 1fr; }
       .terminal{ height:auto; min-height: 700px; }
       .content{grid-template-columns:1fr;}
       .right{max-height:none;}
       .panel .bd{max-height:none;}
-      .grid.toolmode #homeCard{ display:none; }
     }
   </style>
 </head>
@@ -576,163 +557,159 @@
   </header>
 
   <main class="container">
-    <div class="grid single" id="grid">
+    <section class="card" id="contentCard">
+      <div class="hd">
+        <div class="title" id="contentTitle">Home</div>
+        <div class="tag" id="contentTag">Overview</div>
+      </div>
 
-      <!-- Kept exactly (IDs/names unchanged). We mount it into Login view via JS. -->
-      <section class="card" id="homeCard">
-        <div class="hd">
-          <div class="title">Access Control</div>
-          <div class="tag">Authorized Users Only</div>
-        </div>
-        <div class="bd">
-          <form id="loginForm" autocomplete="off">
-            <div class="field">
-              <label for="loginUser">Username</label>
-              <input class="portal" id="loginUser" type="text" required />
-            </div>
-            <div class="field">
-              <label for="loginPass">Password</label>
-              <input class="portal" id="loginPass" type="password" required />
-            </div>
-            <div class="row">
-              <button class="navbtn primary" type="submit" id="loginBtn">Sign in</button>
-              <div class="status" id="loginStatus"></div>
-            </div>
-          </form>
-        </div>
-      </section>
-
-      <section class="card" id="contentCard">
-        <div class="hd">
-          <div class="title" id="contentTitle">Home</div>
-          <div class="tag" id="contentTag">Overview</div>
+      <div class="bd" id="contentBody">
+        <!-- HOME -->
+        <div id="homeView">
+          <div class="news" id="newsList"></div>
+          <div class="status" id="newsEmpty" style="display:none;">No news posted.</div>
         </div>
 
-        <div class="bd" id="contentBody">
-          <div id="homeView">
-            <div class="news" id="newsList"></div>
-            <div class="status" id="newsEmpty" style="display:none;">No news posted.</div>
+        <!-- ABOUT -->
+        <div id="aboutView" hidden><div class="status">About page.</div></div>
+
+        <!-- CONTACT -->
+        <div id="contactView" hidden><div class="status">Contact page.</div></div>
+
+        <!-- LOGIN (kept same form IDs + same behavior) -->
+        <div id="loginView" hidden>
+          <section class="card" id="homeCard">
+            <div class="hd">
+              <div class="title">Access Control</div>
+              <div class="tag">Authorized Users Only</div>
+            </div>
+            <div class="bd">
+              <form id="loginForm" autocomplete="off">
+                <div class="field">
+                  <label for="loginUser">Username</label>
+                  <input class="portal" id="loginUser" type="text" required />
+                </div>
+                <div class="field">
+                  <label for="loginPass">Password</label>
+                  <input class="portal" id="loginPass" type="password" required />
+                </div>
+                <div class="row">
+                  <button class="navbtn primary" type="submit" id="loginBtn">Sign in</button>
+                  <div class="status" id="loginStatus"></div>
+                </div>
+              </form>
+            </div>
+          </section>
+        </div>
+
+        <!-- ADMIN -->
+        <div id="adminView" hidden>
+          <div class="field">
+            <label for="newsTitle">Title</label>
+            <input class="portal" id="newsTitle" type="text" />
           </div>
 
-          <div id="aboutView" hidden><div class="status">About page.</div></div>
-          <div id="contactView" hidden><div class="status">Contact page.</div></div>
+          <div class="field">
+            <label for="newsBody">Body</label>
 
-          <!-- ✅ NEW: Dedicated Login view (so Login shows ONLY login) -->
-          <div id="loginView" hidden>
-            <div class="status" style="margin-bottom:10px;">
-              Sign in to access restricted tools.
-            </div>
-            <div id="loginMount"></div>
-          </div>
+            <!-- keep original textarea ID for backend storage, but use editor UI -->
+            <textarea class="portal" id="newsBody" style="display:none;"></textarea>
 
-          <div id="adminView" hidden>
-            <div class="field">
-              <label for="newsTitle">Title</label>
-              <input class="portal" id="newsTitle" type="text" />
-            </div>
-
-            <div class="field">
-              <label for="newsBody">Body</label>
-
-              <!-- Keep original textarea (IDs unchanged) but hide it; editor writes into it. -->
-              <textarea class="portal" id="newsBody" style="display:none;"></textarea>
-
-              <!-- Rich text editor -->
-              <div class="rte" id="rte">
-                <div class="rtebar" id="rtebar">
-                  <div class="group">
-                    <button class="rtbtn" type="button" data-cmd="bold">B</button>
-                    <button class="rtbtn" type="button" data-cmd="italic"><i>I</i></button>
-                    <button class="rtbtn" type="button" data-cmd="underline"><u>U</u></button>
-                    <button class="rtbtn" type="button" data-cmd="strikeThrough"><s>S</s></button>
-                  </div>
-
-                  <div class="group">
-                    <button class="rtbtn" type="button" data-cmd="insertUnorderedList">• List</button>
-                    <button class="rtbtn" type="button" data-cmd="insertOrderedList">1. List</button>
-                    <button class="rtbtn" type="button" id="btnQuote" title="Blockquote">Quote</button>
-                    <button class="rtbtn" type="button" id="btnCode" title="Inline code">Code</button>
-                  </div>
-
-                  <div class="group">
-                    <button class="rtbtn" type="button" id="btnLink">Link</button>
-                    <button class="rtbtn" type="button" data-cmd="removeFormat">Clear</button>
-                  </div>
-
-                  <!-- Vendetta-only effects toolbar -->
-                  <div class="group" id="fxGroup" hidden>
-                    <span class="hint">Special Effects:</span>
-                    <button class="rtbtn" type="button" data-fx="fx-glow">Glow</button>
-                    <button class="rtbtn" type="button" data-fx="fx-neon">Neon</button>
-                    <button class="rtbtn" type="button" data-fx="fx-flicker">Flicker</button>
-                    <button class="rtbtn" type="button" data-fx="fx-rainbow">Rainbow</button>
-                    <button class="rtbtn" type="button" data-fx="fx-wave">Wave</button>
-                    <input type="color" id="fxColor" value="#6ee7b7" title="Effect color (where applicable)" />
-                    <button class="rtbtn" type="button" id="btnFxRemove">Remove FX</button>
-                  </div>
+            <div class="rte" id="rte">
+              <div class="rtebar" id="rtebar">
+                <div class="group">
+                  <button class="rtbtn" type="button" data-cmd="bold">B</button>
+                  <button class="rtbtn" type="button" data-cmd="italic"><i>I</i></button>
+                  <button class="rtbtn" type="button" data-cmd="underline"><u>U</u></button>
+                  <button class="rtbtn" type="button" data-cmd="strikeThrough"><s>S</s></button>
                 </div>
 
-                <div id="newsBodyEditor" class="rtebody" contenteditable="true"
-                     data-placeholder="Write formatted news here…"></div>
+                <div class="group">
+                  <button class="rtbtn" type="button" data-cmd="insertUnorderedList">• List</button>
+                  <button class="rtbtn" type="button" data-cmd="insertOrderedList">1. List</button>
+                  <button class="rtbtn" type="button" id="btnQuote">Quote</button>
+                  <button class="rtbtn" type="button" id="btnCode">Code</button>
+                </div>
+
+                <div class="group">
+                  <button class="rtbtn" type="button" id="btnLink">Link</button>
+                  <button class="rtbtn" type="button" data-cmd="removeFormat">Clear</button>
+                </div>
+
+                <!-- VendettaPyrex-only toolbar -->
+                <div class="group" id="fxGroup" hidden>
+                  <span class="hint">Special Effects:</span>
+                  <button class="rtbtn" type="button" data-fx="fx-glow">Glow</button>
+                  <button class="rtbtn" type="button" data-fx="fx-neon">Neon</button>
+                  <button class="rtbtn" type="button" data-fx="fx-flicker">Flicker</button>
+                  <button class="rtbtn" type="button" data-fx="fx-rainbow">Rainbow</button>
+                  <button class="rtbtn" type="button" data-fx="fx-wave">Wave</button>
+                  <input type="color" id="fxColor" value="#6ee7b7" title="Effect color" />
+                  <button class="rtbtn" type="button" id="btnFxRemove">Remove FX</button>
+                </div>
               </div>
-            </div>
 
-            <div class="row">
-              <button class="navbtn primary" id="btnAddNews" type="button">Add News</button>
-              <div class="status" id="adminStatus"></div>
-            </div>
-
-            <div class="news" id="adminNewsList" style="margin-top:14px;"></div>
-
-            <div style="margin-top:18px; border-top:1px solid rgba(255,255,255,0.10); padding-top:14px;">
-              <div class="row" style="margin-top:0;">
-                <div class="status" style="font-weight:800; color:rgba(255,255,255,0.92);">Audit Logs</div>
-                <button class="navbtn" id="btnLoadAudit" type="button">Refresh</button>
-              </div>
-              <div class="status" id="auditStatus"></div>
-              <div class="news" id="auditList"></div>
+              <div id="newsBodyEditor" class="rtebody" contenteditable="true"
+                   data-placeholder="Write formatted news here…"></div>
             </div>
           </div>
 
-          <div id="toolView" hidden style="margin-top:0;">
-            <div class="wrap">
-              <div class="terminal">
-                <div class="bar">
-                  <div class="dots">
-                    <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
-                  </div>
-                  <div class="title-mono">Criminal Investigation Division — BGC Terminal</div>
-                </div>
-
-                <div class="content">
-                  <div id="screen" class="screen"></div>
-
-                  <div class="right">
-                    <div class="panel chart">
-                      <div class="hd"><span>Badge Chart</span><span id="chartStatus" class="chip">idle</span></div>
-                      <div class="bd"><canvas id="chart" height="240"></canvas></div>
-                    </div>
-
-                    <div class="panel">
-                      <div class="hd"><span>Blacklist Status</span><span id="blStatus" class="chip">—</span></div>
-                      <div class="bd" id="blacklistsBox" class="muted">Run <span class="chip">check &lt;username&gt;</span></div>
-                    </div>
-
-                    <div class="panel">
-                      <div class="hd"><span>Inventory (No Prices)</span><span id="invStatus" class="chip">—</span></div>
-                      <div class="bd" id="inventoryBox" class="muted">Run <span class="chip">check &lt;username&gt;</span></div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="watermark">Criminal Investigation Division</div>
-              </div>
-            </div>
+          <div class="row">
+            <button class="navbtn primary" id="btnAddNews" type="button">Add News</button>
+            <div class="status" id="adminStatus"></div>
           </div>
 
+          <div class="news" id="adminNewsList" style="margin-top:14px;"></div>
+
+          <div style="margin-top:18px; border-top:1px solid rgba(255,255,255,0.10); padding-top:14px;">
+            <div class="row" style="margin-top:0;">
+              <div class="status" style="font-weight:800; color:rgba(255,255,255,0.92);">Audit Logs</div>
+              <button class="navbtn" id="btnLoadAudit" type="button">Refresh</button>
+            </div>
+            <div class="status" id="auditStatus"></div>
+            <div class="news" id="auditList"></div>
+          </div>
         </div>
-      </section>
-    </div>
+
+        <!-- TOOL -->
+        <div id="toolView" hidden style="margin-top:0;">
+          <div class="wrap">
+            <div class="terminal">
+              <div class="bar">
+                <div class="dots">
+                  <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+                </div>
+                <div class="title-mono">Criminal Investigation Division — BGC Terminal</div>
+              </div>
+
+              <div class="content">
+                <div id="screen" class="screen"></div>
+
+                <div class="right">
+                  <div class="panel chart">
+                    <div class="hd"><span>Badge Chart</span><span id="chartStatus" class="chip">idle</span></div>
+                    <div class="bd"><canvas id="chart" height="240"></canvas></div>
+                  </div>
+
+                  <div class="panel">
+                    <div class="hd"><span>Blacklist Status</span><span id="blStatus" class="chip">—</span></div>
+                    <div class="bd" id="blacklistsBox" class="muted">Run <span class="chip">check &lt;username&gt;</span></div>
+                  </div>
+
+                  <div class="panel">
+                    <div class="hd"><span>Inventory (No Prices)</span><span id="invStatus" class="chip">—</span></div>
+                    <div class="bd" id="inventoryBox" class="muted">Run <span class="chip">check &lt;username&gt;</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="watermark">Criminal Investigation Division</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
   </main>
 
 <script>
@@ -765,8 +742,7 @@
   }
 
   /* =========================================================
-     SAFE-ish HTML sanitizer for formatted news (no scripts)
-     - Allows only a small allowlist of tags + safe attrs.
+     Small sanitizer so formatted news renders safely
      ========================================================= */
   const ALLOWED_TAGS = new Set([
     "B","STRONG","I","EM","U","S","BR","P","DIV","SPAN",
@@ -791,20 +767,17 @@
         if (child.nodeType === Node.ELEMENT_NODE){
           const tag = child.tagName.toUpperCase();
 
-          // remove disallowed tags entirely (keep their text content)
           if (!ALLOWED_TAGS.has(tag)){
             const txt = document.createTextNode(child.textContent || "");
             child.replaceWith(txt);
             continue;
           }
 
-          // remove unsafe attributes
           const allowed = ALLOWED_ATTR[tag] || new Set();
           for (const attr of Array.from(child.attributes)){
             const name = attr.name.toLowerCase();
             const val = attr.value || "";
 
-            // strip any event handlers, srcdoc, etc.
             if (name.startsWith("on") || name === "srcdoc"){
               child.removeAttribute(attr.name);
               continue;
@@ -814,7 +787,6 @@
               continue;
             }
 
-            // lock down links
             if (tag === "A" && name === "href"){
               const href = val.trim();
               if (!href || /^javascript:/i.test(href) || /^data:/i.test(href)){
@@ -825,9 +797,7 @@
               }
             }
 
-            // strip style to only allow CSS variables + color-related safe bits
             if ((tag === "SPAN" || tag === "DIV" || tag === "P") && name === "style"){
-              // allow only: --fx-color: ..., color: ..., background: ..., text-shadow: ...
               const safe = [];
               const parts = val.split(";").map(x=>x.trim()).filter(Boolean);
               for (const p of parts){
@@ -843,12 +813,9 @@
             }
           }
 
-          // recurse
           walk(child);
         } else if (child.nodeType === Node.COMMENT_NODE){
           child.remove();
-        } else {
-          // text nodes are fine
         }
       }
     };
@@ -1039,32 +1006,24 @@
     }
   }
 
-  // NAV/VIEWS
-  const grid = $("grid");
+  // NAV/VIEWS (✅ only show what you clicked)
   const contentTitle = $("contentTitle");
   const contentTag = $("contentTag");
 
   const homeView = $("homeView");
   const aboutView = $("aboutView");
   const contactView = $("contactView");
+  const loginView = $("loginView");
   const adminView = $("adminView");
   const toolView = $("toolView");
-  const loginView = $("loginView");
 
-  const homeCard = $("homeCard");
-  const contentCard = $("contentCard");
-  const loginMount = $("loginMount");
-
-  // mount login card into the Login view so "Login" shows ONLY login
-  let loginMounted = false;
-  function ensureLoginMounted(){
-    if (loginMounted) return;
-    loginMounted = true;
-    try{
-      loginMount.appendChild(homeCard);
-      homeCard.style.display = "";
-    } catch {}
-  }
+  const navHome = $("navHome");
+  const navAbout = $("navAbout");
+  const navContact = $("navContact");
+  const navLogin = $("navLogin");
+  const navTool = $("navTool");
+  const navAdmin = $("navAdmin");
+  const navLogout = $("navLogout");
 
   function setActiveNav(btn){
     [navHome, navAbout, navContact, navLogin, navTool, navAdmin].forEach(b=>{
@@ -1077,12 +1036,9 @@
     homeView.hidden = true;
     aboutView.hidden = true;
     contactView.hidden = true;
+    loginView.hidden = true;
     adminView.hidden = true;
     toolView.hidden = true;
-    loginView.hidden = true;
-
-    grid.classList.remove("toolmode");
-    grid.classList.add("single");
 
     if (which === "home"){
       contentTitle.textContent = "Home";
@@ -1107,7 +1063,6 @@
       return;
     }
     if (which === "login"){
-      ensureLoginMounted();
       contentTitle.textContent = "Login";
       contentTag.textContent = "Access Control";
       loginView.hidden = false;
@@ -1129,7 +1084,6 @@
       contentTag.textContent = "Restricted Tool";
       toolView.hidden = false;
       setActiveNav(navTool);
-      grid.classList.add("toolmode");
       if (!chart) initChart();
       consoleLoop();
       setTimeout(()=>{ try{ chart.resize(); }catch{} }, 50);
@@ -1137,21 +1091,12 @@
     }
   }
 
-  const navHome = $("navHome");
-  const navAbout = $("navAbout");
-  const navContact = $("navContact");
-  const navLogin = $("navLogin");
-  const navTool = $("navTool");
-  const navAdmin = $("navAdmin");
-  const navLogout = $("navLogout");
-
   function updateNav(){
     const loggedIn = !!TOOL_TOKEN;
     navTool.hidden = !loggedIn;
     navLogout.hidden = !loggedIn;
     navAdmin.hidden = !(loggedIn && LOGGED_IN_USER === ADMIN_USERNAME);
 
-    // Vendetta-only editor effects toolbar visibility
     const fxGroup = $("fxGroup");
     if (fxGroup){
       fxGroup.hidden = !(loggedIn && LOGGED_IN_USER === ADMIN_USERNAME);
@@ -1226,7 +1171,6 @@
   const rteBar = $("rtebar");
 
   function rteSyncToTextarea(){
-    // Store sanitized HTML into textarea (still using same ID for backend field)
     const html = newsBodyEditor ? newsBodyEditor.innerHTML : "";
     if (newsBodyTextarea) newsBodyTextarea.value = html;
   }
@@ -1242,30 +1186,22 @@
   function wrapSelectionWithSpan(className, styleObj={}){
     const sel = window.getSelection();
     if (!sel || sel.rangeCount === 0) return;
-
     const range = sel.getRangeAt(0);
     if (range.collapsed) return;
 
     const span = document.createElement("span");
     span.className = className;
-
     for (const [k,v] of Object.entries(styleObj)){
       span.style.setProperty(k, v);
     }
 
     try{
-      // Surround contents; if it fails due to partial selections, fallback with extract/insert
       range.surroundContents(span);
     } catch {
       const frag = range.extractContents();
       span.appendChild(frag);
       range.insertNode(span);
     }
-
-    sel.removeAllRanges();
-    const newRange = document.createRange();
-    newRange.selectNodeContents(span);
-    sel.addRange(newRange);
 
     rteSyncToTextarea();
     newsBodyEditor && newsBodyEditor.focus();
@@ -1277,7 +1213,6 @@
     const range = sel.getRangeAt(0);
     if (range.collapsed) return;
 
-    // Wrap selection into a temp span, then strip fx classes within it
     const tmp = document.createElement("span");
     try{
       range.surroundContents(tmp);
@@ -1287,20 +1222,16 @@
       range.insertNode(tmp);
     }
 
-    // Remove fx classes from spans inside tmp
     tmp.querySelectorAll("span").forEach(sp=>{
       sp.classList.remove("fx-glow","fx-neon","fx-flicker","fx-rainbow","fx-wave");
-      // keep other classes, but strip fx color var if present
       try{ sp.style.removeProperty("--fx-color"); } catch {}
       if (!sp.className.trim() && !sp.getAttribute("style")) {
-        // unwrap empty span if it's just a wrapper
         const parent = sp.parentNode;
         while (sp.firstChild) parent.insertBefore(sp.firstChild, sp);
         parent.removeChild(sp);
       }
     });
 
-    // Also if tmp itself is span, unwrap it
     const parent = tmp.parentNode;
     while (tmp.firstChild) parent.insertBefore(tmp.firstChild, tmp);
     parent.removeChild(tmp);
@@ -1326,7 +1257,6 @@
         const url = prompt("Enter link URL (https://...)");
         if (!url) return;
         rteExec("createLink", url);
-        // force safe target/rel for newly created links
         setTimeout(()=>{
           if (!newsBodyEditor) return;
           newsBodyEditor.querySelectorAll("a").forEach(a=>{
@@ -1344,11 +1274,11 @@
       }
 
       if (t.id === "btnCode"){
-        // wrap selection in <code> by using a span classless + style? better to insert <code>
         const sel = window.getSelection();
         if (!sel || sel.rangeCount === 0) return;
         const range = sel.getRangeAt(0);
         if (range.collapsed) return;
+
         const code = document.createElement("code");
         try{
           range.surroundContents(code);
@@ -1364,7 +1294,6 @@
 
       if (fx){
         const fxColor = $("fxColor") ? $("fxColor").value : "#6ee7b7";
-        // rainbow ignores color; others use --fx-color
         const styleObj = (fx === "fx-rainbow") ? {} : { "--fx-color": fxColor };
         wrapSelectionWithSpan(fx, styleObj);
         return;
@@ -1379,10 +1308,8 @@
 
   if (newsBodyEditor){
     newsBodyEditor.addEventListener("input", ()=> rteSyncToTextarea());
-    // paste as plain-ish: strip dangerous tags after paste
     newsBodyEditor.addEventListener("paste", ()=>{
       setTimeout(()=>{
-        // sanitize inside editor to keep it clean
         const clean = sanitizeHtml(newsBodyEditor.innerHTML);
         newsBodyEditor.innerHTML = clean;
         rteSyncToTextarea();
@@ -1399,13 +1326,10 @@
     }
 
     const titleEl = $("newsTitle");
-    const bodyEl  = $("newsBody"); // keep same ID usage
-
     const title = (titleEl.value || "").trim();
 
-    // pull from editor (HTML). Keep same field name "text" in API.
-    const htmlRaw = (newsBodyEditor ? newsBodyEditor.innerHTML : (bodyEl.value || "")).trim();
-    const htmlClean = sanitizeHtml(htmlRaw); // sanitize before sending/storing
+    const htmlRaw = (newsBodyEditor ? newsBodyEditor.innerHTML : (newsBodyTextarea.value || "")).trim();
+    const htmlClean = sanitizeHtml(htmlRaw);
 
     if (!title || !htmlClean){
       adminStatusEl.textContent = "Title and body required.";
@@ -1417,12 +1341,11 @@
       adminStatusEl.textContent = "";
       adminStatusEl.className = "status";
 
-      // store HTML in "text" field (same API)
       await createNews(title, htmlClean);
 
       titleEl.value = "";
       if (newsBodyEditor) newsBodyEditor.innerHTML = "";
-      bodyEl.value = "";
+      newsBodyTextarea.value = "";
 
       adminStatusEl.textContent = "News added.";
       adminStatusEl.className = "status ok";
