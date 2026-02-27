@@ -1092,7 +1092,22 @@ if (!b) return;
 b.classList.toggle("active", b === btn);
 });
 }
+function closeTransientUI(){
+  // Close any modal/overlay UI so pages never stack/glitch
+  try{
+    const m = document.getElementById("settingsModal");
+    if (m) m.classList.remove("open");
+  }catch(e){}
+  // Collapse any programmatic "open" UI states, if present
+  try{
+    document.querySelectorAll('[data-overlay].open,.overlay.open,.modal.open,.popover.open').forEach(el=>el.classList.remove("open"));
+  }catch(e){}
+  // Blur focused inputs to prevent weird scrolling when switching views
+  try{ if (document.activeElement && typeof document.activeElement.blur === "function") document.activeElement.blur(); }catch(e){}
+}
+
 function setView(which){
+closeTransientUI();
 homeView.hidden = true;
 aboutView.hidden = true;
 contactView.hidden = true;
