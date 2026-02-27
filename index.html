@@ -655,6 +655,21 @@ tbody tr:hover td{ background: rgba(255,255,255,0.04); }
             </div>
         </div>
     </div>
+
+    <!-- Login CTA shown only when not authorized -->
+    <section class="card" id="aboutLoginCTA">
+        <div class="hd">
+            <div class="title">Access Control</div>
+            <div class="tag">Authorized Users Only</div>
+        </div>
+        <div class="bd">
+            <div class="row" style="gap:12px;align-items:center;flex-wrap:wrap">
+                <button class="navbtn primary" type="button" id="aboutGoLogin">Sign in</button>
+                <div class="status" id="aboutLoginHint">Sign in to access internal tools.</div>
+            </div>
+        </div>
+    </section>
+
 </div>
 
 <!-- REDESIGNED CONTACT VIEW -->
@@ -1272,6 +1287,8 @@ const navBlacklist = $("navBlacklist");
 const navAdmin = $("navAdmin");
 const navLogout = $("navLogout");
 const navSettings = $("navSettings"); // New Nav Button
+const aboutLoginCTA = $("aboutLoginCTA");
+const aboutGoLogin = $("aboutGoLogin");
 const settingsMenu = $("settingsMenu");
 const settingsMenuPage = $("settingsMenuPage");
 const settingsMenuNews = $("settingsMenuNews");
@@ -1406,7 +1423,13 @@ return;
 }
 function updateNav(){
 const loggedIn = !!TOOL_TOKEN;
-navLogin.hidden = loggedIn;
+// Public (unauthorized) users should only see the About page in the top nav
+navHome.hidden = !loggedIn;
+navContact.hidden = !loggedIn;
+navSettings.hidden = !loggedIn;
+navLogin.hidden = true;
+// About page shows a login CTA when not authorized
+if (aboutLoginCTA) aboutLoginCTA.hidden = loggedIn;
 navBGC.hidden = !loggedIn;
 navRecruit.hidden = !loggedIn;
 navDocs.hidden = !(loggedIn && IS_PRIV);
@@ -1420,6 +1443,7 @@ navHome.addEventListener("click", ()=> setView("home"));
 navAbout.addEventListener("click", ()=> setView("about"));
 navContact.addEventListener("click", ()=> setView("contact"));
 navLogin.addEventListener("click", ()=> setView("login"));
+if (aboutGoLogin) aboutGoLogin.addEventListener("click", ()=> setView("login"));
 navBGC.addEventListener("click", ()=> setView("bgc"));
 navRecruit.addEventListener("click", ()=> setView("recruit"));
 navDocs.addEventListener("click", ()=> { if (IS_PRIV) setView("docs"); });
@@ -2261,7 +2285,7 @@ updateNav();
 if (!!TOOL_TOKEN) {
   setView("home");
 } else {
-  setView("login");
+  setView("about");
 }
 refreshNews().catch(()=>{});
 loadSavedSettings(); // Load settings on startup
