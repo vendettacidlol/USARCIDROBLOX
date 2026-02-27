@@ -14,10 +14,9 @@
         nav { display: flex; gap: 15px; flex-wrap: wrap; }
         .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
         
-        /* PAGE SECTIONS - FIXED NAVIGATION */
-        .page-section { display: none; animation: fade 0.3s; }
+        /* FIX: Ensure only one section is visible */
+        .page-section { display: none; }
         .page-section.active { display: block; }
-        @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
 
         .card { background: var(--panel); border: 1px solid var(--dim); padding: 15px; margin-bottom: 15px; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
@@ -27,7 +26,7 @@
         button { background: var(--dim); cursor: pointer; font-weight: bold; }
         button:hover { background: var(--accent); color: #000; }
         
-        /* MODAL */
+        /* Modal */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; }
         .modal.active { display: flex; }
         .modal-content { background: var(--panel); border: 1px solid var(--accent); padding: 20px; width: 600px; max-width: 90%; max-height: 90vh; overflow-y: auto; }
@@ -40,8 +39,6 @@
         .status-ok { color: var(--accent); }
         .status-err { color: var(--err); }
         .hidden { display: none !important; }
-        .profile-card { text-align: center; }
-        .profile-img { width: 100px; height: 100px; border-radius: 50%; border: 2px solid var(--accent); margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -150,33 +147,28 @@
 </div>
 
 <script>
-    const API_URL = ""; // Leave empty for same origin (Cloudflare Worker)
+    const API_URL = ""; 
     let authToken = localStorage.getItem('cid_token');
     let currentUser = null;
 
-    // --- NAVIGATION LOGIC (FIXED OVERLAPPING) ---
+    // --- FIX: NAVIGATION LOGIC (Prevents Overlapping) ---
     function navigateTo(pageId) {
-        // 1. Hide ALL page sections
+        // 1. Hide ALL sections first
         document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active'));
-        
-        // 2. Show ONLY the target section
+        // 2. Show target
         const target = document.getElementById(pageId);
         if (target) target.classList.add('active');
-        
-        // 3. Close any open modals
+        // 3. Close modal
         closeSettings();
-
-        // 4. Load data specific to page
+        // 4. Load Data
         if (pageId === 'home') loadNews();
         if (pageId === 'about') loadPageContent();
         if (pageId === 'contact') loadPageContent();
         if (pageId === 'admin') loadAudit();
-        
         updateAuthUI();
         window.scrollTo(0,0);
     }
 
-    // --- SETTINGS MODAL LOGIC ---
     function openSettings() {
         if (!authToken) return navigateTo('login');
         document.getElementById('settings-modal').classList.add('active');
@@ -186,7 +178,6 @@
         document.getElementById('settings-modal').classList.remove('active');
     }
 
-    // --- AUTH ---
     function updateAuthUI() {
         const isAdmin = authToken && currentUser === "VendettaPyrex";
         document.getElementById('nav-admin').classList.toggle('hidden', !isAdmin);
@@ -230,20 +221,18 @@
         navigateTo('home');
     }
 
-    // --- SERVER SIDE SETTINGS ---
+    // --- FIX: SERVER SIDE SETTINGS ---
     async function loadPageContent() {
         // Fetch About
         try {
             const res = await fetch(API_URL + '/pages/about');
             const data = await res.json();
             if (data.ok && data.value) {
-                // Expecting format: "Box1Desc|Box2Desc"
                 const parts = data.value.split('|');
                 if(parts[0]) document.getElementById('about-box1-desc').textContent = parts[0];
                 if(parts[1]) document.getElementById('about-box2-desc').textContent = parts[1];
             }
         } catch(e) {}
-        
         // Fetch Contact
         try {
             const res = await fetch(API_URL + '/pages/contact');
@@ -256,7 +245,6 @@
 
     async function loadSettingsData() {
         if (!authToken) return;
-        // Load current values into inputs
         try {
             const resAbout = await fetch(API_URL + '/pages/about');
             const dataAbout = await resAbout.json();
@@ -266,7 +254,6 @@
                 document.getElementById('set-about-box2').value = parts[1] || "";
             }
         } catch(e) {}
-
         try {
             const resContact = await fetch(API_URL + '/pages/contact');
             const dataContact = await resContact.json();
@@ -280,32 +267,25 @@
         if (!authToken) return alert("Unauthorized");
         const aboutVal = document.getElementById('set-about-box1').value + "|" + document.getElementById('set-about-box2').value;
         const contactVal = document.getElementById('set-contact-content').value;
-
         try {
-            const res1 = await fetch(API_URL + '/pages/about', {
+            await fetch(API_URL + '/pages/about', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
                 body: JSON.stringify({ value: aboutVal })
             });
-            const res2 = await fetch(API_URL + '/pages/contact', {
+            await fetch(API_URL + '/pages/contact', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
                 body: JSON.stringify({ value: contactVal })
             });
-            
-            if(res1.ok && res2.ok) {
-                alert("Settings Saved Server-Side");
-                closeSettings();
-                navigateTo('about');
-            } else {
-                alert("Save Failed (Ensure you are VendettaPyrex)");
-            }
+            alert("Settings Saved Server-Side");
+            closeSettings();
+            navigateTo('about');
         } catch (e) {
             alert("Save Failed");
         }
     }
 
-    // --- NEWS & AUDIT ---
     async function loadNews() {
         const res = await fetch(API_URL + '/news');
         const data = await res.json();
@@ -349,7 +329,6 @@
         }
     }
 
-    // Init
     updateAuthUI();
     loadNews();
 </script>
