@@ -224,7 +224,7 @@ nav {
 }
 .org-connector::after {
     content: '';
-    position: fixed;
+    position: absolute;
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
@@ -360,11 +360,6 @@ nav {
     padding: 20px;
     box-shadow: 0 0 50px rgba(0,0,0,0.8);
 }
-
-/* Settings page uses modal-content styling but as a normal view */
-#settingsView{padding: 12px 0;}
-#settingsView .modal-content{max-width: 920px; max-height: none;}
-
 .modal-header {
     display: flex;
     justify-content: space-between;
@@ -541,37 +536,32 @@ tbody tr:hover td{ background: rgba(255,255,255,0.04); }
 .flagIcon[data-tip]:hover::after{ content: attr(data-tip); position: absolute; left: 50%; transform: translateX(-50%); top: -10px; translate: 0 -100%; white-space: nowrap; background: rgba(0,0,0,0.85); color: rgba(255,255,255,0.95); border: 1px solid rgba(255,255,255,0.16); padding: 6px 10px; border-radius: 10px; box-shadow: 0 18px 40px rgba(0,0,0,0.55); font-size: 12px; z-index: 50; }
 @media (max-width: 980px){ .terminal{ height:auto; min-height: 700px; } .content{grid-template-columns:1fr;} .right{max-height:none;} .panel .bd{max-height:none;} thead{ display:none; } table, tbody, tr, td{ display:block; width:100%; } tbody td{ border-bottom: none; padding: 10px 12px; } tbody tr{ border-bottom: 1px solid rgba(255,255,255,0.08); } }
 
-/* Settings submenu */
-.settings-menu{
-  position: absolute;
-  display: none;
-  flex-direction: column;
-  gap: 6px;
-  min-width: 180px;
-  padding: 10px;
-  margin-top: 8px;
-  border-radius: 14px;
-  border: 1px solid rgba(255,255,255,0.14);
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.45);
-  z-index: 50;
-}
-.settings-menu.open{ display:flex; }
-.settings-menu .settings-item{
-  text-align: left;
-  padding: 10px 12px;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.10);
-  background: rgba(255,255,255,0.05);
-  color: var(--text);
-  cursor: pointer;
-  font-weight: 600;
-}
-.settings-menu .settings-item:hover{
-  background: rgba(255,255,255,0.09);
-}
+/* --- Admin menu dropdown --- */
+.menu{ position:absolute; top:64px; right:34px; background:rgba(10,14,20,.92); border:1px solid rgba(255,255,255,.12); border-radius:14px; padding:10px; width:220px; box-shadow:0 10px 30px rgba(0,0,0,.35); z-index:50; }
+.menuItem{ width:100%; text-align:left; padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.06); color:#eaf2ff; font-weight:700; cursor:pointer; }
+.menuItem + .menuItem{ margin-top:8px; }
+.menuItem:hover{ background:rgba(255,255,255,.10); }
 
+/* --- Tabs --- */
+.tabs{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
+.tabBtn{ padding:10px 14px; border-radius:12px; border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.06); color:#eaf2ff; font-weight:800; cursor:pointer; }
+.tabBtn.active{ outline:2px solid rgba(255,215,100,.45); }
+
+/* --- Rich text editor --- */
+.rteBar{ display:flex; gap:8px; flex-wrap:wrap; margin:10px 0; }
+.rteBtn{ padding:8px 10px; border-radius:10px; border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.06); color:#eaf2ff; font-weight:800; cursor:pointer; }
+.rte{ min-height:180px; padding:12px; border-radius:14px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.04); color:#eaf2ff; overflow:auto; }
+.previewBox{ min-height:180px; padding:12px; border-radius:14px; border:1px dashed rgba(255,255,255,.18); background:rgba(0,0,0,.15); color:#eaf2ff; overflow:auto; }
+
+/* --- Modal --- */
+.modal{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:flex; align-items:center; justify-content:center; z-index:100; }
+.modalCard{ width:min(560px, 92vw); background:rgba(10,14,20,.94); border:1px solid rgba(255,255,255,.14); border-radius:18px; padding:14px; box-shadow:0 12px 40px rgba(0,0,0,.55); }
+.lbl{ display:block; margin:10px 0 6px; font-weight:800; color:#cfe0ff; }
+.in{ width:100%; padding:10px 12px; border-radius:12px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.04); color:#eaf2ff; outline:none; }
+.chk{ display:flex; align-items:center; gap:8px; font-weight:800; color:#cfe0ff; }
+.grid2{ display:grid; grid-template-columns: 1fr 1fr; gap:14px; }
+@media (max-width: 980px){ .grid2{ grid-template-columns:1fr; } }
+.card.inner{ border-radius:16px; }
 </style>
 </head>
 <body>
@@ -597,16 +587,20 @@ tbody tr:hover td{ background: rgba(255,255,255,0.04); }
 <button class="navbtn" id="navLogin">Login</button>
 <!-- SETTINGS BUTTON ADDED HERE -->
 <button class="navbtn settings-btn" id="navSettings">Settings</button>
-<div class="settings-menu" id="settingsMenu" data-overlay>
-  <button class="settings-item" id="settingsMenuPage" type="button">Page Settings</button>
-  <button class="settings-item" id="settingsMenuNews" type="button" hidden>Admin News</button>
-</div>
 <button class="navbtn primary" id="navBGC" hidden>Background Checks</button>
 <button class="navbtn primary" id="navRecruit" hidden>Recruitment</button>
 <button class="navbtn primary" id="navDocs" hidden>Documents</button>
 <button class="navbtn primary" id="navAccess" hidden>Access Control</button>
 <button class="navbtn primary" id="navBlacklist" hidden>Blacklist</button>
 <button class="navbtn primary" id="navAdmin" hidden>Admin</button>
+<div id="adminMenu" class="menu" hidden>
+  <button class="menuItem" id="adminMenuOpenPanel" type="button">Admin Panel</button>
+  <button class="menuItem" id="adminMenuPages" type="button">Edit Pages</button>
+  <button class="menuItem" id="adminMenuUsers" type="button">Manage Users</button>
+  <button class="menuItem" id="adminMenuNews" type="button">Post News</button>
+  <button class="menuItem" id="adminMenuAudit" type="button">Audit Log</button>
+</div>
+
 <button class="navbtn" id="navLogout" hidden>Logout</button>
 </nav>
 </div>
@@ -618,7 +612,7 @@ tbody tr:hover td{ background: rgba(255,255,255,0.04); }
 <div class="tag" id="contentTag">Overview</div>
 </div>
 <div class="bd" id="contentBody">
-<div id="homeView" hidden>
+<div id="homeView">
 <div class="news" id="newsList"></div>
 <div class="status" id="newsEmpty" style="display:none;">No news posted.</div>
 </div>
@@ -655,21 +649,6 @@ tbody tr:hover td{ background: rgba(255,255,255,0.04); }
             </div>
         </div>
     </div>
-
-    <!-- Login CTA shown only when not authorized -->
-    <section class="card" id="aboutLoginCTA">
-        <div class="hd">
-            <div class="title">Access Control</div>
-            <div class="tag">Authorized Users Only</div>
-        </div>
-        <div class="bd">
-            <div class="row" style="gap:12px;align-items:center;flex-wrap:wrap">
-                <button class="navbtn primary" type="button" id="aboutGoLogin">Sign in</button>
-                <div class="status" id="aboutLoginHint">Sign in to access internal tools.</div>
-            </div>
-        </div>
-    </section>
-
 </div>
 
 <!-- REDESIGNED CONTACT VIEW -->
@@ -734,14 +713,14 @@ tbody tr:hover td{ background: rgba(255,255,255,0.04); }
 </form>
 </div>
 </section>
+</div>
 
-
-<!-- SETTINGS PAGE -->
-<div id="settingsView" hidden>
+<!-- SETTINGS MODAL (Hidden by default) -->
+<div class="modal-overlay" id="settingsModal">
     <div class="modal-content">
         <div class="modal-header">
             <h2>Page Settings</h2>
-            <button class="close-modal" id="closeSettings" type="button">Back</button>
+            <button class="close-modal" id="closeSettings">&times;</button>
         </div>
         
         <div class="settings-section">
@@ -825,56 +804,157 @@ tbody tr:hover td{ background: rgba(255,255,255,0.04); }
         <button class="btn-save" id="saveSettingsBtn">Save Changes</button>
     </div>
 </div>
-</div>
-
 
 
 <div id="adminView" hidden>
-<div class="status">Admin tools are unchanged on your setup.</div>
-</div>
-
-<div id="adminNewsView" hidden>
   <div class="card">
-    <div class="card-h">
-      <div class="card-title">Admin News</div>
-      <div class="card-sub">Create and remove news posts shown on the Home page.</div>
+    <div class="hd">
+      <div class="title">Admin Panel</div>
+      <div class="tag">Admins only</div>
     </div>
+    <div class="bd">
+      <div class="tabs" id="adminTabs">
+        <button class="tabBtn active" data-tab="news">News</button>
+        <button class="tabBtn" data-tab="pages">Pages</button>
+        <button class="tabBtn" data-tab="users">Users</button>
+        <button class="tabBtn" data-tab="audit">Audit</button>
+      </div>
 
-    <form id="newsCreateForm" class="form" style="margin-top:12px;">
-      <div class="grid2">
-        <div class="form-group">
-          <label>Title</label>
-          <input type="text" id="newsTitle" maxlength="120" placeholder="Headline" required />
+      <div class="tabPanel" id="tab_news">
+        <div class="grid2">
+          <div class="card inner">
+            <div class="hd"><div class="title">Post News</div><div class="tag">Rich text</div></div>
+            <div class="bd">
+              <label class="lbl">Title</label>
+              <input class="in" id="newsTitleIn" placeholder="News title" maxlength="120" />
+              <div class="rteBar">
+                <button class="rteBtn" data-cmd="bold" type="button"><b>B</b></button>
+                <button class="rteBtn" data-cmd="italic" type="button"><i>I</i></button>
+                <button class="rteBtn" data-cmd="underline" type="button"><u>U</u></button>
+                <button class="rteBtn" data-cmd="insertUnorderedList" type="button">• List</button>
+                <button class="rteBtn" data-cmd="insertOrderedList" type="button">1. List</button>
+                <button class="rteBtn" data-link="1" type="button">Link</button>
+                <button class="rteBtn" data-cmd="removeFormat" type="button">Clear</button>
+              </div>
+              <div id="newsBodyEd" class="rte" contenteditable="true"></div>
+              <div class="row">
+                <button class="navbtn primary" id="btnPostNews" type="button">Publish</button>
+                <button class="navbtn" id="btnRefreshNewsAdmin" type="button">Refresh</button>
+                <span class="status" id="newsAdminStatus"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card inner">
+            <div class="hd"><div class="title">Recent News</div><div class="tag">Manage</div></div>
+            <div class="bd">
+              <div id="adminNewsList" class="newsList"></div>
+              <div class="status" id="adminNewsEmpty" style="display:none;">No news posts yet.</div>
+            </div>
+          </div>
         </div>
-        <div class="form-group">
-          <label>Visibility</label>
-          <input type="text" value="Public (Home page)" disabled />
+      </div>
+
+      <div class="tabPanel" id="tab_pages" hidden>
+        <div class="card inner">
+          <div class="hd"><div class="title">Edit Pages</div><div class="tag">Home / About / Contact</div></div>
+          <div class="bd">
+            <div class="row">
+              <select class="in" id="pagePick">
+                <option value="home">Home</option>
+                <option value="about">About</option>
+                <option value="contact">Contact</option>
+              </select>
+              <button class="navbtn" id="btnLoadPage" type="button">Load</button>
+              <button class="navbtn primary" id="btnSavePage" type="button">Save</button>
+              <span class="status" id="pageEditStatus"></span>
+            </div>
+            <div class="grid2">
+              <div>
+                <div class="rteBar">
+                  <button class="rteBtn" data-cmd="bold" type="button"><b>B</b></button>
+                  <button class="rteBtn" data-cmd="italic" type="button"><i>I</i></button>
+                  <button class="rteBtn" data-cmd="underline" type="button"><u>U</u></button>
+                  <button class="rteBtn" data-cmd="insertUnorderedList" type="button">• List</button>
+                  <button class="rteBtn" data-cmd="insertOrderedList" type="button">1. List</button>
+                  <button class="rteBtn" data-link="1" type="button">Link</button>
+                  <button class="rteBtn" data-cmd="removeFormat" type="button">Clear</button>
+                </div>
+                <div id="pageEditor" class="rte" contenteditable="true"></div>
+              </div>
+              <div>
+                <div class="status" style="margin-bottom:8px;">Preview</div>
+                <div id="pagePreview" class="previewBox"></div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="form-group">
-        <label>Text</label>
-        <textarea id="newsText" rows="5" placeholder="Write the update..." required></textarea>
+      <div class="tabPanel" id="tab_users" hidden>
+        <div class="card inner">
+          <div class="hd"><div class="title">Manage Users</div><div class="tag">Runtime list</div></div>
+          <div class="bd">
+            <div class="grid2">
+              <div>
+                <label class="lbl">Username</label>
+                <input class="in" id="userNameIn" placeholder="Roblox username" />
+                <label class="lbl">Password (leave blank to use shared TOKEN_SECRET)</label>
+                <input class="in" id="userPassIn" placeholder="Password" type="password" />
+                <div class="row" style="gap:10px; flex-wrap:wrap;">
+                  <label class="chk"><input type="checkbox" id="userPrivIn"> Privileged</label>
+                  <label class="chk"><input type="checkbox" id="userAdminIn"> Admin</label>
+                </div>
+                <label class="lbl">Rank</label>
+                <input class="in" id="userRankIn" placeholder="e.g., Brigadier General" />
+                <label class="lbl">Position</label>
+                <input class="in" id="userPosIn" placeholder="e.g., Director of Criminal Investigations" />
+                <div class="row">
+                  <button class="navbtn primary" id="btnUserSave" type="button">Save User</button>
+                  <button class="navbtn" id="btnUserDelete" type="button">Remove User</button>
+                  <button class="navbtn" id="btnUsersRefresh" type="button">Refresh List</button>
+                  <span class="status" id="usersStatus"></span>
+                </div>
+              </div>
+              <div>
+                <div class="tableWrap">
+                  <table>
+                    <thead><tr><th>Username</th><th>Priv</th><th>Admin</th><th>Rank</th><th>Position</th></tr></thead>
+                    <tbody id="usersTbody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="status" style="opacity:.8; margin-top:10px;">
+              Note: this edits the runtime user list stored in KV (does not change your Cloudflare secrets).
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-        <button class="navbtn primary" type="submit" id="newsPublishBtn">Publish</button>
-        <button class="navbtn" type="button" id="newsRefreshBtn">Refresh</button>
-        <div class="status" id="newsAdminStatus"></div>
+      <div class="tabPanel" id="tab_audit" hidden>
+        <div class="card inner">
+          <div class="hd"><div class="title">Audit Log</div><div class="tag">Every action</div></div>
+          <div class="bd">
+            <div class="row">
+              <button class="navbtn" id="btnAuditRefresh" type="button">Refresh</button>
+              <button class="navbtn" id="btnAuditMore" type="button">Load more</button>
+              <span class="status" id="auditStatus"></span>
+            </div>
+            <div class="tableWrap">
+              <table>
+                <thead><tr><th>Time</th><th>Actor</th><th>Type</th><th>Detail</th></tr></thead>
+                <tbody id="auditTbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
-    </form>
-  </div>
 
-  <div class="card" style="margin-top:14px;">
-    <div class="card-h">
-      <div class="card-title">Existing posts</div>
-      <div class="card-sub">Newest first.</div>
     </div>
-    <div class="news" id="newsAdminList" style="margin-top:12px;"></div>
   </div>
 </div>
-
-<div id="bgcView" hidden style="margin-top:0;">
+<div id="bgcView hidden style="margin-top:0;">
 <div class="cmdbar">
 <button class="navbtn primary" id="btnRunBGC" type="button">Run Background Check</button>
 <button class="navbtn" id="btnClearBGC" type="button">Clear</button>
@@ -1016,6 +1096,22 @@ tbody tr:hover td{ background: rgba(255,255,255,0.04); }
 </div>
 </section>
 </main>
+
+<div id="uiModal" class="modal" hidden>
+  <div class="modalCard">
+    <div class="hd">
+      <div class="title" id="uiModalTitle">Input</div>
+      <button class="navbtn" id="uiModalClose" type="button">Close</button>
+    </div>
+    <div class="bd" id="uiModalBody"></div>
+    <div class="row" style="justify-content:flex-end; gap:10px; margin-top:12px;">
+      <button class="navbtn" id="uiModalCancel" type="button">Cancel</button>
+      <button class="navbtn primary" id="uiModalOk" type="button">OK</button>
+    </div>
+    <div class="status" id="uiModalStatus"></div>
+  </div>
+</div>
+
 <script>
 (() => {
 "use strict";
@@ -1028,6 +1124,75 @@ let LOGGED_IN_USER = null;
 let IS_ADMIN = false;
 let IS_PRIV = false;
 let NEWS_TOKEN = null;
+
+function show(el){ el.hidden = false; }
+function hide(el){ el.hidden = true; }
+function closeAdminMenu(){ const m = $("adminMenu"); if (m) m.hidden = true; }
+document.addEventListener("click", (e)=>{ 
+  const m = $("adminMenu"); 
+  const btn = $("navAdmin");
+  if (!m || m.hidden) return;
+  if (btn && (btn === e.target || btn.contains(e.target))) return;
+  if (m === e.target || m.contains(e.target)) return;
+  m.hidden = true;
+});
+async function uiModalForm({ title, fields }) {
+  return await new Promise((resolve) => {
+    const modal = $("uiModal");
+    const body = $("uiModalBody");
+    const titleEl = $("uiModalTitle");
+    const statusEl = $("uiModalStatus");
+    titleEl.textContent = title || "Input";
+    statusEl.textContent = "";
+    body.innerHTML = "";
+    const inputs = {};
+    for (const f of fields) {
+      const label = document.createElement("label");
+      label.className = "lbl";
+      label.textContent = f.label || f.name;
+      body.appendChild(label);
+
+      let inp;
+      if (f.type === "textarea") {
+        inp = document.createElement("textarea");
+        inp.className = "in";
+        inp.rows = f.rows || 4;
+      } else if (f.type === "select") {
+        inp = document.createElement("select");
+        inp.className = "in";
+        for (const opt of (f.options || [])) {
+          const o = document.createElement("option");
+          o.value = opt.value;
+          o.textContent = opt.label;
+          inp.appendChild(o);
+        }
+      } else {
+        inp = document.createElement("input");
+        inp.className = "in";
+        inp.type = f.type || "text";
+      }
+      if (f.placeholder) inp.placeholder = f.placeholder;
+      if (f.value != null) inp.value = f.value;
+      if (f.maxLength) inp.maxLength = f.maxLength;
+      inputs[f.name] = inp;
+      body.appendChild(inp);
+    }
+
+    const close = () => { modal.hidden = true; };
+    $("uiModalClose").onclick = () => { close(); resolve(null); };
+    $("uiModalCancel").onclick = () => { close(); resolve(null); };
+    $("uiModalOk").onclick = () => {
+      const out = {};
+      for (const [k, el] of Object.entries(inputs)) out[k] = (el.value ?? "").toString();
+      close();
+      resolve(out);
+    };
+    modal.hidden = false;
+    // focus first input
+    const first = body.querySelector("input,textarea,select");
+    if (first) first.focus();
+  });
+}
 const $ = (id) => document.getElementById(id);
 function escapeHtml(s){
 return (s ?? "").toString()
@@ -1163,105 +1328,6 @@ async function refreshNews(){
 const items = await fetchNewsPublic();
 renderNewsHome(items);
 }
-
-async function refreshAdminNews(){
-  if (!NEWS_TOKEN) {
-    $("newsAdminStatus").textContent = "News access not available.";
-    $("newsAdminStatus").className = "status danger";
-    return;
-  }
-  $("newsAdminStatus").textContent = "Loading...";
-  $("newsAdminStatus").className = "status";
-  try{
-    const data = await fetchNewsPublic();
-    renderNewsAdminList(data.items || []);
-    $("newsAdminStatus").textContent = "";
-  }catch(err){
-    $("newsAdminStatus").textContent = err?.message || "Failed to load news";
-    $("newsAdminStatus").className = "status danger";
-  }
-}
-
-function renderNewsAdminList(items){
-  const list = $("newsAdminList");
-  if (!list) return;
-  if (!items || !items.length){
-    list.innerHTML = '<div class="status">No posts yet.</div>';
-    return;
-  }
-  list.innerHTML = items.map(it => `
-    <div class="newsItem">
-      <div class="h">
-        <div><strong>${escapeHtml(it.title)}</strong></div>
-        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-          <span class="muted">${fmtDate(it.createdAt)}</span>
-          <button class="navbtn" type="button" data-delnews="${escapeHtml(it.id)}">Delete</button>
-        </div>
-      </div>
-      <div class="muted" style="margin-top:6px; white-space:pre-wrap;">${escapeHtml(it.text)}</div>
-      <div class="muted" style="margin-top:8px;">By ${escapeHtml(it.createdBy || "")}</div>
-    </div>
-  `).join("");
-  // Attach delete handlers
-  list.querySelectorAll("[data-delnews]").forEach(btn=>{
-    btn.addEventListener("click", async ()=>{
-      const id = btn.getAttribute("data-delnews");
-      if (!id) return;
-      if (!confirm("Delete this news post?")) return;
-      try{
-        btn.disabled = true;
-        await newsApi(`/news/${encodeURIComponent(id)}`, { method:"DELETE", headers: newsAuthHeaders() });
-        await refreshAdminNews();
-        await refreshNews().catch(()=>{});
-      }catch(err){
-        $("newsAdminStatus").textContent = err?.message || "Failed to delete";
-        $("newsAdminStatus").className = "status danger";
-      }finally{
-        btn.disabled = false;
-      }
-    });
-  });
-}
-
-// Admin news form handlers
-try{
-  const f = $("newsCreateForm");
-  if (f){
-    f.addEventListener("submit", async (e)=>{
-      e.preventDefault();
-      const title = ($("newsTitle").value || "").trim();
-      const textv = ($("newsText").value || "").trim();
-      if (!title || !textv) return;
-      const st = $("newsAdminStatus");
-      st.textContent = "Publishing...";
-      st.className = "status";
-      $("newsPublishBtn").disabled = true;
-      try{
-        await newsApi("/news", {
-          method:"POST",
-          headers: { ...newsAuthHeaders(), "Content-Type":"application/json" },
-          body: JSON.stringify({ title, text: textv })
-        });
-        $("newsTitle").value = "";
-        $("newsText").value = "";
-        st.textContent = "Published.";
-        st.className = "status ok";
-        await refreshAdminNews();
-        await refreshNews().catch(()=>{});
-      }catch(err){
-        st.textContent = err?.message || "Publish failed";
-        st.className = "status danger";
-      }finally{
-        $("newsPublishBtn").disabled = false;
-        setTimeout(()=>{ if (st.classList.contains("ok")) st.textContent = ""; }, 1500);
-      }
-    });
-
-    $("newsRefreshBtn").addEventListener("click", ()=>{
-      refreshAdminNews().catch(()=>{});
-    });
-  }
-}catch(e){}
 const contentTitle = $("contentTitle");
 const contentTag = $("contentTag");
 const homeView = $("homeView");
@@ -1269,7 +1335,6 @@ const aboutView = $("aboutView");
 const contactView = $("contactView");
 const loginView = $("loginView");
 const adminView = $("adminView");
-const adminNewsView = $("adminNewsView");
 const bgcView = $("bgcView");
 const recruitView = $("recruitView");
 const docsView = $("docsView");
@@ -1287,35 +1352,18 @@ const navBlacklist = $("navBlacklist");
 const navAdmin = $("navAdmin");
 const navLogout = $("navLogout");
 const navSettings = $("navSettings"); // New Nav Button
-const aboutLoginCTA = $("aboutLoginCTA");
-const aboutGoLogin = $("aboutGoLogin");
-const settingsMenu = $("settingsMenu");
-const settingsMenuPage = $("settingsMenuPage");
-const settingsMenuNews = $("settingsMenuNews");
 function setActiveNav(btn){
 [navHome, navAbout, navContact, navLogin, navBGC, navRecruit, navDocs, navAccess, navBlacklist, navAdmin].forEach(b=>{
 if (!b) return;
 b.classList.toggle("active", b === btn);
 });
 }
-function closeTransientUI(){
-  // Close any dropdown/overlay UI so pages never stack/glitch
-  try{ closeSettingsMenu(); }catch(e){}
-}
-
-
 function setView(which){
-closeTransientUI();
-const loggedIn = !!TOOL_TOKEN;
-const protectedViews = new Set(["home","bgc","recruit","docs","access","blacklist","admin","adminNews","settings"]); 
-if (!loggedIn && protectedViews.has(which)) which = "login";
 homeView.hidden = true;
 aboutView.hidden = true;
 contactView.hidden = true;
 loginView.hidden = true;
-settingsView.hidden = true;
 adminView.hidden = true;
-adminNewsView.hidden = true;
 bgcView.hidden = true;
 recruitView.hidden = true;
 docsView.hidden = true;
@@ -1343,13 +1391,6 @@ contactView.hidden = false;
 setActiveNav(navContact);
 return;
 }
-if (which === "settings"){
-contentTitle.textContent = "Settings";
-contentTag.textContent = "Page Settings";
-settingsView.hidden = false;
-setActiveNav(null);
-return;
-}
 if (which === "login"){
 contentTitle.textContent = "Login";
 contentTag.textContent = "Access Control";
@@ -1364,20 +1405,6 @@ contentTag.textContent = "Website Editor";
 adminView.hidden = false;
 setActiveNav(navAdmin);
 return;
-}
-
-if (which === "adminnews"){
-  // Admin-only view; fallback to Home if not allowed
-  if (!TOOL_TOKEN || (LOGGED_IN_USER||"").toLowerCase() !== (ADMIN_USERNAME||"").toLowerCase()){
-    setView("home");
-    return;
-  }
-  contentTitle.textContent = "Admin News";
-  contentTag.textContent = "Management";
-  adminNewsView.hidden = false;
-  setActiveNav(null);
-  refreshAdminNews().catch(()=>{});
-  return;
 }
 if (which === "bgc"){
 contentTitle.textContent = "Background Checks";
@@ -1423,27 +1450,19 @@ return;
 }
 function updateNav(){
 const loggedIn = !!TOOL_TOKEN;
-// Public (unauthorized) users should only see the About page in the top nav
-navHome.hidden = !loggedIn;
-navContact.hidden = !loggedIn;
-navSettings.hidden = !loggedIn;
-navLogin.hidden = true;
-// About page shows a login CTA when not authorized
-if (aboutLoginCTA) aboutLoginCTA.hidden = loggedIn;
+navLogin.hidden = loggedIn;
 navBGC.hidden = !loggedIn;
 navRecruit.hidden = !loggedIn;
 navDocs.hidden = !(loggedIn && IS_PRIV);
 navAccess.hidden = !(loggedIn && IS_PRIV);
 navBlacklist.hidden = !(loggedIn && IS_PRIV);
 navLogout.hidden = !loggedIn;
-settingsMenuNews.hidden = !(loggedIn && (LOGGED_IN_USER||"").toLowerCase() === (ADMIN_USERNAME||"").toLowerCase());
-navAdmin.hidden = !(loggedIn && (LOGGED_IN_USER||"").toLowerCase() === (ADMIN_USERNAME||"").toLowerCase());
+navAdmin.hidden = !(loggedIn && LOGGED_IN_USER === ADMIN_USERNAME);
 }
 navHome.addEventListener("click", ()=> setView("home"));
 navAbout.addEventListener("click", ()=> setView("about"));
 navContact.addEventListener("click", ()=> setView("contact"));
 navLogin.addEventListener("click", ()=> setView("login"));
-if (aboutGoLogin) aboutGoLogin.addEventListener("click", ()=> setView("login"));
 navBGC.addEventListener("click", ()=> setView("bgc"));
 navRecruit.addEventListener("click", ()=> setView("recruit"));
 navDocs.addEventListener("click", ()=> { if (IS_PRIV) setView("docs"); });
@@ -1462,11 +1481,11 @@ setView("home");
 });
 
 // --- SETTINGS LOGIC ---
-const settingsView = $("settingsView");
+const settingsModal = $("settingsModal");
 const closeSettings = $("closeSettings");
 const saveSettingsBtn = $("saveSettingsBtn");
 
-function openPageSettingsModal(){
+navSettings.addEventListener("click", () => {
     // Load current values into inputs
     $("setAboutTitle").value = $("aboutMainTitle").textContent;
     $("setBox1Title").value = $("aboutBox1Title").textContent;
@@ -1488,47 +1507,11 @@ function openPageSettingsModal(){
     $("setContactDiscord2").value = $("contactDiscord2").textContent;
     $("setContactUser2").value = $("contactUser2").textContent;
 
-    setView("settings");
-}
-function closeSettingsMenu(){
-  if (settingsMenu) settingsMenu.classList.remove("open");
-}
-function toggleSettingsMenu(){
-  if (!settingsMenu) return;
-  // Position under the Settings button
-  const r = navSettings.getBoundingClientRect();
-  // Ensure nav is the positioning context
-  settingsMenu.style.left = Math.max(12, r.left) + "px";
-  settingsMenu.style.top = (r.bottom + 6) + "px";
-  settingsMenu.classList.toggle("open");
-}
-
-navSettings.addEventListener("click", (e) => {
-  e.preventDefault();
-  e.stopPropagation();
-  toggleSettingsMenu();
+    settingsModal.classList.add("open");
 });
-
-settingsMenuPage.addEventListener("click", (e) => {
-  e.preventDefault();
-  closeSettingsMenu();
-  openPageSettingsModal();
-});
-
-settingsMenuNews.addEventListener("click", (e) => {
-  e.preventDefault();
-  closeSettingsMenu();
-  setView("adminnews");
-});
-
-// Click outside closes the submenu
-document.addEventListener("click", () => {
-  closeSettingsMenu();
-});
-
 
 closeSettings.addEventListener("click", () => {
-    setView("home");
+    settingsModal.classList.remove("open");
 });
 
 saveSettingsBtn.addEventListener("click", () => {
@@ -1568,8 +1551,8 @@ saveSettingsBtn.addEventListener("click", () => {
     };
     localStorage.setItem('cid_settings', JSON.stringify(settingsData));
     
-    setView("home");
-alert("Settings saved!");
+    settingsModal.classList.remove("open");
+    alert("Settings saved!");
 });
 
 // Load settings on startup
@@ -1897,7 +1880,11 @@ chartStatus.textContent = "done";
 termPrint("Done.");
 }
 $("btnRunBGC").addEventListener("click", async ()=>{
-const u = prompt("Roblox Username:");
+const r = await uiModalForm({ title:"Run Background Check", fields:[
+  { name:"username", label:"Roblox Username", placeholder:"Username" }
+]});
+if (!r) return;
+const u = (r.username || "").trim();
 if (!u) return;
 try{
 await runCheck(u.trim());
@@ -2126,7 +2113,11 @@ accessDocsStatus.className = "status danger";
 }
 }
 async function promptDocId(){
-const id = prompt("Document ID:");
+const r = await uiModalForm({ title:"Document", fields:[
+  { name:"id", label:"Document ID", placeholder:"Enter document ID" }
+]});
+if (!r) return null;
+const id = (r.id || "").trim();
 if (!id) return null;
 const ok = accessDocsCache.some(x => String(x.id) === String(id).trim());
 if (!ok){
@@ -2140,10 +2131,14 @@ accessStatus.textContent = "";
 accessStatus.className = "status";
 const id = await promptDocId();
 if (!id) return;
-const email = prompt("Email:");
-if (!email) return;
-const role = prompt("Permissions (viewer/editor):");
-if (!role) return;
+const r = await uiModalForm({ title:"Grant Access", fields:[
+  { name:"email", label:"Email", placeholder:"user@example.com" },
+  { name:"role", label:"Permissions", placeholder:"viewer or editor" }
+]});
+if (!r) return;
+const email = (r.email || "").trim();
+const role = (r.role || "").trim();
+if (!email || !role) return;
 const sure = confirm(`Grant ${role} to ${email} on document ${id}?`);
 if (!sure) return;
 try{
@@ -2164,10 +2159,14 @@ accessStatus.textContent = "";
 accessStatus.className = "status";
 const id = await promptDocId();
 if (!id) return;
-const email = prompt("Email:");
-if (!email) return;
-const reason = prompt("Reason:");
-if (!reason) return;
+const r = await uiModalForm({ title:"Revoke Access", fields:[
+  { name:"email", label:"Email", placeholder:"user@example.com" },
+  { name:"reason", label:"Reason", placeholder:"Why revoke?" }
+]});
+if (!r) return;
+const email = (r.email || "").trim();
+const reason = (r.reason || "").trim();
+if (!email || !reason) return;
 const sure = confirm(`Revoke access for ${email} on document ${id}?`);
 if (!sure) return;
 try{
@@ -2186,10 +2185,14 @@ accessStatus.className = "status danger";
 $("btnRevokeAllOpen").addEventListener("click", async ()=>{
 accessStatus.textContent = "";
 accessStatus.className = "status";
-const email = prompt("Email:");
-if (!email) return;
-const reason = prompt("Reason:");
-if (!reason) return;
+const r = await uiModalForm({ title:"Revoke Access", fields:[
+  { name:"email", label:"Email", placeholder:"user@example.com" },
+  { name:"reason", label:"Reason", placeholder:"Why revoke?" }
+]});
+if (!r) return;
+const email = (r.email || "").trim();
+const reason = (r.reason || "").trim();
+if (!email || !reason) return;
 const sure = confirm(`Revoke ALL document access for ${email}?`);
 if (!sure) return;
 try{
@@ -2282,13 +2285,340 @@ blStatusMsg.className = "status danger";
 }
 });
 updateNav();
-if (!!TOOL_TOKEN) {
-  setView("home");
-} else {
-  setView("about");
-}
+setView("home");
 refreshNews().catch(()=>{});
 loadSavedSettings(); // Load settings on startup
+
+/* =========================
+   ADMIN MENU + PANEL
+   ========================= */
+function initAdminMenu(){
+  const btn = $("navAdmin");
+  const menu = $("adminMenu");
+  if (!btn || !menu) return;
+
+  btn.addEventListener("click", (e)=>{
+    e.preventDefault();
+    if (!IS_ADMIN) return;
+    menu.hidden = !menu.hidden;
+  });
+
+  const openTab = (tab) => {
+    setView("admin");
+    // tabs
+    for (const b of document.querySelectorAll("#adminTabs .tabBtn")){
+      b.classList.toggle("active", b.dataset.tab === tab);
+    }
+    for (const p of document.querySelectorAll("#adminView .tabPanel")){
+      p.hidden = true;
+    }
+    const panel = $("tab_" + tab);
+    if (panel) panel.hidden = false;
+  };
+
+  $("adminMenuOpenPanel").addEventListener("click", ()=>{ closeAdminMenu(); openTab("news"); });
+  $("adminMenuPages").addEventListener("click", ()=>{ closeAdminMenu(); openTab("pages"); });
+  $("adminMenuUsers").addEventListener("click", ()=>{ closeAdminMenu(); openTab("users"); loadUsers(); });
+  $("adminMenuNews").addEventListener("click", ()=>{ closeAdminMenu(); openTab("news"); refreshAdminNews(); });
+  $("adminMenuAudit").addEventListener("click", ()=>{ closeAdminMenu(); openTab("audit"); refreshAudit(true); });
+
+  for (const b of document.querySelectorAll("#adminTabs .tabBtn")){
+    b.addEventListener("click", ()=>{
+      openTab(b.dataset.tab);
+      if (b.dataset.tab === "users") loadUsers();
+      if (b.dataset.tab === "audit") refreshAudit(true);
+      if (b.dataset.tab === "news") refreshAdminNews();
+    });
+  }
+}
+
+function rteBind(container){
+  container.addEventListener("click", async (e)=>{
+    const btn = e.target.closest(".rteBtn");
+    if (!btn) return;
+    const cmd = btn.dataset.cmd;
+    if (btn.dataset.link){
+      const r = await uiModalForm({ title:"Insert Link", fields:[
+        { name:"href", label:"URL", placeholder:"https://..." }
+      ]});
+      if (!r) return;
+      const href = (r.href || "").trim();
+      if (!href) return;
+      document.execCommand("createLink", false, href);
+      return;
+    }
+    if (cmd) document.execCommand(cmd, false, null);
+  });
+}
+
+rteBind(document);
+initAdminMenu();
+
+async function refreshAdminNews(){
+  if (!IS_ADMIN) return;
+  const list = $("adminNewsList");
+  const empty = $("adminNewsEmpty");
+  const status = $("newsAdminStatus");
+  status.textContent = "";
+  try{
+    const items = await fetchNewsPublic();
+    list.innerHTML = "";
+    if (!items.length){ empty.style.display = "block"; return; }
+    empty.style.display = "none";
+    for (const n of items.slice(0, 20)){
+      const div = document.createElement("div");
+      div.className = "newsItem";
+      const safeBody = sanitizeHtml(n.text || "");
+      const meta = await formatAuthor(n.createdBy || "");
+      div.innerHTML = `
+        <div class="h">
+          <div class="t">${escapeHtml(n.title || "")}</div>
+          <div class="d">${fmtDate(n.createdAt || "")}</div>
+        </div>
+        <div class="author">${meta}</div>
+        <div class="b">${safeBody}</div>
+        <div class="row" style="justify-content:flex-end;">
+          <button class="navbtn" data-del="${escapeHtml(n.id||"")}" type="button">Delete</button>
+        </div>
+      `;
+      div.querySelector("button[data-del]")?.addEventListener("click", async ()=>{
+        const id = n.id;
+        if (!id) return;
+        try{
+          await ensureNewsAdminLogin();
+          await newsApi(`/news/${encodeURIComponent(id)}`, { method:"DELETE", headers: newsAuthHeaders() });
+          status.textContent = "Deleted.";
+          await refreshAdminNews();
+        } catch(e){ status.textContent = e.message || "Delete failed"; }
+      });
+      list.appendChild(div);
+    }
+  } catch(e){
+    status.textContent = e.message || "Failed";
+  }
+}
+
+async function ensureNewsAdminLogin(){
+  if (NEWS_TOKEN) return;
+  // Use same credentials you used for TOOL login
+  // (news worker expects TOKEN_SECRET as password)
+  await newsLogin(LOGGED_IN_USER, $("passIn")?.value || "");
+}
+
+$("btnRefreshNewsAdmin")?.addEventListener("click", refreshAdminNews);
+
+$("btnPostNews")?.addEventListener("click", async ()=>{
+  const status = $("newsAdminStatus");
+  status.textContent = "";
+  const title = ($("newsTitleIn").value || "").trim();
+  const htmlBody = ($("newsBodyEd").innerHTML || "").trim();
+  const text = sanitizeHtml(htmlBody);
+  if (!title || !text){ status.textContent = "Title and body required."; return; }
+  try{
+    await ensureNewsAdminLogin();
+    await newsApi("/news", {
+      method:"POST",
+      headers: newsAuthHeaders({ "Content-Type":"application/json" }),
+      body: JSON.stringify({ title, text })
+    });
+    $("newsTitleIn").value = "";
+    $("newsBodyEd").innerHTML = "";
+    status.textContent = "Published.";
+    await refreshAdminNews();
+  } catch(e){
+    status.textContent = e.message || "Failed";
+  }
+});
+
+/* Author formatting */
+const _robloxIdCache = new Map();
+async function getRobloxUserIdByName(username){
+  const key = (username||"").toLowerCase();
+  if (_robloxIdCache.has(key)) return _robloxIdCache.get(key);
+  try{
+    const res = await fetch("https://users.roblox.com/v1/usernames/users", {
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({ usernames:[username], excludeBannedUsers:false })
+    });
+    const data = await res.json().catch(()=>({}));
+    const id = data?.data?.[0]?.id || null;
+    _robloxIdCache.set(key, id);
+    return id;
+  } catch {
+    _robloxIdCache.set(key, null);
+    return null;
+  }
+}
+async function getHeadshotUrl(username){
+  const id = await getRobloxUserIdByName(username);
+  if (!id) return "";
+  try{
+    const res = await fetch(`https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${encodeURIComponent(id)}&size=150x150&format=Png&isCircular=true`);
+    const data = await res.json().catch(()=>({}));
+    return data?.data?.[0]?.imageUrl || "";
+  } catch { return ""; }
+}
+async function formatAuthor(username){
+  const u = (username||"").trim();
+  if (!u) return "";
+  let rank = "";
+  let pos = "";
+  if (u.toLowerCase() === "vendettapyrex"){
+    rank = "Brigadier General";
+    pos = "Director of Criminal Investigations";
+  }
+  // If we have runtime user metadata (admin can set), try to load once lazily
+  // (best-effort; doesn't block)
+  const avatar = await getHeadshotUrl(u);
+  const img = avatar ? `<img class="av" src="${escapeHtml(avatar)}" alt="">` : `<div class="av ph">${escapeHtml(u[0]||"?")}</div>`;
+  const meta = (rank || pos) ? `<div class="am"><div class="au">${escapeHtml(u)}</div><div class="ar">${escapeHtml(rank)}${rank&&pos?" • ":""}${escapeHtml(pos)}</div></div>` : `<div class="am"><div class="au">${escapeHtml(u)}</div></div>`;
+  return `<div class="authorRow">${img}${meta}</div>`;
+}
+
+/* Add small CSS for author row into existing styles via runtime (safe) */
+const authorStyle = document.createElement("style");
+authorStyle.textContent = `
+.authorRow{ display:flex; align-items:center; gap:10px; margin:8px 0 6px; }
+.authorRow .av{ width:34px; height:34px; border-radius:999px; border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.06); }
+.authorRow .av.ph{ display:flex; align-items:center; justify-content:center; font-weight:900; }
+.authorRow .au{ font-weight:900; }
+.authorRow .ar{ opacity:.85; font-weight:700; font-size:.9em; }
+`;
+document.head.appendChild(authorStyle);
+
+/* Pages editor */
+$("btnLoadPage")?.addEventListener("click", async ()=>{
+  const status = $("pageEditStatus");
+  status.textContent = "";
+  const name = $("pagePick").value;
+  try{
+    const data = await toolApi(`/pages/${encodeURIComponent(name)}`);
+    $("pageEditor").innerHTML = sanitizeHtml(data.html || "");
+    $("pagePreview").innerHTML = sanitizeHtml(data.html || "");
+    status.textContent = "Loaded.";
+  } catch(e){ status.textContent = e.message || "Load failed"; }
+});
+$("pageEditor")?.addEventListener("input", ()=>{
+  $("pagePreview").innerHTML = sanitizeHtml($("pageEditor").innerHTML || "");
+});
+$("btnSavePage")?.addEventListener("click", async ()=>{
+  const status = $("pageEditStatus");
+  status.textContent = "";
+  const name = $("pagePick").value;
+  const htmlBody = sanitizeHtml($("pageEditor").innerHTML || "");
+  try{
+    await toolApi(`/pages/set`, {
+      method:"POST",
+      headers: toolAuthHeaders({ "Content-Type":"application/json" }),
+      body: JSON.stringify({ name, html: htmlBody })
+    });
+    status.textContent = "Saved.";
+  } catch(e){ status.textContent = e.message || "Save failed"; }
+});
+
+/* Users manager */
+async function loadUsers(){
+  const status = $("usersStatus");
+  status.textContent = "";
+  try{
+    const data = await toolApi("/users/list", { headers: toolAuthHeaders() });
+    const tbody = $("usersTbody");
+    tbody.innerHTML = "";
+    for (const u of (data.users || [])){
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td>${escapeHtml(u.username)}</td><td>${u.priv ? "Yes" : ""}</td><td>${u.admin ? "Yes" : ""}</td><td>${escapeHtml(u.rank||"")}</td><td>${escapeHtml(u.position||"")}</td>`;
+      tr.addEventListener("click", ()=>{
+        $("userNameIn").value = u.username || "";
+        $("userPassIn").value = "";
+        $("userPrivIn").checked = !!u.priv;
+        $("userAdminIn").checked = !!u.admin;
+        $("userRankIn").value = u.rank || "";
+        $("userPosIn").value = u.position || "";
+      });
+      tbody.appendChild(tr);
+    }
+    status.textContent = "Loaded.";
+  } catch(e){ status.textContent = e.message || "Failed"; }
+}
+$("btnUsersRefresh")?.addEventListener("click", loadUsers);
+$("btnUserSave")?.addEventListener("click", async ()=>{
+  const status = $("usersStatus");
+  status.textContent = "";
+  const username = ($("userNameIn").value || "").trim();
+  const password = ($("userPassIn").value || "").toString();
+  if (!username){ status.textContent = "Username required."; return; }
+  try{
+    await toolApi("/users/set", {
+      method:"POST",
+      headers: toolAuthHeaders({ "Content-Type":"application/json" }),
+      body: JSON.stringify({
+        username,
+        password: password || "",
+        priv: $("userPrivIn").checked,
+        admin: $("userAdminIn").checked,
+        rank: ($("userRankIn").value || "").trim(),
+        position: ($("userPosIn").value || "").trim()
+      })
+    });
+    status.textContent = "Saved.";
+    await loadUsers();
+  } catch(e){ status.textContent = e.message || "Save failed"; }
+});
+$("btnUserDelete")?.addEventListener("click", async ()=>{
+  const status = $("usersStatus");
+  status.textContent = "";
+  const username = ($("userNameIn").value || "").trim();
+  if (!username){ status.textContent = "Username required."; return; }
+  try{
+    await toolApi("/users/delete", {
+      method:"POST",
+      headers: toolAuthHeaders({ "Content-Type":"application/json" }),
+      body: JSON.stringify({ username })
+    });
+    status.textContent = "Removed.";
+    $("userNameIn").value = ""; $("userPassIn").value=""; $("userPrivIn").checked=false; $("userAdminIn").checked=false;
+    await loadUsers();
+  } catch(e){ status.textContent = e.message || "Remove failed"; }
+});
+
+/* Audit log */
+let auditCursor = "";
+async function refreshAudit(reset){
+  const status = $("auditStatus");
+  status.textContent = "";
+  if (reset){ auditCursor = ""; $("auditTbody").innerHTML = ""; }
+  try{
+    const q = auditCursor ? `?limit=100&cursor=${encodeURIComponent(auditCursor)}` : `?limit=100`;
+    const data = await toolApi(`/audit${q}`, { headers: toolAuthHeaders() });
+    const tbody = $("auditTbody");
+    for (const it of (data.items || [])){
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td>${escapeHtml(fmtDate(it.ts||""))}</td><td>${escapeHtml(it.actor||"")}</td><td>${escapeHtml(it.type||"")}</td><td>${escapeHtml(JSON.stringify(it.detail||{}))}</td>`;
+      tbody.appendChild(tr);
+    }
+    auditCursor = data.nextCursor || "";
+    status.textContent = "Loaded.";
+  } catch(e){ status.textContent = e.message || "Failed"; }
+}
+$("btnAuditRefresh")?.addEventListener("click", ()=>refreshAudit(true));
+$("btnAuditMore")?.addEventListener("click", ()=>refreshAudit(false));
+
+/* =========================
+   NAV VISIBILITY TWEAKS
+   ========================= */
+function enforceAdminNavRules(){
+  if ($("navSettings")) $("navSettings").hidden = true;
+  if ($("navAdmin")) $("navAdmin").hidden = !IS_ADMIN;
+  if ($("adminMenu")) $("adminMenu").hidden = true;
+}
+const _oldApplyAuth = applyAuthUI;
+applyAuthUI = function(){
+  _oldApplyAuth();
+  enforceAdminNavRules();
+};
+enforceAdminNavRules();
+
 })();
 </script>
 </body>
