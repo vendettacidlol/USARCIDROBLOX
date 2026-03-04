@@ -562,6 +562,12 @@ tbody tr:hover td{ background: rgba(255,255,255,0.04); }
 .grid2{ display:grid; grid-template-columns: 1fr 1fr; gap:14px; }
 @media (max-width: 980px){ .grid2{ grid-template-columns:1fr; } }
 .card.inner{ border-radius:16px; }
+
+.modalBody{ padding-top:10px; }
+.modalBody .lbl{ display:block; margin:10px 0 6px; }
+.modalBody .in{ display:block; width:100%; }
+.modal .row{ display:flex; }
+
 </style>
 </head>
 <body>
@@ -1103,7 +1109,7 @@ tbody tr:hover td{ background: rgba(255,255,255,0.04); }
       <div class="title" id="uiModalTitle">Input</div>
       <button class="navbtn" id="uiModalClose" type="button">Close</button>
     </div>
-    <div class="bd" id="uiModalBody"></div>
+    <div id="uiModalBody" class="modalBody"></div>
     <div class="row" style="justify-content:flex-end; gap:10px; margin-top:12px;">
       <button class="navbtn" id="uiModalCancel" type="button">Cancel</button>
       <button class="navbtn primary" id="uiModalOk" type="button">OK</button>
@@ -2608,7 +2614,9 @@ $("btnAuditMore")?.addEventListener("click", ()=>refreshAudit(false));
    NAV VISIBILITY TWEAKS
    ========================= */
 function enforceAdminNavRules(){
+  // Remove settings for everyone (replaced by admin menu)
   if ($("navSettings")) $("navSettings").hidden = true;
+  // Only show admin button/menu for admins
   if ($("navAdmin")) $("navAdmin").hidden = !IS_ADMIN;
   if ($("adminMenu")) $("adminMenu").hidden = true;
 }
