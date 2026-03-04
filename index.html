@@ -1363,6 +1363,7 @@ async function renderPageIfExists(name, viewEl){
   }
   return false;
 }
+
 async function toolLogin(username, password){
 const data = await toolApi(`/auth/login`, {
 method:"POST",
@@ -1559,26 +1560,27 @@ return;
 function updateNav(){
 const loggedIn = !!TOOL_TOKEN;
 
-// Public nav
+// Public
 navHome.hidden = false;
 navAbout.hidden = false;
 navContact.hidden = false;
 
-// Login/Logout
+// Login/logout
 navLogin.hidden = loggedIn;
 navLogout.hidden = !loggedIn;
 
-// Tools
+// Tools for logged-in users
 navBGC.hidden = !loggedIn;
 navRecruit.hidden = !loggedIn;
+
+// Privileged tools
 navDocs.hidden = !(loggedIn && IS_PRIV);
 navAccess.hidden = !(loggedIn && IS_PRIV);
 navBlacklist.hidden = !(loggedIn && IS_PRIV);
 
-// Admin-only controls
-// Settings button is admin-only and acts as an Admin menu trigger (no public settings page)
+// Admin-only (use Settings button as admin menu trigger)
 navSettings.hidden = !(loggedIn && IS_ADMIN);
-navAdmin.hidden = true; // legacy button not used
+navAdmin.hidden = !(loggedIn && IS_ADMIN); // keep Admin button for admins too (optional)
 }
 
 navHome.addEventListener("click", ()=> setView("home"));
@@ -1610,3 +1612,1148 @@ navSettings.addEventListener("click", (e)=>{
   if (!menu) return;
   menu.hidden = !menu.hidden;
 });
+// --- SETTINGS LOGIC ---
+const settingsModal = $("settingsModal");
+const closeSettings = $("closeSettings");
+const saveSettingsBtn = $("saveSettingsBtn");
+
+navSettings.addEventListener("click", () => {
+    // Load current values into inputs
+    $("setAboutTitle").value = $("aboutMainTitle").textContent;
+    $("setBox1Title").value = $("aboutBox1Title").textContent;
+    $("setBox1Desc").value = $("aboutBox1Desc").textContent;
+    $("setBox1Roles").value = $("aboutBox1Roles").innerHTML.replace(/<br>/g, "\n");
+    $("setBox2Title").value = $("aboutBox2Title").textContent;
+    $("setBox2Desc").value = $("aboutBox2Desc").textContent;
+    $("setBox2Roles").value = $("aboutBox2Roles").innerHTML.replace(/<br>/g, "\n");
+
+    $("setContactName1").value = $("contactName1").textContent;
+    $("setContactRole1").value = $("contactRole1").textContent;
+    $("setContactImg1").value = $("contactImg1").src;
+    $("setContactDiscord1").value = $("contactDiscord1").textContent;
+    $("setContactUser1").value = $("contactUser1").textContent;
+
+    $("setContactName2").value = $("contactName2").textContent;
+    $("setContactRole2").value = $("contactRole2").textContent;
+    $("setContactImg2").value = $("contactImg2").src;
+    $("setContactDiscord2").value = $("contactDiscord2").textContent;
+    $("setContactUser2").value = $("contactUser2").textContent;
+
+    settingsModal.classList.add("open");
+});
+
+closeSettings.addEventListener("click", () => {
+    settingsModal.classList.remove("open");
+});
+
+saveSettingsBtn.addEventListener("click", () => {
+    // Update About Page
+    $("aboutMainTitle").textContent = $("setAboutTitle").value;
+    $("aboutBox1Title").textContent = $("setBox1Title").value;
+    $("aboutBox1Desc").textContent = $("setBox1Desc").value;
+    $("aboutBox1Roles").innerHTML = $("setBox1Roles").value.replace(/\n/g, "<br>");
+    $("aboutBox2Title").textContent = $("setBox2Title").value;
+    $("aboutBox2Desc").textContent = $("setBox2Desc").value;
+    $("aboutBox2Roles").innerHTML = $("setBox2Roles").value.replace(/\n/g, "<br>");
+
+    // Update Contact Page
+    $("contactName1").textContent = $("setContactName1").value;
+    $("contactRole1").textContent = $("setContactRole1").value;
+    $("contactImg1").src = $("setContactImg1").value;
+    $("contactDiscord1").textContent = $("setContactDiscord1").value;
+    $("contactUser1").textContent = $("setContactUser1").value;
+
+    $("contactName2").textContent = $("setContactName2").value;
+    $("contactRole2").textContent = $("setContactRole2").value;
+    $("contactImg2").src = $("setContactImg2").value;
+    $("contactDiscord2").textContent = $("setContactDiscord2").value;
+    $("contactUser2").textContent = $("setContactUser2").value;
+
+    // Save to LocalStorage so it persists on refresh
+    const settingsData = {
+        about: {
+            title: $("setAboutTitle").value,
+            b1Title: $("setBox1Title").value, b1Desc: $("setBox1Desc").value, b1Roles: $("setBox1Roles").value,
+            b2Title: $("setBox2Title").value, b2Desc: $("setBox2Desc").value, b2Roles: $("setBox2Roles").value
+        },
+        contact: {
+            c1Name: $("setContactName1").value, c1Role: $("setContactRole1").value, c1Img: $("setContactImg1").value, c1Discord: $("setContactDiscord1").value, c1User: $("setContactUser1").value,
+            c2Name: $("setContactName2").value, c2Role: $("setContactRole2").value, c2Img: $("setContactImg2").value, c2Discord: $("setContactDiscord2").value, c2User: $("setContactUser2").value
+        }
+    };
+    localStorage.setItem('cid_settings', JSON.stringify(settingsData));
+    
+    settingsModal.classList.remove("open");
+    alert("Settings saved!");
+});
+
+// Load settings on startup
+function loadSavedSettings() {
+    const saved = localStorage.getItem('cid_settings');
+    if (saved) {
+        try {
+            const data = JSON.parse(saved);
+            // Apply About
+            if(data.about) {
+                $("aboutMainTitle").textContent = data.about.title;
+                $("aboutBox1Title").textContent = data.about.b1Title;
+                $("aboutBox1Desc").textContent = data.about.b1Desc;
+                $("aboutBox1Roles").innerHTML = data.about.b1Roles.replace(/\n/g, "<br>");
+                $("aboutBox2Title").textContent = data.about.b2Title;
+                $("aboutBox2Desc").textContent = data.about.b2Desc;
+                $("aboutBox2Roles").innerHTML = data.about.b2Roles.replace(/\n/g, "<br>");
+            }
+            // Apply Contact
+            if(data.contact) {
+                $("contactName1").textContent = data.contact.c1Name;
+                $("contactRole1").textContent = data.contact.c1Role;
+                $("contactImg1").src = data.contact.c1Img;
+                $("contactDiscord1").textContent = data.contact.c1Discord;
+                $("contactUser1").textContent = data.contact.c1User;
+
+                $("contactName2").textContent = data.contact.c2Name;
+                $("contactRole2").textContent = data.contact.c2Role;
+                $("contactImg2").src = data.contact.c2Img;
+                $("contactDiscord2").textContent = data.contact.c2Discord;
+                $("contactUser2").textContent = data.contact.c2User;
+            }
+        } catch(e) { console.error("Failed to load settings", e); }
+    }
+}
+
+const loginForm   = $("loginForm");
+const loginUser   = $("loginUser");
+const loginPass   = $("loginPass");
+const loginStatus = $("loginStatus");
+const loginBtn    = $("loginBtn");
+loginForm.addEventListener("submit", async (e)=>{
+e.preventDefault();
+loginStatus.textContent = "";
+loginStatus.className = "status";
+loginBtn.disabled = true;
+try{
+const u = (loginUser.value || "").trim();
+const p = (loginPass.value || "");
+await toolLogin(u, p);
+if (u === ADMIN_USERNAME){
+await newsLogin(u, p);
+} else {
+NEWS_TOKEN = null;
+}
+loginStatus.textContent = "Access granted.";
+loginStatus.className = "status ok";
+updateNav();
+setView("bgc");
+} catch(err){
+loginStatus.textContent = err?.message || "Login failed";
+loginStatus.className = "status danger";
+} finally{
+loginBtn.disabled = false;
+loginPass.value = "";
+}
+});
+const screen = $("screen");
+function termPrint(text=""){
+const div = document.createElement("div");
+div.textContent = text;
+screen.appendChild(div);
+screen.scrollTop = screen.scrollHeight;
+}
+const TRELLO_SOURCES = [
+{ key: "USAR WIDE", json: "https://trello.com/b/zVRnrvhb/usar-management-mainframe.json", list_name: "USAR Blacklists" },
+{ key: "FORSCOM",   json: "https://trello.com/b/YncjLEbF/forces-command-information-trello.json", list_name: "Blacklists" },
+{ key: "ASOC",      json: "https://trello.com/b/TwIxsGvt/army-special-operations-information.json", list_name: "ASOC Blacklists" },
+{ key: "MPC",       json: "https://trello.com/b/IeGd7MBr/military-police-corps-information-board.json", list_name: "Unit Blacklists" },
+{ key: "TRADOC",    json: "https://trello.com/b/fUwjef3b/training-and-doctrine-command-information.json", list_name: "PERMANENT TRADOC BLACKLISTS" },
+];
+const DISPLAY_ORDER = ["USAR WIDE", "FORSCOM", "ASOC", "MPC", "TRADOC"];
+const INVENTORY_CATEGORIES = {
+"T-Shirts": 2, "Classic Shirts": 11, "Classic Pants": 12, "Hats": 8,
+"Face": 18, "Gear": 19, "Hair Accessories": 41, "Face Accessories": 42,
+"Neck Accessories": 43, "Shoulder Accessories": 44, "Front Accessories": 45,
+"Back Accessories": 46, "Waist Accessories": 47,
+};
+const BASE_DELAY_MS = 250;
+const JITTER_MS = 200;
+const BATCH_DELAY_MS = 900;
+const PHASE_DELAY_MS = 900;
+const MAX_RETRIES_429 = 7;
+function sleep(ms){ return new Promise(r=>setTimeout(r, ms)); }
+async function nap(base=BASE_DELAY_MS){ await sleep(base + Math.random()*JITTER_MS); }
+async function fetchRL(url, opts={}){
+await nap();
+let res = await fetch(url, opts);
+if (res.status !== 429) return res;
+let backoff = 2000;
+for (let i=0; i<MAX_RETRIES_429; i++){
+termPrint(`Rate limited. Sleeping ${(backoff/1000).toFixed(1)}s...`);
+await sleep(backoff);
+backoff = Math.floor(backoff * 1.55);
+await nap(50);
+res = await fetch(url, opts);
+if (res.status !== 429) return res;
+}
+return res;
+}
+async function toolApiRL(path, opts={}){
+const res = await fetchRL(`${TOOL_API_BASE}${path}`, opts);
+const data = await res.json().catch(()=> ({}));
+if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+if (data && data.ok === false) throw new Error(data.error || "Request failed");
+return data;
+}
+async function trelloFetchBoardJson(trelloUrl){
+const res = await fetchRL(`${TOOL_API_BASE}/trello?url=${encodeURIComponent(trelloUrl)}`, { headers: toolAuthHeaders() });
+const data = await res.json().catch(()=> ({}));
+if (!res.ok) throw new Error(data.error || `Trello HTTP ${res.status}`);
+return data;
+}
+async function robloxUserId(username){
+const data = await toolApiRL(`/roblox/userid`, {
+method:"POST",
+headers: toolAuthHeaders({ "Content-Type":"application/json" }),
+body: JSON.stringify({ username })
+});
+if (data?.data?.length) return String(data.data[0].id);
+throw new Error("User not found");
+}
+async function robloxBadges(userId){
+const out = [];
+let cursor = "";
+while(true){
+const url = cursor ? `/roblox/badges?userId=${encodeURIComponent(userId)}&cursor=${encodeURIComponent(cursor)}`
+: `/roblox/badges?userId=${encodeURIComponent(userId)}`;
+const data = await toolApiRL(url, { headers: toolAuthHeaders() });
+out.push(...(data.data || []));
+cursor = data.nextPageCursor || "";
+if (!cursor) break;
+await sleep(BATCH_DELAY_MS);
+}
+return out;
+}
+async function robloxAwardedDates(userId, badgeIds){
+const STEP = 100;
+const dates = [];
+for (let i=0; i<badgeIds.length; i+=STEP){
+const batch = badgeIds.slice(i, i+STEP);
+const data = await toolApiRL(`/roblox/awardedDates`, {
+method:"POST",
+headers: toolAuthHeaders({ "Content-Type":"application/json" }),
+body: JSON.stringify({ userId, badgeIds: batch })
+});
+(data.data || []).forEach(x => dates.push(x.awardedDate));
+await sleep(BATCH_DELAY_MS);
+}
+return dates;
+}
+async function canViewInventory(userId){
+const data = await toolApiRL(`/roblox/canViewInventory?userId=${encodeURIComponent(userId)}`, { headers: toolAuthHeaders() });
+return !!data.canView;
+}
+async function inventoryItems(userId, assetTypeId){
+const out = [];
+let cursor = "";
+while(true){
+const path =
+`/roblox/inventory?userId=${encodeURIComponent(userId)}&assetTypeId=${encodeURIComponent(assetTypeId)}` +
+(cursor ? `&cursor=${encodeURIComponent(cursor)}` : "");
+const data = await toolApiRL(path, { headers: toolAuthHeaders() });
+out.push(...(data.data || []));
+cursor = data.nextPageCursor || "";
+if (!cursor) break;
+await sleep(BATCH_DELAY_MS);
+}
+return out;
+}
+function normalize(s){ return (s ?? "").toString().trim().toLowerCase(); }
+function usernameInCardName(username, cardName){
+const u = (username ?? "").trim();
+if (!u) return false;
+const cn = (cardName ?? "").trim();
+if (normalize(cn) === "[username]") return false;
+const escaped = u.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+try {
+const re = new RegExp(`(?<![A-Za-z0-9_])${escaped}(?![A-Za-z0-9_])`, "i");
+return re.test(cn);
+} catch {
+const low = cn.toLowerCase();
+const uu = u.toLowerCase();
+const idx = low.indexOf(uu);
+if (idx === -1) return false;
+const before = low[idx-1] || "";
+const after = low[idx+uu.length] || "";
+const word = /[a-z0-9_]/i;
+return !word.test(before) && !word.test(after);
+}
+}
+async function trelloBlacklistStatus(username){
+const results = {};
+TRELLO_SOURCES.forEach(s => results[s.key] = false);
+for (const src of TRELLO_SOURCES){
+try{
+const board = await trelloFetchBoardJson(src.json);
+const lists = board.lists || [];
+const cards = board.cards || [];
+const listIds = lists.filter(l => normalize(l.name) === normalize(src.list_name)).map(l => l.id);
+if (!listIds.length) { results[src.key] = false; continue; }
+let found = false;
+for (const c of cards){
+if (listIds.includes(c.idList) && usernameInCardName(username, c.name || "")) { found = true; break; }
+}
+results[src.key] = found;
+} catch {
+results[src.key] = false;
+}
+await nap(250);
+}
+return results;
+}
+const chartStatus = $("chartStatus");
+const blStatus = $("blStatus");
+const invStatus = $("invStatus");
+const blacklistsBox = $("blacklistsBox");
+const inventoryBox = $("inventoryBox");
+let chart;
+function initChart(){
+const ctx = $("chart").getContext("2d");
+chart = new Chart(ctx, {
+type: "scatter",
+data: { datasets: [{ label: "Badges over Time", data: [], pointRadius: 2 }] },
+options: {
+responsive: true,
+maintainAspectRatio: false,
+parsing: false,
+scales: {
+x: { type: "time", time: { unit: "year" }, ticks: { color: "#8fb3a3" }, grid: { color: "rgba(215,251,230,0.08)" } },
+y: { ticks: { color: "#8fb3a3" }, grid: { color: "rgba(215,251,230,0.08)" } }
+},
+plugins: { legend: { labels: { color: "#8fb3a3" } } }
+}
+});
+}
+function renderBlacklists(statusMap){
+const lines = DISPLAY_ORDER.map(k => `${k} BLACKLIST - ${statusMap[k] ? "YES" : "NO"}`);
+blacklistsBox.textContent = lines.join("\n");
+blStatus.textContent = DISPLAY_ORDER.some(k => statusMap[k]) ? "flags" : "clear";
+}
+function renderInventory(report){
+const frag = document.createDocumentFragment();
+const total = Object.values(report).reduce((a, arr)=>a + (arr?.length||0), 0);
+const head = document.createElement("div");
+head.style.marginBottom = "10px";
+head.innerHTML = `<span class="pillMini">items: ${total}</span>`;
+frag.appendChild(head);
+Object.entries(report).forEach(([cat, items])=>{
+const h = document.createElement("div");
+h.style.marginTop = "10px";
+h.innerHTML = `<span class="pillMini">${escapeHtml(cat)}</span> <span style="opacity:.75">(${items.length})</span>`;
+frag.appendChild(h);
+const ul = document.createElement("ul");
+ul.style.margin = "8px 0 0 18px";
+ul.style.padding = "0";
+items.slice(0, 60).forEach(it=>{
+const li = document.createElement("li");
+li.textContent = `${it.name ?? "Unknown"} (AssetId: ${it.assetId ?? "?"})`;
+ul.appendChild(li);
+});
+if (items.length > 60){
+const li = document.createElement("li");
+li.style.opacity = ".75";
+li.textContent = `…and ${items.length - 60} more`;
+ul.appendChild(li);
+}
+frag.appendChild(ul);
+});
+inventoryBox.innerHTML = "";
+inventoryBox.appendChild(frag);
+}
+async function runCheck(username){
+termPrint("");
+termPrint(`Checking user: ${username}`);
+chartStatus.textContent = "running";
+blStatus.textContent = "…";
+invStatus.textContent = "…";
+blacklistsBox.textContent = "Running…";
+inventoryBox.textContent = "Running…";
+await toolLogCommand(`check ${username}`);
+const bl = await trelloBlacklistStatus(username);
+renderBlacklists(bl);
+await sleep(PHASE_DELAY_MS);
+const userId = await robloxUserId(username);
+termPrint(`UserId: ${userId}`);
+await sleep(PHASE_DELAY_MS);
+const canView = await canViewInventory(userId);
+if (!canView){
+invStatus.textContent = "private";
+inventoryBox.textContent = "Inventory is private.";
+} else {
+const report = {};
+for (const [cat, typeId] of Object.entries(INVENTORY_CATEGORIES)){
+try{
+const items = await inventoryItems(userId, typeId);
+report[cat] = items.map(x => ({ name: x.name, assetId: x.assetId }));
+} catch {
+report[cat] = [];
+}
+await sleep(250);
+}
+invStatus.textContent = "done";
+renderInventory(report);
+}
+await sleep(PHASE_DELAY_MS);
+const badges = await robloxBadges(userId);
+const badgeIds = badges.map(b=>b.id).filter(Boolean);
+const dates = await robloxAwardedDates(userId, badgeIds);
+const parsed = dates.map(s => new Date(s)).filter(d => !isNaN(d.getTime())).sort((a,b)=>a-b);
+const points = parsed.map((d, idx)=>({ x: d, y: idx+1 }));
+chart.data.datasets[0].data = points;
+chart.update();
+chartStatus.textContent = "done";
+termPrint("Done.");
+}
+$("btnRunBGC").addEventListener("click", async ()=>{
+const r = await uiModalForm({ title:"Run Background Check", fields:[
+  { name:"username", label:"Roblox Username", placeholder:"Username" }
+]});
+if (!r) return;
+const u = (r.username || "").trim();
+if (!u) return;
+try{
+await runCheck(u.trim());
+} catch(e){
+termPrint(`ERROR: ${e.message || "Failed"}`);
+chartStatus.textContent = "error";
+}
+});
+$("btnClearBGC").addEventListener("click", ()=>{
+screen.textContent = "";
+blacklistsBox.textContent = "Run a check.";
+inventoryBox.textContent = "Run a check.";
+blStatus.textContent = "—";
+invStatus.textContent = "—";
+chartStatus.textContent = "idle";
+if (chart){
+chart.data.datasets[0].data = [];
+chart.update();
+}
+});
+const recruitStatus = $("recruitStatus");
+const recruitTbody = $("recruitTbody");
+function flagSvg(){
+return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 1 21h22L12 2zm0 6c.6 0 1 .4 1 1v5a1 1 0 1 1-2 0V9c0-.6.4-1 1-1zm0 10a1.25 1.25 0 1 1 0 2.5A1.25 1.25 0 0 1 12 18z"/></svg>`;
+}
+async function loadRecruit(){
+recruitStatus.textContent = "";
+recruitStatus.className = "status";
+recruitTbody.innerHTML = "";
+try{
+const data = await toolApi(`/recruit/list`, { headers: toolAuthHeaders() });
+const items = data.items || [];
+for (const it of items){
+const tr = document.createElement("tr");
+const flagged = (it.flaggedReason || "").trim();
+const userHtml = `${escapeHtml(it.usernames || "")}` + (flagged ? ` <span class="flagIcon" data-tip="${escapeHtml("RED FLAGGED: " + flagged)}">${flagSvg()}</span>` : "");
+const statusVal = (it.status || "PENDING").toUpperCase();
+const validationVal = (it.validation || "PENDING").toUpperCase();
+const validationPill = (validationVal === "APPROVED")
+? `<span class="pillMini ok">APPROVED</span>`
+: (validationVal === "REJECTED")
+? `<span class="pillMini warn">REJECTED</span>`
+: `<span class="pillMini">PENDING</span>`;
+const statusSelect = `
+<select class="portal" data-row="${it.rowIndex}" style="max-width:180px;">
+${["PENDING","IN_PROGRESS","COMPLETED","HOLD"].map(x => `<option value="${x}" ${x===statusVal?"selected":""}>${x}</option>`).join("")}
+</select>
+`;
+const updateBtn = `<button class="miniBtn" data-upd="${it.rowIndex}">Update</button>`;
+const validBtns = (IS_PRIV)
+? `<div style="display:flex; gap:8px; justify-content:flex-start;">
+<button class="miniBtn good" data-ok="${it.rowIndex}">✓</button>
+<button class="miniBtn danger" data-no="${it.rowIndex}">✕</button>
+</div>`
+: ``;
+tr.innerHTML = `
+<td>${userHtml}</td>
+<td>${escapeHtml(it.entrance || "")}</td>
+<td>${statusSelect}</td>
+<td>${updateBtn}</td>
+<td>${escapeHtml(it.completedBy || "")}</td>
+<td>${escapeHtml(it.date ? fmtDate(it.date) : "")}</td>
+<td>
+<div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+${validationPill}
+${validBtns}
+${it.validatedBy ? `<span style="opacity:.85; font-size:12px;">${escapeHtml(it.validatedBy)}</span>` : ``}
+</div>
+</td>
+`;
+recruitTbody.appendChild(tr);
+}
+recruitTbody.querySelectorAll("button[data-upd]").forEach(btn=>{
+btn.addEventListener("click", async ()=>{
+const row = Number(btn.getAttribute("data-upd"));
+const sel = recruitTbody.querySelector(`select[data-row="${row}"]`);
+const status = sel ? sel.value : "PENDING";
+try{
+btn.disabled = true;
+await toolApi(`/recruit/update`, {
+method:"POST",
+headers: toolAuthHeaders({ "Content-Type":"application/json" }),
+body: JSON.stringify({ rowIndex: row, status })
+});
+await loadRecruit();
+} catch(e){
+recruitStatus.textContent = e.message || "Failed";
+recruitStatus.className = "status danger";
+} finally{
+btn.disabled = false;
+}
+});
+});
+recruitTbody.querySelectorAll("button[data-ok]").forEach(btn=>{
+btn.addEventListener("click", async ()=>{
+const row = Number(btn.getAttribute("data-ok"));
+try{
+btn.disabled = true;
+await toolApi(`/recruit/validate`, {
+method:"POST",
+headers: toolAuthHeaders({ "Content-Type":"application/json" }),
+body: JSON.stringify({ rowIndex: row, approved: true })
+});
+await loadRecruit();
+} catch(e){
+recruitStatus.textContent = e.message || "Failed";
+recruitStatus.className = "status danger";
+} finally{ btn.disabled = false; }
+});
+});
+recruitTbody.querySelectorAll("button[data-no]").forEach(btn=>{
+btn.addEventListener("click", async ()=>{
+const row = Number(btn.getAttribute("data-no"));
+try{
+btn.disabled = true;
+await toolApi(`/recruit/validate`, {
+method:"POST",
+headers: toolAuthHeaders({ "Content-Type":"application/json" }),
+body: JSON.stringify({ rowIndex: row, approved: false })
+});
+await loadRecruit();
+} catch(e){
+recruitStatus.textContent = e.message || "Failed";
+recruitStatus.className = "status danger";
+} finally{ btn.disabled = false; }
+});
+});
+} catch(e){
+recruitStatus.textContent = e.message || "Failed";
+recruitStatus.className = "status danger";
+}
+}
+$("btnRecruitRefresh").addEventListener("click", ()=> loadRecruit());
+const docsStatus = $("docsStatus");
+const docsList = $("docsList");
+const docAclCard = $("docAclCard");
+const docAclTitle = $("docAclTitle");
+const docAclStatus = $("docAclStatus");
+const docAclTbody = $("docAclTbody");
+async function loadDocs(){
+docsStatus.textContent = "";
+docsStatus.className = "status";
+docsList.innerHTML = "";
+docAclCard.style.display = "none";
+try{
+const data = await toolApi(`/docs/list`, { headers: toolAuthHeaders() });
+const items = data.items || [];
+for (const d of items){
+const box = document.createElement("div");
+box.className = "newsItem";
+box.innerHTML = `
+<div class="h">
+<div class="t">${escapeHtml(d.title || "Document")}</div>
+<div class="d">${escapeHtml(d.clearance || "")}</div>
+</div>
+<div style="margin-top:10px; display:flex; justify-content:flex-end;">
+<button class="navbtn" data-doc="${escapeHtml(d.id)}">See Access</button>
+</div>
+`;
+docsList.appendChild(box);
+}
+docsList.querySelectorAll("button[data-doc]").forEach(btn=>{
+btn.addEventListener("click", async ()=>{
+const id = btn.getAttribute("data-doc");
+if (!id) return;
+try{
+btn.disabled = true;
+docAclCard.style.display = "block";
+docAclStatus.textContent = "";
+docAclStatus.className = "status";
+docAclTbody.innerHTML = "";
+const acl = await toolApi(`/docs/acl?id=${encodeURIComponent(id)}`, { headers: toolAuthHeaders() });
+docAclTitle.textContent = acl.title || "Access List";
+const entries = acl.entries || [];
+for (const p of entries){
+const tr = document.createElement("tr");
+tr.innerHTML = `<td>${escapeHtml(p.email || "")}</td><td>${escapeHtml((p.role||"").toUpperCase())}</td>`;
+docAclTbody.appendChild(tr);
+}
+} catch(e){
+docAclStatus.textContent = e.message || "Failed";
+docAclStatus.className = "status danger";
+} finally{
+btn.disabled = false;
+}
+});
+});
+} catch(e){
+docsStatus.textContent = e.message || "Failed";
+docsStatus.className = "status danger";
+}
+}
+$("btnDocsRefresh").addEventListener("click", ()=> loadDocs());
+const accessStatus = $("accessStatus");
+const accessDocsStatus = $("accessDocsStatus");
+const accessDocsList = $("accessDocsList");
+let accessDocsCache = [];
+async function loadAccessDocs(){
+accessStatus.textContent = "";
+accessStatus.className = "status";
+accessDocsStatus.textContent = "";
+accessDocsStatus.className = "status";
+accessDocsList.innerHTML = "";
+accessDocsCache = [];
+try{
+const data = await toolApi(`/docs/list`, { headers: toolAuthHeaders() });
+accessDocsCache = data.items || [];
+for (const d of accessDocsCache){
+const box = document.createElement("div");
+box.className = "newsItem";
+box.innerHTML = `
+<div class="h">
+<div class="t">${escapeHtml(d.title || "Document")}</div>
+<div class="d">${escapeHtml(d.clearance || "")}</div>
+</div>
+<div style="margin-top:10px; display:flex; justify-content:flex-end;">
+<span class="pillMini" data-docsel="${escapeHtml(d.id)}">ID: ${escapeHtml(d.id)}</span>
+</div>
+`;
+accessDocsList.appendChild(box);
+}
+accessDocsStatus.textContent = "Select a document ID when prompted.";
+} catch(e){
+accessDocsStatus.textContent = e.message || "Failed";
+accessDocsStatus.className = "status danger";
+}
+}
+async function promptDocId(){
+const r = await uiModalForm({ title:"Document", fields:[
+  { name:"id", label:"Document ID", placeholder:"Enter document ID" }
+]});
+if (!r) return null;
+const id = (r.id || "").trim();
+if (!id) return null;
+const ok = accessDocsCache.some(x => String(x.id) === String(id).trim());
+if (!ok){
+alert("Invalid document ID.");
+return null;
+}
+return String(id).trim();
+}
+$("btnGrantOpen").addEventListener("click", async ()=>{
+accessStatus.textContent = "";
+accessStatus.className = "status";
+const id = await promptDocId();
+if (!id) return;
+const r = await uiModalForm({ title:"Grant Access", fields:[
+  { name:"email", label:"Email", placeholder:"user@example.com" },
+  { name:"role", label:"Permissions", placeholder:"viewer or editor" }
+]});
+if (!r) return;
+const email = (r.email || "").trim();
+const role = (r.role || "").trim();
+if (!email || !role) return;
+const sure = confirm(`Grant ${role} to ${email} on document ${id}?`);
+if (!sure) return;
+try{
+await toolApi(`/docs/grant`, {
+method:"POST",
+headers: toolAuthHeaders({ "Content-Type":"application/json" }),
+body: JSON.stringify({ id, email, role: role.toLowerCase()==="editor" ? "writer" : "reader" })
+});
+accessStatus.textContent = "Done.";
+accessStatus.className = "status ok";
+} catch(e){
+accessStatus.textContent = e.message || "Failed";
+accessStatus.className = "status danger";
+}
+});
+$("btnRevokeOpen").addEventListener("click", async ()=>{
+accessStatus.textContent = "";
+accessStatus.className = "status";
+const id = await promptDocId();
+if (!id) return;
+const r = await uiModalForm({ title:"Revoke Access", fields:[
+  { name:"email", label:"Email", placeholder:"user@example.com" },
+  { name:"reason", label:"Reason", placeholder:"Why revoke?" }
+]});
+if (!r) return;
+const email = (r.email || "").trim();
+const reason = (r.reason || "").trim();
+if (!email || !reason) return;
+const sure = confirm(`Revoke access for ${email} on document ${id}?`);
+if (!sure) return;
+try{
+await toolApi(`/docs/revoke`, {
+method:"POST",
+headers: toolAuthHeaders({ "Content-Type":"application/json" }),
+body: JSON.stringify({ id, email, reason })
+});
+accessStatus.textContent = "Done.";
+accessStatus.className = "status ok";
+} catch(e){
+accessStatus.textContent = e.message || "Failed";
+accessStatus.className = "status danger";
+}
+});
+$("btnRevokeAllOpen").addEventListener("click", async ()=>{
+accessStatus.textContent = "";
+accessStatus.className = "status";
+const r = await uiModalForm({ title:"Revoke Access", fields:[
+  { name:"email", label:"Email", placeholder:"user@example.com" },
+  { name:"reason", label:"Reason", placeholder:"Why revoke?" }
+]});
+if (!r) return;
+const email = (r.email || "").trim();
+const reason = (r.reason || "").trim();
+if (!email || !reason) return;
+const sure = confirm(`Revoke ALL document access for ${email}?`);
+if (!sure) return;
+try{
+await toolApi(`/docs/revokeAll`, {
+method:"POST",
+headers: toolAuthHeaders({ "Content-Type":"application/json" }),
+body: JSON.stringify({ email, reason })
+});
+accessStatus.textContent = "Done.";
+accessStatus.className = "status ok";
+} catch(e){
+accessStatus.textContent = e.message || "Failed";
+accessStatus.className = "status danger";
+}
+});
+const blStatusMsg = $("blStatusMsg");
+const blTbody = $("blTbody");
+async function loadBlacklist(){
+blStatusMsg.textContent = "";
+blStatusMsg.className = "status";
+blTbody.innerHTML = "";
+try{
+const data = await toolApi(`/blacklist/list`, { headers: toolAuthHeaders() });
+const items = data.items || [];
+for (const it of items){
+const tr = document.createElement("tr");
+tr.innerHTML = `
+<td>${escapeHtml(it.username || "")}</td>
+<td>${escapeHtml(it.reason || "")}</td>
+<td style="text-align:right;">
+<button class="miniBtn danger" data-del="${escapeHtml(it.username || "")}">Remove</button>
+</td>
+`;
+blTbody.appendChild(tr);
+}
+blTbody.querySelectorAll("button[data-del]").forEach(btn=>{
+btn.addEventListener("click", async ()=>{
+const u = btn.getAttribute("data-del");
+if (!u) return;
+const sure = confirm(`Remove ${u} from blacklist?`);
+if (!sure) return;
+try{
+btn.disabled = true;
+await toolApi(`/blacklist/remove`, {
+method:"POST",
+headers: toolAuthHeaders({ "Content-Type":"application/json" }),
+body: JSON.stringify({ username: u })
+});
+await loadBlacklist();
+if (!recruitView.hidden) await loadRecruit();
+} catch(e){
+blStatusMsg.textContent = e.message || "Failed";
+blStatusMsg.className = "status danger";
+} finally{
+btn.disabled = false;
+}
+});
+});
+} catch(e){
+blStatusMsg.textContent = e.message || "Failed";
+blStatusMsg.className = "status danger";
+}
+}
+$("btnBlRefresh").addEventListener("click", ()=> loadBlacklist());
+$("btnBlAdd").addEventListener("click", async ()=>{
+blStatusMsg.textContent = "";
+blStatusMsg.className = "status";
+const u = ($("blUser").value || "").trim();
+const r = ($("blReason").value || "").trim();
+if (!u || !r){
+blStatusMsg.textContent = "Username and reason required.";
+blStatusMsg.className = "status danger";
+return;
+}
+try{
+await toolApi(`/blacklist/add`, {
+method:"POST",
+headers: toolAuthHeaders({ "Content-Type":"application/json" }),
+body: JSON.stringify({ username: u, reason: r })
+});
+$("blUser").value = "";
+$("blReason").value = "";
+await loadBlacklist();
+if (!recruitView.hidden) await loadRecruit();
+blStatusMsg.textContent = "Added.";
+blStatusMsg.className = "status ok";
+} catch(e){
+blStatusMsg.textContent = e.message || "Failed";
+blStatusMsg.className = "status danger";
+}
+});
+updateNav();
+setView("home");
+refreshNews().catch(()=>{});
+loadSavedSettings(); // Load settings on startup
+
+/* =========================
+   ADMIN MENU + PANEL
+   ========================= */
+function initAdminMenu(){
+  const btn = $("navAdmin");
+  const menu = $("adminMenu");
+  if (!btn || !menu) return;
+
+  btn.addEventListener("click", (e)=>{
+    e.preventDefault();
+    if (!IS_ADMIN) return;
+    menu.hidden = !menu.hidden;
+  });
+
+  const openTab = (tab) => {
+    setView("admin");
+    // tabs
+    for (const b of document.querySelectorAll("#adminTabs .tabBtn")){
+      b.classList.toggle("active", b.dataset.tab === tab);
+    }
+    for (const p of document.querySelectorAll("#adminView .tabPanel")){
+      p.hidden = true;
+    }
+    const panel = $("tab_" + tab);
+    if (panel) panel.hidden = false;
+  };
+
+  $("adminMenuOpenPanel").addEventListener("click", ()=>{ closeAdminMenu(); openTab("news"); });
+  $("adminMenuPages").addEventListener("click", ()=>{ closeAdminMenu(); openTab("pages"); });
+  $("adminMenuUsers").addEventListener("click", ()=>{ closeAdminMenu(); openTab("users"); loadUsers(); });
+  $("adminMenuNews").addEventListener("click", ()=>{ closeAdminMenu(); openTab("news"); refreshAdminNews(); });
+  $("adminMenuAudit").addEventListener("click", ()=>{ closeAdminMenu(); openTab("audit"); refreshAudit(true); });
+
+  for (const b of document.querySelectorAll("#adminTabs .tabBtn")){
+    b.addEventListener("click", ()=>{
+      openTab(b.dataset.tab);
+      if (b.dataset.tab === "users") loadUsers();
+      if (b.dataset.tab === "audit") refreshAudit(true);
+      if (b.dataset.tab === "news") refreshAdminNews();
+    });
+  }
+}
+
+function rteBind(container){
+  container.addEventListener("click", async (e)=>{
+    const btn = e.target.closest(".rteBtn");
+    if (!btn) return;
+    const cmd = btn.dataset.cmd;
+    if (btn.dataset.link){
+      const r = await uiModalForm({ title:"Insert Link", fields:[
+        { name:"href", label:"URL", placeholder:"https://..." }
+      ]});
+      if (!r) return;
+      const href = (r.href || "").trim();
+      if (!href) return;
+      document.execCommand("createLink", false, href);
+      return;
+    }
+    if (cmd) document.execCommand(cmd, false, null);
+  });
+}
+
+rteBind(document);
+initAdminMenu();
+
+async function refreshAdminNews(){
+  if (!IS_ADMIN) return;
+  const list = $("adminNewsList");
+  const empty = $("adminNewsEmpty");
+  const status = $("newsAdminStatus");
+  status.textContent = "";
+  try{
+    const items = await fetchNewsPublic();
+    list.innerHTML = "";
+    if (!items.length){ empty.style.display = "block"; return; }
+    empty.style.display = "none";
+    for (const n of items.slice(0, 20)){
+      const div = document.createElement("div");
+      div.className = "newsItem";
+      const safeBody = sanitizeHtml(n.text || "");
+      const meta = await formatAuthor(n.createdBy || "");
+      div.innerHTML = `
+        <div class="h">
+          <div class="t">${escapeHtml(n.title || "")}</div>
+          <div class="d">${fmtDate(n.createdAt || "")}</div>
+        </div>
+        <div class="author">${meta}</div>
+        <div class="b">${safeBody}</div>
+        <div class="row" style="justify-content:flex-end;">
+          <button class="navbtn" data-del="${escapeHtml(n.id||"")}" type="button">Delete</button>
+        </div>
+      `;
+      div.querySelector("button[data-del]")?.addEventListener("click", async ()=>{
+        const id = n.id;
+        if (!id) return;
+        try{
+          await ensureNewsAdminLogin();
+          await newsApi(`/news/${encodeURIComponent(id)}`, { method:"DELETE", headers: newsAuthHeaders() });
+          status.textContent = "Deleted.";
+          await refreshAdminNews();
+        } catch(e){ status.textContent = e.message || "Delete failed"; }
+      });
+      list.appendChild(div);
+    }
+  } catch(e){
+    status.textContent = e.message || "Failed";
+  }
+}
+
+async function ensureNewsAdminLogin(){
+  if (NEWS_TOKEN) return;
+  // Use same credentials you used for TOOL login
+  // (news worker expects TOKEN_SECRET as password)
+  await newsLogin(LOGGED_IN_USER, $("passIn")?.value || "");
+}
+
+$("btnRefreshNewsAdmin")?.addEventListener("click", refreshAdminNews);
+
+$("btnPostNews")?.addEventListener("click", async ()=>{
+  const status = $("newsAdminStatus");
+  status.textContent = "";
+  const title = ($("newsTitleIn").value || "").trim();
+  const htmlBody = ($("newsBodyEd").innerHTML || "").trim();
+  const text = sanitizeHtml(htmlBody);
+  if (!title || !text){ status.textContent = "Title and body required."; return; }
+  try{
+    await ensureNewsAdminLogin();
+    await newsApi("/news", {
+      method:"POST",
+      headers: newsAuthHeaders({ "Content-Type":"application/json" }),
+      body: JSON.stringify({ title, text })
+    });
+    $("newsTitleIn").value = "";
+    $("newsBodyEd").innerHTML = "";
+    status.textContent = "Published.";
+    await refreshAdminNews();
+  } catch(e){
+    status.textContent = e.message || "Failed";
+  }
+});
+
+/* Author formatting */
+const _robloxIdCache = new Map();
+async function getRobloxUserIdByName(username){
+  const key = (username||"").toLowerCase();
+  if (_robloxIdCache.has(key)) return _robloxIdCache.get(key);
+  try{
+    const res = await fetch("https://users.roblox.com/v1/usernames/users", {
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({ usernames:[username], excludeBannedUsers:false })
+    });
+    const data = await res.json().catch(()=>({}));
+    const id = data?.data?.[0]?.id || null;
+    _robloxIdCache.set(key, id);
+    return id;
+  } catch {
+    _robloxIdCache.set(key, null);
+    return null;
+  }
+}
+async function getHeadshotUrl(username){
+  const id = await getRobloxUserIdByName(username);
+  if (!id) return "";
+  try{
+    const res = await fetch(`https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${encodeURIComponent(id)}&size=150x150&format=Png&isCircular=true`);
+    const data = await res.json().catch(()=>({}));
+    return data?.data?.[0]?.imageUrl || "";
+  } catch { return ""; }
+}
+async function formatAuthor(username){
+  const u = (username||"").trim();
+  if (!u) return "";
+  let rank = "";
+  let pos = "";
+  if (u.toLowerCase() === "vendettapyrex"){
+    rank = "Brigadier General";
+    pos = "Director of Criminal Investigations";
+  }
+  // If we have runtime user metadata (admin can set), try to load once lazily
+  // (best-effort; doesn't block)
+  const avatar = await getHeadshotUrl(u);
+  const img = avatar ? `<img class="av" src="${escapeHtml(avatar)}" alt="">` : `<div class="av ph">${escapeHtml(u[0]||"?")}</div>`;
+  const meta = (rank || pos) ? `<div class="am"><div class="au">${escapeHtml(u)}</div><div class="ar">${escapeHtml(rank)}${rank&&pos?" • ":""}${escapeHtml(pos)}</div></div>` : `<div class="am"><div class="au">${escapeHtml(u)}</div></div>`;
+  return `<div class="authorRow">${img}${meta}</div>`;
+}
+
+/* Add small CSS for author row into existing styles via runtime (safe) */
+const authorStyle = document.createElement("style");
+authorStyle.textContent = `
+.authorRow{ display:flex; align-items:center; gap:10px; margin:8px 0 6px; }
+.authorRow .av{ width:34px; height:34px; border-radius:999px; border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.06); }
+.authorRow .av.ph{ display:flex; align-items:center; justify-content:center; font-weight:900; }
+.authorRow .au{ font-weight:900; }
+.authorRow .ar{ opacity:.85; font-weight:700; font-size:.9em; }
+`;
+document.head.appendChild(authorStyle);
+
+/* Pages editor */
+$("btnLoadPage")?.addEventListener("click", async ()=>{
+  const status = $("pageEditStatus");
+  status.textContent = "";
+  const name = $("pagePick").value;
+  try{
+    const data = await toolApi(`/pages/${encodeURIComponent(name)}`);
+    $("pageEditor").innerHTML = sanitizeHtml(data.html || "");
+    $("pagePreview").innerHTML = sanitizeHtml(data.html || "");
+    status.textContent = "Loaded.";
+  } catch(e){ status.textContent = e.message || "Load failed"; }
+});
+$("pageEditor")?.addEventListener("input", ()=>{
+  $("pagePreview").innerHTML = sanitizeHtml($("pageEditor").innerHTML || "");
+});
+$("btnSavePage")?.addEventListener("click", async ()=>{
+  const status = $("pageEditStatus");
+  status.textContent = "";
+  const name = $("pagePick").value;
+  const htmlBody = sanitizeHtml($("pageEditor").innerHTML || "");
+  try{
+    await toolApi(`/pages/set`, {
+      method:"POST",
+      headers: toolAuthHeaders({ "Content-Type":"application/json" }),
+      body: JSON.stringify({ name, html: htmlBody })
+    });
+    status.textContent = "Saved.";
+  } catch(e){ status.textContent = e.message || "Save failed"; }
+});
+
+/* Users manager */
+async function loadUsers(){
+  const status = $("usersStatus");
+  status.textContent = "";
+  try{
+    const data = await toolApi("/users/list", { headers: toolAuthHeaders() });
+    const tbody = $("usersTbody");
+    tbody.innerHTML = "";
+    for (const u of (data.users || [])){
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td>${escapeHtml(u.username)}</td><td>${u.priv ? "Yes" : ""}</td><td>${u.admin ? "Yes" : ""}</td><td>${escapeHtml(u.rank||"")}</td><td>${escapeHtml(u.position||"")}</td>`;
+      tr.addEventListener("click", ()=>{
+        $("userNameIn").value = u.username || "";
+        $("userPassIn").value = "";
+        $("userPrivIn").checked = !!u.priv;
+        $("userAdminIn").checked = !!u.admin;
+        $("userRankIn").value = u.rank || "";
+        $("userPosIn").value = u.position || "";
+      });
+      tbody.appendChild(tr);
+    }
+    status.textContent = "Loaded.";
+  } catch(e){ status.textContent = e.message || "Failed"; }
+}
+$("btnUsersRefresh")?.addEventListener("click", loadUsers);
+$("btnUserSave")?.addEventListener("click", async ()=>{
+  const status = $("usersStatus");
+  status.textContent = "";
+  const username = ($("userNameIn").value || "").trim();
+  const password = ($("userPassIn").value || "").toString();
+  if (!username){ status.textContent = "Username required."; return; }
+  try{
+    await toolApi("/users/set", {
+      method:"POST",
+      headers: toolAuthHeaders({ "Content-Type":"application/json" }),
+      body: JSON.stringify({
+        username,
+        password: password || "",
+        priv: $("userPrivIn").checked,
+        admin: $("userAdminIn").checked,
+        rank: ($("userRankIn").value || "").trim(),
+        position: ($("userPosIn").value || "").trim()
+      })
+    });
+    status.textContent = "Saved.";
+    await loadUsers();
+  } catch(e){ status.textContent = e.message || "Save failed"; }
+});
+$("btnUserDelete")?.addEventListener("click", async ()=>{
+  const status = $("usersStatus");
+  status.textContent = "";
+  const username = ($("userNameIn").value || "").trim();
+  if (!username){ status.textContent = "Username required."; return; }
+  try{
+    await toolApi("/users/delete", {
+      method:"POST",
+      headers: toolAuthHeaders({ "Content-Type":"application/json" }),
+      body: JSON.stringify({ username })
+    });
+    status.textContent = "Removed.";
+    $("userNameIn").value = ""; $("userPassIn").value=""; $("userPrivIn").checked=false; $("userAdminIn").checked=false;
+    await loadUsers();
+  } catch(e){ status.textContent = e.message || "Remove failed"; }
+});
+
+/* Audit log */
+let auditCursor = "";
+async function refreshAudit(reset){
+  const status = $("auditStatus");
+  status.textContent = "";
+  if (reset){ auditCursor = ""; $("auditTbody").innerHTML = ""; }
+  try{
+    const q = auditCursor ? `?limit=100&cursor=${encodeURIComponent(auditCursor)}` : `?limit=100`;
+    const data = await toolApi(`/audit${q}`, { headers: toolAuthHeaders() });
+    const tbody = $("auditTbody");
+    for (const it of (data.items || [])){
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td>${escapeHtml(fmtDate(it.ts||""))}</td><td>${escapeHtml(it.actor||"")}</td><td>${escapeHtml(it.type||"")}</td><td>${escapeHtml(JSON.stringify(it.detail||{}))}</td>`;
+      tbody.appendChild(tr);
+    }
+    auditCursor = data.nextCursor || "";
+    status.textContent = "Loaded.";
+  } catch(e){ status.textContent = e.message || "Failed"; }
+}
+$("btnAuditRefresh")?.addEventListener("click", ()=>refreshAudit(true));
+$("btnAuditMore")?.addEventListener("click", ()=>refreshAudit(false));
+
+/* =========================
+   NAV VISIBILITY TWEAKS
+   ========================= */
+function enforceAdminNavRules(){
+  // Remove settings for everyone (replaced by admin menu)
+  if ($("navSettings")) $("navSettings").hidden = true;
+  // Only show admin button/menu for admins
+  if ($("navAdmin")) $("navAdmin").hidden = !IS_ADMIN;
+  if ($("adminMenu")) $("adminMenu").hidden = true;
+}
+const _oldApplyAuth = applyAuthUI;
+applyAuthUI = function(){
+  _oldApplyAuth();
+  enforceAdminNavRules();
+};
+enforceAdminNavRules();
+
+})();
+</script>
+</body>
+</html>
