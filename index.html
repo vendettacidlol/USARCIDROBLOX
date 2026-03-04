@@ -555,6 +555,7 @@ tbody tr:hover td{ background: rgba(255,255,255,0.04); }
 
 /* --- Modal --- */
 .modal{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:flex; align-items:center; justify-content:center; z-index:100; }
+.modal[hidden]{ display:none !important; }
 .modalCard{ width:min(560px, 92vw); background:rgba(10,14,20,.94); border:1px solid rgba(255,255,255,.14); border-radius:18px; padding:14px; box-shadow:0 12px 40px rgba(0,0,0,.55); }
 .lbl{ display:block; margin:10px 0 6px; font-weight:800; color:#cfe0ff; }
 .in{ width:100%; padding:10px 12px; border-radius:12px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.04); color:#eaf2ff; outline:none; }
@@ -567,6 +568,87 @@ tbody tr:hover td{ background: rgba(255,255,255,0.04); }
 .modalBody .lbl{ display:block; margin:10px 0 6px; }
 .modalBody .in{ display:block; width:100%; }
 .modal .row{ display:flex; }
+
+
+/* === Army Corrections Command theme override (dark green + gold) === */
+:root{
+  --acc-bg0:#040b06;
+  --acc-bg1:#07140b;
+  --acc-panel:#07150c;
+  --acc-panel2:#0a1c10;
+  --acc-line:rgba(249,199,22,.35);
+  --acc-line2:rgba(249,199,22,.18);
+  --acc-accent:#f9c716;
+  --acc-accent2:#a4951d;
+  --acc-text:#eaf6ee;
+  --acc-muted:#bcd3c2;
+}
+
+body{
+  color:var(--acc-text) !important;
+  background:
+    radial-gradient(900px 520px at 18% 10%, rgba(59,123,52,.22), transparent 60%),
+    radial-gradient(900px 520px at 82% 0%, rgba(249,199,22,.10), transparent 55%),
+    linear-gradient(180deg, var(--acc-bg1), var(--acc-bg0)) !important;
+}
+
+header, .topbar, .hero{
+  background:
+    radial-gradient(900px 220px at 20% 20%, rgba(59,123,52,.28), transparent 60%),
+    linear-gradient(180deg, rgba(10,28,16,.92), rgba(7,20,11,.92)) !important;
+  border-bottom:1px solid var(--acc-line2) !important;
+}
+
+.card, .panel, .box, .modalCard{
+  background: linear-gradient(180deg, rgba(7,21,12,.92), rgba(4,11,6,.92)) !important;
+  border:1px solid var(--acc-line2) !important;
+  box-shadow: 0 12px 40px rgba(0,0,0,.45) !important;
+}
+
+.tag, .pill, .chip{
+  border:1px solid var(--acc-line2) !important;
+  color:var(--acc-muted) !important;
+  background: rgba(249,199,22,.06) !important;
+}
+
+.navbtn, button, .menuItem, .tabBtn, .rteBtn{
+  border:1px solid var(--acc-line2) !important;
+  background: rgba(249,199,22,.06) !important;
+  color: var(--acc-text) !important;
+}
+
+.navbtn.primary, button.primary{
+  background: rgba(249,199,22,.12) !important;
+  border:1px solid var(--acc-line) !important;
+  color: var(--acc-accent) !important;
+  text-shadow: 0 1px 0 rgba(0,0,0,.4);
+}
+
+.navbtn:hover, button:hover, .menuItem:hover, .tabBtn:hover, .rteBtn:hover{
+  background: rgba(249,199,22,.10) !important;
+}
+
+a{ color: var(--acc-accent) !important; }
+hr, .sep{ border-color: var(--acc-line2) !important; }
+
+.in, input, select, textarea{
+  background: rgba(255,255,255,.04) !important;
+  border:1px solid var(--acc-line2) !important;
+  color: var(--acc-text) !important;
+}
+
+.tableWrap table th, .tableWrap table td{
+  border-color: var(--acc-line2) !important;
+}
+
+.menu{
+  background: rgba(4,11,6,.95) !important;
+  border:1px solid var(--acc-line2) !important;
+}
+
+.modal{
+  background: rgba(0,0,0,.65) !important;
+}
 
 </style>
 </head>
