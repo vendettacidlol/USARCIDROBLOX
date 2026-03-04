@@ -1581,6 +1581,7 @@ navBlacklist.hidden = !(loggedIn && IS_PRIV);
 // Admin-only (use Settings button as admin menu trigger)
 navSettings.hidden = !(loggedIn && IS_ADMIN);
 navAdmin.hidden = !(loggedIn && IS_ADMIN); // keep Admin button for admins too (optional)
+  if (typeof enforceAdminNavRules==="function") enforceAdminNavRules();
 }
 
 navHome.addEventListener("click", ()=> setView("home"));
@@ -2746,12 +2747,6 @@ function enforceAdminNavRules(){
   if ($("navAdmin")) $("navAdmin").hidden = !IS_ADMIN;
   if ($("adminMenu")) $("adminMenu").hidden = true;
 }
-const _oldApplyAuth = applyAuthUI;
-applyAuthUI = function(){
-  _oldApplyAuth();
-  enforceAdminNavRules();
-};
-enforceAdminNavRules();
 
 })();
 </script>
