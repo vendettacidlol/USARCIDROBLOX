@@ -92,7 +92,7 @@ a{ color:var(--gold); text-decoration:none; }
       <img src="USACIDC_SSI.PNG" alt="ACC"/>
       <div>
         <div class="t1">Army Corrections Command</div>
-        <div class="t2"> <span style="color:var(--gold);font-weight:700">Duty. Honor. Justice.</span></div>
+        <div class="t2">Motto: <span style="color:var(--gold);font-weight:700">Duty. Honor. Justice.</span></div>
       </div>
       <div style="margin-left:auto; display:flex; gap:8px; align-items:center;">
         <span id="who" class="badge">Not logged in</span>
@@ -117,7 +117,7 @@ a{ color:var(--gold); text-decoration:none; }
     <div class="card">
       <div class="hd"><div>
         <div class="h" id="viewTitle">About</div>
-        <div class="kicker" id="viewKicker">Relevant information regarding CID, JAGC and ACC as a whole.</div>
+        <div class="kicker" id="viewKicker">Information for unit members.</div>
       </div></div>
       <div class="bd" id="viewBody"></div>
     </div>
@@ -129,13 +129,14 @@ a{ color:var(--gold); text-decoration:none; }
   </div>
 </div>
 
-<div class="footer">© Army Corrections Command - MGEN VendettaPyrex</div>
+<div class="footer">© Army Corrections Command Roleplay Unit</div>
 
 <script>
-const API_BASE = "the.chastiefola.workers.dev";
+const API_BASE = "REPLACE_WITH_YOUR_WORKER_URL";
 
 let TOKEN = localStorage.getItem("acc_token") || "";
 let ME = null;
+let SESSION_KEY = localStorage.getItem("acc_session_key") || "";
 
 const $ = (id)=>document.getElementById(id);
 const viewBody = $("viewBody");
@@ -157,10 +158,44 @@ function navSync(){
   setWho();
 }
 
+
+async function sha256Hex(str){
+  const enc = new TextEncoder();
+  const buf = await crypto.subtle.digest("SHA-256", enc.encode(str));
+  const b = new Uint8Array(buf);
+  return Array.from(b).map(x=>x.toString(16).padStart(2,"0")).join("");
+}
+async function hmacHex(key, msg){
+  const enc = new TextEncoder();
+  const k = await crypto.subtle.importKey("raw", enc.encode(key), { name:"HMAC", hash:"SHA-256" }, false, ["sign"]);
+  const sig = await crypto.subtle.sign("HMAC", k, enc.encode(msg));
+  const b = new Uint8Array(sig);
+  return Array.from(b).map(x=>x.toString(16).padStart(2,"0")).join("");
+}
+async function signIfNeeded(path, opts){
+  const method = (opts.method || "GET").toUpperCase();
+  const isMut = ["POST","PUT","PATCH","DELETE"].includes(method);
+  if (!isMut) return {};
+
+  const ts = String(Date.now());
+  const nonce = crypto.randomUUID();
+  const bodyStr = (opts.body || "").toString();
+  const bodySha = await sha256Hex(bodyStr);
+  const msg = `${method}\n${path}\n${ts}\n${nonce}\n${bodySha}`;
+
+  // If worker enforces signatures, SESSION_KEY must be present (comes from /auth/me).
+  // If not present, we still send TS/NONCE so the worker can return a clear error.
+  if (!SESSION_KEY) return { "X-ACC-TS": ts, "X-ACC-NONCE": nonce };
+
+  const sig = await hmacHex(SESSION_KEY, msg);
+  return { "X-ACC-TS": ts, "X-ACC-NONCE": nonce, "X-ACC-SIG": sig };
+}
 async function api(path, opts={}){
   const headers = opts.headers || {};
   headers["Content-Type"] = "application/json";
   if (TOKEN) headers["Authorization"] = "Bearer " + TOKEN;
+  const sigHeaders = await signIfNeeded(path, opts);
+  Object.assign(headers, sigHeaders);
   const res = await fetch(API_BASE + path, { ...opts, headers });
   const data = await res.json().catch(()=>({}));
   if (!res.ok) throw new Error(data.error || "Request failed");
@@ -183,7 +218,7 @@ document.querySelectorAll("[data-view]").forEach(btn=>{
   btn.addEventListener("click", ()=> setView(btn.getAttribute("data-view")));
 });
 $("logoutBtn").addEventListener("click", ()=>{
-  TOKEN=""; ME=null; localStorage.removeItem("acc_token");
+  TOKEN=""; ME=null; SESSION_KEY=""; localStorage.removeItem("acc_token"); localStorage.removeItem("acc_session_key");
   navSync();
   setView("about");
 });
@@ -288,6 +323,8 @@ async function loadMe(){
   try{
     const data = await api("/auth/me", { method:"GET" });
     ME = data.user;
+    SESSION_KEY = data.sessionKey || "";
+    localStorage.setItem("acc_session_key", SESSION_KEY);
   }catch{
     ME=null; TOKEN=""; localStorage.removeItem("acc_token");
   }
@@ -554,11 +591,11 @@ function escapeHtml(str){
 function escapeAttr(str){ return escapeHtml(str).replace(/"/g,"&quot;"); }
 function armyRanksOptions(){
   const ranks = [
-    "Private (E1)","Private (E2)","Private First Class (E3)","Specialist (E4B)","Corporal (E4)",
-    "Sergeant (E5)","Staff Sergeant (E6)","Sergeant First Class (E7)","First Sergeant (E8A)",
-    "Sergeant Major (E-9)","Command Sergeant Major (E9B)","Sergeant Major of the Army (E9C)",
-    "Second Lieutenant (O-1)","First Lieutenant (O-2)","Captain (O-3)","Major (O-4)","Lieutenant Colonel (O-5)","Colonel (O-6)",
-    "Brigadier General (O-7)","Major General (O-8)","Lieutenant General (O-9)","General (O-10)"
+    "Private (E2)","Private First Class (E3)","Corporal (E4B)",
+    "Sergeant (E5)","Staff Sergeant (E-6)","Sergeant First Class (E7)","First Sergeant (E8A)",
+    "Sergeant Major (E9)","Command Sergeant Major (E9)","Sergeant Major of the Army (E9)",
+    "Second Lieutenant (O1)","First Lieutenant (O2)","Captain (O3)","Major (O4)","Lieutenant Colonel (O5)","Colonel (O6)",
+    "Brigadier General (O7)","Major General (O8)","Lieutenant General (O9)","General (O10)"
   ];
   return ranks.map(r=>`<option value="${escapeAttr(r)}">${escapeHtml(r)}</option>`).join("");
 }
@@ -571,5 +608,3 @@ function armyRanksOptions(){
 </script>
 </body>
 </html>
-
-
