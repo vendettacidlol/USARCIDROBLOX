@@ -1,2753 +1,573 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Criminal Investigation Division Board</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3"></script>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Army Corrections Command Portal</title>
 <style>
-/* --- EASY EDITING SECTION --- */
-:root {
-    /* Background Colors */
-    --bg: #050607;
-    --portal-ink: #0a1626;       /* Main dark blue container color */
-    --portal-ink-2: #0e223a;     /* Slightly lighter blue for headers */
-    
-    /* Text Colors */
-    --portal-text: #eaf0ff;      /* Main text color */
-    --portal-sub: #b7c4df;       /* Subtitle text color */
-    --portal-gold: #c7a44a;      /* Accent/Gold color */
-    
-    /* UI Elements */
-    --border: rgba(215,251,230,0.14);
-    --portal-line: rgba(255,255,255,0.14);
-    --glass-bg: rgba(10, 22, 38, 0.65); /* Semi-transparent background for cards */
-    --glass-border: rgba(199, 164, 74, 0.25); /* Gold-ish border */
-    
-    /* Status Colors */
-    --danger: #ff6b6b;
-    --accent: #6ee7b7;
-    --whiteglow: rgba(255,255,255,0.55);
-    --whiteglow2: rgba(255,255,255,0.25);
-}
-
-/* --- CORE LAYOUT --- */
-html, body { height:100%; }
-body {
-    margin:0;
-    background: transparent;
-    color: var(--portal-text);
-    font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans";
-    overflow:auto;
-}
-
-/* Animated Background */
-body::before {
-    content:"";
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    background:
-    radial-gradient(1200px 900px at 20% -10%, rgba(199,164,74,0.18), transparent 55%),
-    radial-gradient(900px 700px at 110% 20%, rgba(82,140,255,0.14), transparent 55%),
-    linear-gradient(180deg, var(--portal-ink), #06080c 65%, var(--bg));
-}
-
-/* Banner */
-.banner {
-    background: rgba(0,0,0,0.35);
-    border-bottom: 1px solid var(--portal-line);
-    padding: 8px 14px;
-    font-size: 13px;
-    color: var(--portal-sub);
-    display:flex;
-    gap:10px;
-    align-items:center;
-    justify-content:space-between;
-}
-.banner b { color: var(--portal-text); font-weight: 650; }
-.banner .pill {
-    border:1px solid rgba(199,164,74,0.35);
-    color: rgba(255,255,255,0.85);
-    padding: 2px 10px;
-    border-radius: 999px;
-    font-size: 12px;
-    background: rgba(199,164,74,0.08);
-    white-space: nowrap;
-}
-
-/* Header & Nav */
-header {
-    background: linear-gradient(180deg, rgba(14,34,58,0.92), rgba(10,22,38,0.92));
-    border-bottom: 1px solid var(--portal-line);
-    box-shadow: 0 16px 50px rgba(0,0,0,0.35);
-    position: sticky;
-    top: 0;
-    z-index: 20;
-    backdrop-filter: blur(8px);
-}
-.header-inner {
-    max-width: 1180px;
-    margin: 0 auto;
-    padding: 14px 16px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap: 14px;
-}
-.brand { display:flex; align-items:center; gap: 10px; flex: 0 0 auto; }
-.brand-mark img {
-    width: 64px; height: 64px; object-fit: contain; display:block;
-    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.35));
-}
-.brand-title { line-height:1.1; }
-.brand-title .top { font-weight: 800; letter-spacing: 0.4px; color: var(--portal-text); font-size: 16px; }
-.brand-title .sub { font-size: 12px; color: var(--portal-sub); margin-top: 3px; }
-
-nav {
-    display:flex; align-items:center; gap: 10px; flex-wrap: wrap;
-    justify-content:flex-end; margin-left: auto;
-}
-.navbtn {
-    appearance:none;
-    border:1px solid rgba(255,255,255,0.20);
-    background: rgba(255,255,255,0.06);
-    color: rgba(255,255,255,0.92);
-    border-radius: 10px;
-    padding: 9px 12px;
-    font-size: 13px;
-    font-weight: 650;
-    letter-spacing: 0.2px;
-    cursor:pointer;
-    transition: transform .06s ease, background .15s ease, border-color .15s ease, box-shadow .15s ease;
-    user-select:none;
-    white-space: nowrap;
-}
-.navbtn:hover {
-    background: rgba(255,255,255,0.09);
-    border-color: rgba(255,255,255,0.75);
-    box-shadow: 0 0 0 1px var(--whiteglow), 0 0 16px var(--whiteglow2);
-}
-.navbtn:active { transform: translateY(1px); }
-.navbtn.primary {
-    border-color: rgba(255,255,255,0.45);
-    background: rgba(255,255,255,0.08);
-    box-shadow: 0 0 0 1px rgba(255,255,255,0.18);
-}
-.navbtn.active {
-    border-color: rgba(255,255,255,0.85);
-    background: rgba(255,255,255,0.10);
-    box-shadow: 0 0 0 1px var(--whiteglow), 0 0 18px var(--whiteglow2);
-}
-/* Settings Button Style */
-.navbtn.settings-btn {
-    border-color: rgba(199, 164, 74, 0.4);
-    color: var(--portal-gold);
-    background: rgba(199, 164, 74, 0.05);
-}
-.navbtn.settings-btn:hover {
-    background: rgba(199, 164, 74, 0.15);
-    border-color: var(--portal-gold);
-}
-.navbtn[hidden] { display:none !important; }
-
-/* Main Container */
-.container {
-    max-width: 1180px;
-    margin: 0 auto;
-    padding: 18px 16px 26px;
-    box-sizing: border-box;
-}
-.card {
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    border-radius: 14px;
-    box-shadow: 0 24px 70px rgba(0,0,0,0.40);
-    overflow:hidden;
-    backdrop-filter: blur(5px);
-}
-.card .hd {
-    padding: 12px 14px;
-    border-bottom: 1px solid rgba(255,255,255,0.10);
-    background: rgba(0,0,0,0.22);
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap: 10px;
-}
-.card .hd .title { font-weight: 800; letter-spacing: 0.25px; font-size: 14px; color: rgba(255,255,255,0.92); }
-.card .hd .tag {
-    font-size: 12px; color: rgba(255,255,255,0.82);
-    border: 1px solid rgba(199,164,74,0.35);
-    background: rgba(199,164,74,0.08);
-    border-radius: 999px; padding: 3px 10px; white-space: nowrap;
-}
-.card .bd { padding: 14px; color: rgba(255,255,255,0.88); }
-
-/* --- ABOUT PAGE (ORG CHART) STYLES --- */
-.org-chart-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 40px;
-    padding: 20px;
-    position: relative;
-}
-
-/* Top Level Box */
-.org-top-box {
-    background: rgba(14, 34, 58, 0.85); /* Blended Blue */
-    border: 1px solid rgba(199, 164, 74, 0.3);
-    border-radius: 12px;
-    padding: 20px 40px;
-    text-align: center;
-    min-width: 300px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    position: relative;
-    z-index: 2;
-}
-.org-top-box h2 {
-    margin: 0;
-    font-size: 18px;
-    color: var(--portal-text);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-/* Connector Lines */
-.org-connector {
-    width: 2px;
-    height: 40px;
-    background: rgba(199, 164, 74, 0.4);
-    position: relative;
-}
-.org-connector::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 60%; /* Width of the horizontal line */
-    height: 2px;
-    background: rgba(199, 164, 74, 0.4);
-}
-
-/* Bottom Level Container */
-.org-bottom-row {
-    display: flex;
-    justify-content: center;
-    gap: 60px;
-    width: 100%;
-    flex-wrap: wrap;
-}
-
-/* Bottom Level Boxes */
-.org-box {
-    background: rgba(10, 22, 38, 0.7); /* Darker blended */
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    padding: 20px;
-    width: 300px;
-    text-align: center;
-    transition: transform 0.2s ease;
-}
-.org-box:hover {
-    transform: translateY(-5px);
-    border-color: rgba(199, 164, 74, 0.5);
-    background: rgba(10, 22, 38, 0.9);
-}
-.org-box h3 {
-    margin: 0 0 10px 0;
-    font-size: 16px;
-    color: var(--portal-gold);
-    font-weight: 700;
-}
-.org-box p {
-    margin: 0;
-    font-size: 13px;
-    color: var(--portal-sub);
-    line-height: 1.5;
-}
-.org-box .role-list {
-    margin-top: 15px;
-    text-align: left;
-    font-size: 12px;
-    color: rgba(255,255,255,0.6);
-    border-top: 1px solid rgba(255,255,255,0.1);
-    padding-top: 10px;
-}
-
-/* --- CONTACT PAGE STYLES --- */
-.contact-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-    padding: 10px;
-}
-.contact-card {
-    background: rgba(0, 0, 0, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
-    padding: 25px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-}
-.contact-card img {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid var(--portal-gold);
-    margin-bottom: 15px;
-    background: #000;
-}
-.contact-card h3 {
-    margin: 0;
-    font-size: 18px;
-    color: var(--portal-text);
-    font-weight: 700;
-}
-.contact-card .role {
-    font-size: 13px;
-    color: var(--portal-gold);
-    margin-bottom: 20px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-.contact-details {
-    width: 100%;
-    text-align: left;
-    background: rgba(255,255,255,0.03);
-    padding: 15px;
-    border-radius: 10px;
-}
-.contact-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 8px;
-    font-size: 13px;
-}
-.contact-row:last-child { margin-bottom: 0; }
-.contact-label { color: var(--portal-sub); }
-.contact-value { color: var(--portal-text); font-weight: 600; font-family: monospace; }
-
-/* --- SETTINGS MODAL --- */
-.modal-overlay {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.8);
-    z-index: 1000;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    backdrop-filter: blur(5px);
-}
-.modal-overlay.open { display: flex; }
-.modal-content {
-    background: var(--portal-ink);
-    border: 1px solid var(--portal-gold);
-    width: 90%;
-    max-width: 600px;
-    max-height: 90vh;
-    overflow-y: auto;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 0 50px rgba(0,0,0,0.8);
-}
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-    padding-bottom: 10px;
-}
-.modal-header h2 { margin: 0; font-size: 18px; color: var(--portal-gold); }
-.close-modal {
-    background: none; border: none; color: #fff; font-size: 24px; cursor: pointer;
-}
-.settings-section { margin-bottom: 25px; }
-.settings-section h3 {
-    color: var(--portal-text);
-    font-size: 14px;
-    border-left: 3px solid var(--portal-gold);
-    padding-left: 10px;
-    margin-bottom: 15px;
-}
-.form-group { margin-bottom: 15px; }
-.form-group label { display: block; font-size: 12px; color: var(--portal-sub); margin-bottom: 5px; }
-.form-group input, .form-group textarea {
-    width: 100%;
-    background: rgba(0,0,0,0.3);
-    border: 1px solid rgba(255,255,255,0.2);
-    color: #fff;
-    padding: 8px 12px;
-    border-radius: 6px;
-    box-sizing: border-box;
-    font-family: inherit;
-}
-.form-group input:focus, .form-group textarea:focus {
-    outline: none;
-    border-color: var(--portal-gold);
-}
-.btn-save {
-    width: 100%;
-    padding: 12px;
-    background: var(--portal-gold);
-    color: #000;
-    font-weight: 700;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    margin-top: 10px;
-}
-.btn-save:hover { background: #d4b050; }
-
-/* --- EXISTING UTILS (Preserved) --- */
-.field{ display:flex; flex-direction:column; gap: 7px; margin-top: 12px; }
-label{ font-size: 12px; color: rgba(255,255,255,0.82); font-weight: 650; letter-spacing: 0.2px; }
-input.portal, textarea.portal, select.portal{
-    border: 1px solid rgba(255,255,255,0.16);
-    background: rgba(0,0,0,0.22);
-    color: rgba(255,255,255,0.92);
-    border-radius: 12px;
-    padding: 10px 12px;
-    outline: none;
-    font-size: 14px;
-    width: 100%;
-    box-sizing: border-box;
-}
-textarea.portal{ min-height: 110px; resize: vertical; }
-.row{ display:flex; gap: 10px; align-items:center; justify-content:space-between; margin-top: 14px; flex-wrap: wrap; }
-.status{ font-size: 13px; color: var(--portal-sub); min-height: 18px; }
-.status.danger{ color: var(--danger); }
-.status.ok{ color: rgba(110,231,183,0.92); }
-.news{ margin-top: 12px; display:flex; flex-direction:column; gap: 10px; }
-.newsItem{
-    border: 1px solid rgba(255,255,255,0.12);
-    background: rgba(0,0,0,0.18);
-    border-radius: 12px;
-    padding: 10px 12px;
-}
-.newsItem .h{ display:flex; align-items:baseline; justify-content:space-between; gap: 10px; flex-wrap: wrap; }
-.newsItem .t{ font-weight: 800; color: rgba(255,255,255,0.92); }
-.newsItem .d{ font-size: 12px; color: rgba(255,255,255,0.75); }
-.newsItem .b{ margin-top: 6px; color: rgba(255,255,255,0.86); font-size: 13px; line-height: 1.35; white-space: normal; }
-.newsItem .b p{ margin: 6px 0; }
-.newsItem .b ul, .newsItem .b ol{ margin: 6px 0 6px 18px; }
-.newsItem .b a{ color: rgba(110,231,183,0.95); text-decoration: underline; }
-.newsItem .b code{
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
-    font-size: 12.5px;
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.12);
-    padding: 1px 6px;
-    border-radius: 999px;
-}
-.newsItem .b pre{
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
-    font-size: 12.5px;
-    background: rgba(0,0,0,0.25);
-    border: 1px solid rgba(255,255,255,0.12);
-    padding: 10px 12px;
-    border-radius: 12px;
-    overflow:auto;
-}
-.newsItem .b blockquote{
-    margin: 8px 0;
-    padding: 8px 10px;
-    border-left: 3px solid rgba(199,164,74,0.55);
-    background: rgba(199,164,74,0.08);
-    border-radius: 10px;
-}
-.wrap{min-height:0;display:flex;align-items:flex-start;justify-content:center;padding:0;box-sizing:border-box;}
-.terminal{
-    width:100%;
-    height: min(860px, calc(100vh - 210px));
-    border:1px solid var(--border);
-    border-radius:14px;
-    overflow:hidden;
-    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.00));
-    box-shadow: 0 0 0 1px rgba(110,231,183,0.08), 0 30px 80px rgba(0,0,0,0.55);
-    position:relative;
-    display:flex;
-    flex-direction:column;
-}
-.bar{ display:flex;align-items:center;gap:10px; padding:10px 12px; border-bottom:1px solid rgba(215,251,230,0.12); background:rgba(0,0,0,0.35); flex:0 0 auto; }
-.dots{display:flex;gap:6px;}
-.dot{width:10px;height:10px;border-radius:999px;opacity:.75}
-.dot.red{background:#ff5f57}.dot.yellow{background:#febc2e}.dot.green{background:#28c840}
-.title-mono{color:var(--muted);font-size:13px;font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;}
-.content{ flex:1 1 auto; min-height:0; display:grid; grid-template-columns: 1fr 460px; gap:12px; padding:12px; box-sizing:border-box; }
-.screen{
-    background:rgba(0,0,0,0.30);
-    border:1px solid rgba(215,251,230,0.10);
-    border-radius:10px;
-    padding:12px;
-    overflow:auto;
-    white-space:pre-wrap;
-    line-height:1.35;
-    font-size:14px;
-    user-select:text;
-    min-height:0;
-    color: var(--fg);
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
-}
-.right{ display:flex; flex-direction:column; gap:12px; min-width:0; min-height:0; overflow:auto; padding-right:4px; }
-.panel{
-    background:rgba(0,0,0,0.30);
-    border:1px solid rgba(215,251,230,0.10);
-    border-radius:10px;
-    overflow:hidden;
-    min-width:0;
-    display:flex;
-    flex-direction:column;
-    min-height:0;
-    flex:0 0 auto;
-    color: var(--fg);
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
-}
-.panel .hd{ padding:10px 12px; border-bottom:1px solid rgba(215,251,230,0.10); color:var(--muted); font-size:13px; background:rgba(0,0,0,0.18); display:flex;justify-content:space-between;align-items:center; flex:0 0 auto; }
-.panel .bd{ padding:10px 12px; overflow:auto; min-height:120px; max-height:240px; color: var(--fg); }
-.panel.chart .bd{ min-height:260px; max-height:320px; }
-.watermark{ position:absolute;right:10px;bottom:10px; color:rgba(215,251,230,0.18); font-weight:800; pointer-events:none; user-select:none; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","CourierNew", monospace; }
-.cmdbar{ display:flex; gap:10px; align-items:center; justify-content:flex-start; flex-wrap: wrap; margin-bottom: 10px; }
-.tableWrap{ border: 1px solid rgba(255,255,255,0.12); background: rgba(0,0,0,0.16); border-radius: 14px; overflow: hidden; }
-table{ width: 100%; border-collapse: collapse; font-size: 13px; }
-thead th{ text-align:left; padding: 12px 12px; background: rgba(0,0,0,0.28); border-bottom: 1px solid rgba(255,255,255,0.10); color: rgba(255,255,255,0.90); font-weight: 800; letter-spacing: 0.2px; }
-tbody td{ padding: 12px 12px; border-bottom: 1px solid rgba(255,255,255,0.08); color: rgba(255,255,255,0.88); vertical-align: middle; }
-tbody tr:hover td{ background: rgba(255,255,255,0.04); }
-.pillMini{ display:inline-block; padding: 4px 10px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.06); font-size: 12px; font-weight: 750; color: rgba(255,255,255,0.90); letter-spacing: 0.2px; }
-.pillMini.ok{ border-color: rgba(110,231,183,0.30); background: rgba(110,231,183,0.10); }
-.pillMini.warn{ border-color: rgba(255,107,107,0.35); background: rgba(255,107,107,0.10); color: rgba(255,220,220,0.95); }
-.miniBtn{ padding: 7px 10px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.16); background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.92); font-weight: 750; cursor:pointer; transition: transform .06s ease, background .15s ease, border-color .15s ease, box-shadow .15s ease; }
-.miniBtn:hover{ border-color: rgba(255,255,255,0.75); box-shadow: 0 0 0 1px var(--whiteglow), 0 0 16px var(--whiteglow2); background: rgba(255,255,255,0.09); }
-.miniBtn:active{ transform: translateY(1px); }
-.miniBtn.danger{ border-color: rgba(255,107,107,0.35); background: rgba(255,107,107,0.10); }
-.miniBtn.good{ border-color: rgba(110,231,183,0.35); background: rgba(110,231,183,0.10); }
-.flagIcon{ display:inline-flex; align-items:center; justify-content:center; width: 18px; height: 18px; border-radius: 999px; border: 1px solid rgba(255,107,107,0.55); background: rgba(255,107,107,0.12); margin-left: 8px; cursor: help; position: relative; }
-.flagIcon svg{ width: 12px; height: 12px; fill: rgba(255,140,140,0.95); }
-.flagIcon[data-tip]:hover::after{ content: attr(data-tip); position: absolute; left: 50%; transform: translateX(-50%); top: -10px; translate: 0 -100%; white-space: nowrap; background: rgba(0,0,0,0.85); color: rgba(255,255,255,0.95); border: 1px solid rgba(255,255,255,0.16); padding: 6px 10px; border-radius: 10px; box-shadow: 0 18px 40px rgba(0,0,0,0.55); font-size: 12px; z-index: 50; }
-@media (max-width: 980px){ .terminal{ height:auto; min-height: 700px; } .content{grid-template-columns:1fr;} .right{max-height:none;} .panel .bd{max-height:none;} thead{ display:none; } table, tbody, tr, td{ display:block; width:100%; } tbody td{ border-bottom: none; padding: 10px 12px; } tbody tr{ border-bottom: 1px solid rgba(255,255,255,0.08); } }
-
-/* --- Admin menu dropdown --- */
-.menu{ position:absolute; top:64px; right:34px; background:rgba(10,14,20,.92); border:1px solid rgba(255,255,255,.12); border-radius:14px; padding:10px; width:220px; box-shadow:0 10px 30px rgba(0,0,0,.35); z-index:50; }
-.menuItem{ width:100%; text-align:left; padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.06); color:#eaf2ff; font-weight:700; cursor:pointer; }
-.menuItem + .menuItem{ margin-top:8px; }
-.menuItem:hover{ background:rgba(255,255,255,.10); }
-
-/* --- Tabs --- */
-.tabs{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
-.tabBtn{ padding:10px 14px; border-radius:12px; border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.06); color:#eaf2ff; font-weight:800; cursor:pointer; }
-.tabBtn.active{ outline:2px solid rgba(255,215,100,.45); }
-
-/* --- Rich text editor --- */
-.rteBar{ display:flex; gap:8px; flex-wrap:wrap; margin:10px 0; }
-.rteBtn{ padding:8px 10px; border-radius:10px; border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.06); color:#eaf2ff; font-weight:800; cursor:pointer; }
-.rte{ min-height:180px; padding:12px; border-radius:14px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.04); color:#eaf2ff; overflow:auto; }
-.previewBox{ min-height:180px; padding:12px; border-radius:14px; border:1px dashed rgba(255,255,255,.18); background:rgba(0,0,0,.15); color:#eaf2ff; overflow:auto; }
-
-/* --- Modal --- */
-.modal{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:flex; align-items:center; justify-content:center; z-index:100; }
-.modal[hidden]{ display:none !important; }
-.modalCard{ width:min(560px, 92vw); background:rgba(10,14,20,.94); border:1px solid rgba(255,255,255,.14); border-radius:18px; padding:14px; box-shadow:0 12px 40px rgba(0,0,0,.55); }
-.lbl{ display:block; margin:10px 0 6px; font-weight:800; color:#cfe0ff; }
-.in{ width:100%; padding:10px 12px; border-radius:12px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.04); color:#eaf2ff; outline:none; }
-.chk{ display:flex; align-items:center; gap:8px; font-weight:800; color:#cfe0ff; }
-.grid2{ display:grid; grid-template-columns: 1fr 1fr; gap:14px; }
-@media (max-width: 980px){ .grid2{ grid-template-columns:1fr; } }
-.card.inner{ border-radius:16px; }
-
-.modalBody{ padding-top:10px; }
-.modalBody .lbl{ display:block; margin:10px 0 6px; }
-.modalBody .in{ display:block; width:100%; }
-.modal .row{ display:flex; }
-
-
-/* === Army Corrections Command theme override (dark green + gold) === */
 :root{
-  --acc-bg0:#040b06;
-  --acc-bg1:#07140b;
-  --acc-panel:#07150c;
-  --acc-panel2:#0a1c10;
-  --acc-line:rgba(249,199,22,.35);
-  --acc-line2:rgba(249,199,22,.18);
-  --acc-accent:#f9c716;
-  --acc-accent2:#a4951d;
-  --acc-text:#eaf6ee;
-  --acc-muted:#bcd3c2;
+  --bg0:#040b06; --bg1:#07140b;
+  --line:rgba(249,199,22,.35); --line2:rgba(249,199,22,.18);
+  --gold:#f9c716; --text:#eaf6ee; --muted:#bcd3c2;
+  --greenGlow: rgba(59,123,52,.35);
 }
-
+*{ box-sizing:border-box; }
 body{
-  color:var(--acc-text) !important;
+  margin:0; color:var(--text); font:14px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Arial;
   background:
     radial-gradient(900px 520px at 18% 10%, rgba(59,123,52,.22), transparent 60%),
     radial-gradient(900px 520px at 82% 0%, rgba(249,199,22,.10), transparent 55%),
-    linear-gradient(180deg, var(--acc-bg1), var(--acc-bg0)) !important;
+    linear-gradient(180deg, var(--bg1), var(--bg0));
 }
-
-header, .topbar, .hero{
-  background:
-    radial-gradient(900px 220px at 20% 20%, rgba(59,123,52,.28), transparent 60%),
-    linear-gradient(180deg, rgba(10,28,16,.92), rgba(7,20,11,.92)) !important;
-  border-bottom:1px solid var(--acc-line2) !important;
+a{ color:var(--gold); text-decoration:none; }
+.top{
+  position:sticky; top:0; z-index:50;
+  background: linear-gradient(180deg, rgba(10,28,16,.92), rgba(7,20,11,.92));
+  border-bottom:1px solid var(--line2);
 }
-
-.card, .panel, .box, .modalCard{
-  background: linear-gradient(180deg, rgba(7,21,12,.92), rgba(4,11,6,.92)) !important;
-  border:1px solid var(--acc-line2) !important;
-  box-shadow: 0 12px 40px rgba(0,0,0,.45) !important;
+.wrap{ max-width:1160px; margin:0 auto; padding:14px 16px; }
+.brand{ display:flex; gap:12px; align-items:center; }
+.brand img{ width:44px; height:44px; object-fit:contain; filter: drop-shadow(0 0 10px rgba(59,123,52,.25)); }
+.brand .t1{ font-weight:800; letter-spacing:.3px; font-size:15px; }
+.brand .t2{ color:var(--muted); font-size:12px; margin-top:2px; }
+.nav{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+.btn{
+  display:inline-flex; align-items:center; gap:8px; padding:9px 12px;
+  border-radius:14px; border:1px solid var(--line2);
+  background: rgba(249,199,22,.06);
+  color:var(--text); cursor:pointer; user-select:none;
+  box-shadow: 0 10px 30px rgba(0,0,0,.2);
 }
-
-.tag, .pill, .chip{
-  border:1px solid var(--acc-line2) !important;
-  color:var(--acc-muted) !important;
-  background: rgba(249,199,22,.06) !important;
+.btn:hover{ background: rgba(249,199,22,.10); }
+.btn.primary{ border-color:var(--line); background: rgba(249,199,22,.12); color:var(--gold); }
+.btn:disabled{ opacity:.55; cursor:not-allowed; }
+.grid{ display:grid; grid-template-columns: 1.15fr .85fr; gap:14px; }
+@media (max-width: 980px){ .grid{ grid-template-columns:1fr; } }
+.card{
+  background: linear-gradient(180deg, rgba(7,21,12,.92), rgba(4,11,6,.92));
+  border:1px solid var(--line2);
+  border-radius:18px;
+  box-shadow: 0 18px 60px rgba(0,0,0,.45);
+  overflow:hidden;
 }
-
-.navbtn, button, .menuItem, .tabBtn, .rteBtn{
-  border:1px solid var(--acc-line2) !important;
-  background: rgba(249,199,22,.06) !important;
-  color: var(--acc-text) !important;
+.card .hd{ padding:14px 14px 8px; border-bottom:1px solid var(--line2); display:flex; justify-content:space-between; align-items:center; gap:10px; }
+.card .hd .h{ font-weight:800; letter-spacing:.2px; }
+.card .bd{ padding:14px; }
+.kicker{ color:var(--muted); font-size:12px; }
+.hr{ height:1px; background:var(--line2); margin:12px 0; }
+.in{
+  width:100%; padding:10px 10px; border-radius:12px;
+  border:1px solid var(--line2); background: rgba(255,255,255,.04);
+  color:var(--text); outline:none;
 }
-
-.navbtn.primary, button.primary{
-  background: rgba(249,199,22,.12) !important;
-  border:1px solid var(--acc-line) !important;
-  color: var(--acc-accent) !important;
-  text-shadow: 0 1px 0 rgba(0,0,0,.4);
+.in:focus{ box-shadow:0 0 0 3px var(--greenGlow); border-color: var(--line); }
+.lbl{ display:block; margin:10px 0 6px; color:var(--muted); }
+.row{ display:flex; gap:10px; flex-wrap:wrap; }
+.row > *{ flex:1; }
+.small{ font-size:12px; color:var(--muted); }
+.badge{
+  display:inline-flex; align-items:center; padding:4px 10px;
+  border-radius:999px; border:1px solid var(--line2);
+  background: rgba(249,199,22,.06); color:var(--muted);
 }
-
-.navbtn:hover, button:hover, .menuItem:hover, .tabBtn:hover, .rteBtn:hover{
-  background: rgba(249,199,22,.10) !important;
+.newsItem{ padding:12px; border:1px solid var(--line2); border-radius:16px; background: rgba(4,11,6,.55); box-shadow: inset 0 0 0 1px rgba(59,123,52,.08); }
+.newsItem + .newsItem{ margin-top:10px; }
+.newsMeta{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; color:var(--muted); font-size:12px; margin-top:6px; }
+.logLine{ padding:10px 12px; border-radius:14px; border:1px solid var(--line2); background: rgba(4,11,6,.55); }
+.logLine + .logLine{ margin-top:8px; }
+.hide{ display:none !important; }
+.rte{
+  min-height:180px; padding:10px; border-radius:14px;
+  border:1px solid var(--line2); background: rgba(255,255,255,.03);
+  outline:none;
 }
-
-a{ color: var(--acc-accent) !important; }
-hr, .sep{ border-color: var(--acc-line2) !important; }
-
-.in, input, select, textarea{
-  background: rgba(255,255,255,.04) !important;
-  border:1px solid var(--acc-line2) !important;
-  color: var(--acc-text) !important;
-}
-
-.tableWrap table th, .tableWrap table td{
-  border-color: var(--acc-line2) !important;
-}
-
-.menu{
-  background: rgba(4,11,6,.95) !important;
-  border:1px solid var(--acc-line2) !important;
-}
-
-.modal{
-  background: rgba(0,0,0,.65) !important;
-}
-
+.rte:focus{ box-shadow:0 0 0 3px var(--greenGlow); border-color: var(--line); }
+.footer{ padding:20px 16px; color:var(--muted); text-align:center; }
 </style>
 </head>
 <body>
-<div class="banner">
-<div><b>Criminal Investigation Division</b> — Official Page</div>
-<div class="pill">Contact BGEN VendettaPyrex for any issues.</div>
-</div>
-<header>
-<div class="header-inner">
-<div class="brand">
-<div class="brand-mark">
-<img src="USACIDC_SSI.png" alt="Logo" />
-</div>
-<div class="brand-title">
-<div class="top">Criminal Investigation Division</div>
-<div class="sub">Do what has to be done</div>
-</div>
-</div>
-<nav>
-<button class="navbtn" id="navHome">Home</button>
-<button class="navbtn" id="navAbout">About</button>
-<button class="navbtn" id="navContact">Contact</button>
-<button class="navbtn" id="navLogin">Login</button>
-<!-- SETTINGS BUTTON ADDED HERE -->
-<button class="navbtn settings-btn" id="navSettings">Settings</button>
-<button class="navbtn primary" id="navBGC" hidden>Background Checks</button>
-<button class="navbtn primary" id="navRecruit" hidden>Recruitment</button>
-<button class="navbtn primary" id="navDocs" hidden>Documents</button>
-<button class="navbtn primary" id="navAccess" hidden>Access Control</button>
-<button class="navbtn primary" id="navBlacklist" hidden>Blacklist</button>
-<button class="navbtn primary" id="navAdmin" hidden>Admin</button>
-<div id="adminMenu" class="menu" hidden>
-  <button class="menuItem" id="adminMenuOpenPanel" type="button">Admin Panel</button>
-  <button class="menuItem" id="adminMenuPages" type="button">Edit Pages</button>
-  <button class="menuItem" id="adminMenuUsers" type="button">Manage Users</button>
-  <button class="menuItem" id="adminMenuNews" type="button">Post News</button>
-  <button class="menuItem" id="adminMenuAudit" type="button">Audit Log</button>
-</div>
-
-<button class="navbtn" id="navLogout" hidden>Logout</button>
-</nav>
-</div>
-</header>
-<main class="container">
-<section class="card" id="contentCard">
-<div class="hd">
-<div class="title" id="contentTitle">Home</div>
-<div class="tag" id="contentTag">Overview</div>
-</div>
-<div class="bd" id="contentBody">
-<div id="homeView">
-<div class="news" id="newsList"></div>
-<div class="status" id="newsEmpty" style="display:none;">No news posted.</div>
-</div>
-
-<!-- REDESIGNED ABOUT VIEW -->
-<div id="aboutView" hidden>
-    <div class="org-chart-container">
-        <!-- Top Box -->
-        <div class="org-top-box">
-            <h2 id="aboutMainTitle">Criminal Investigation Division</h2>
-        </div>
-        
-        <!-- Connector Line -->
-        <div class="org-connector"></div>
-        
-        <!-- Bottom Boxes -->
-        <div class="org-bottom-row">
-            <div class="org-box">
-                <h3 id="aboutBox1Title">Office of Special Investigations</h3>
-                <p id="aboutBox1Desc">Handles complex internal investigations and sensitive matters.</p>
-                <div class="role-list" id="aboutBox1Roles">
-                    Office Chief: USERNAME<br>
-                    Office Sergeant Major: USERNAME
-                </div>
-            </div>
-            
-            <div class="org-box">
-                <h3 id="aboutBox2Title">Office of Criminal Investigations</h3>
-                <p id="aboutBox2Desc">Responsible for felony-level investigations and major crimes.</p>
-                <div class="role-list" id="aboutBox2Roles">
-                    Office Chief: USERNAME<br>
-                    Office Sergeant Major: USERNAME
-                </div>
-            </div>
-        </div>
+<div class="top">
+  <div class="wrap">
+    <div class="brand">
+      <img src="USACIDC_SSI.PNG" alt="ACC"/>
+      <div>
+        <div class="t1">Army Corrections Command</div>
+        <div class="t2">Motto: <span style="color:var(--gold);font-weight:700">Duty. Honor. Justice.</span></div>
+      </div>
+      <div style="margin-left:auto; display:flex; gap:8px; align-items:center;">
+        <span id="who" class="badge">Not logged in</span>
+        <button id="logoutBtn" class="btn hide">Logout</button>
+      </div>
     </div>
-</div>
 
-<!-- REDESIGNED CONTACT VIEW -->
-<div id="contactView" hidden>
-    <div class="contact-grid">
-        <!-- Card 1 -->
-        <div class="contact-card">
-            <img id="contactImg1" src="https://via.placeholder.com/100/000000/FFFFFF?text=User" alt="Profile">
-            <h3 id="contactName1">Director of Criminal Investigations</h3>
-            <div class="role" id="contactRole1">BGEN VendettaPyrex</div>
-            <div class="contact-details">
-                <div class="contact-row">
-                    <span class="contact-label">Discord ID:</span>
-                    <span class="contact-value" id="contactDiscord1">XXXXXXXXXXXXXXXX</span>
-                </div>
-                <div class="contact-row">
-                    <span class="contact-label">Username:</span>
-                    <span class="contact-value" id="contactUser1">vendettapyrex</span>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Card 2 -->
-        <div class="contact-card">
-            <img id="contactImg2" src="https://via.placeholder.com/100/000000/FFFFFF?text=User" alt="Profile">
-            <h3 id="contactName2">Deputy Director</h3>
-            <div class="role" id="contactRole2">COL PurelyGeon</div>
-            <div class="contact-details">
-                <div class="contact-row">
-                    <span class="contact-label">Discord ID:</span>
-                    <span class="contact-value" id="contactDiscord2">XXXXXXXXXXXXXXXX</span>
-                </div>
-                <div class="contact-row">
-                    <span class="contact-label">Username:</span>
-                    <span class="contact-value" id="contactUser2">purelygeon</span>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="loginView" hidden>
-<section class="card">
-<div class="hd">
-<div class="title">Access Control</div>
-<div class="tag">Authorized Users Only</div>
-</div>
-<div class="bd">
-<form id="loginForm" autocomplete="off">
-<div class="field">
-<label for="loginUser">Username</label>
-<input class="portal" id="loginUser" type="text" required />
-</div>
-<div class="field">
-<label for="loginPass">Password</label>
-<input class="portal" id="loginPass" type="password" required />
-</div>
-<div class="row">
-<button class="navbtn primary" type="submit" id="loginBtn">Sign in</button>
-<div class="status" id="loginStatus"></div>
-</div>
-</form>
-</div>
-</section>
-</div>
-
-<!-- SETTINGS MODAL (Hidden by default) -->
-<div class="modal-overlay" id="settingsModal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>Page Settings</h2>
-            <button class="close-modal" id="closeSettings">&times;</button>
-        </div>
-        
-        <div class="settings-section">
-            <h3>About Page Content</h3>
-            <div class="form-group">
-                <label>Main Title</label>
-                <input type="text" id="setAboutTitle" value="Criminal Investigation Division">
-            </div>
-            <div class="form-group">
-                <label>Box 1 Title (Left)</label>
-                <input type="text" id="setBox1Title" value="Office of Special Investigations">
-            </div>
-            <div class="form-group">
-                <label>Box 1 Description</label>
-                <textarea id="setBox1Desc">Handles complex internal investigations and sensitive matters.</textarea>
-            </div>
-            <div class="form-group">
-                <label>Box 1 Roles</label>
-                <textarea id="setBox1Roles">Office Chief: USERNAME&#10;Office Sergeant Major: USERNAME</textarea>
-            </div>
-            <hr style="border-color: rgba(255,255,255,0.1); margin: 20px 0;">
-            <div class="form-group">
-                <label>Box 2 Title (Right)</label>
-                <input type="text" id="setBox2Title" value="Office of Criminal Investigations">
-            </div>
-            <div class="form-group">
-                <label>Box 2 Description</label>
-                <textarea id="setBox2Desc">Responsible for felony-level investigations and major crimes.</textarea>
-            </div>
-            <div class="form-group">
-                <label>Box 2 Roles</label>
-                <textarea id="setBox2Roles">Office Chief: USERNAME&#10;Office Sergeant Major: USERNAME</textarea>
-            </div>
-        </div>
-
-        <div class="settings-section">
-            <h3>Contact Page Content</h3>
-            <div class="form-group">
-                <label>Card 1 Name</label>
-                <input type="text" id="setContactName1" value="Director of Criminal Investigations">
-            </div>
-            <div class="form-group">
-                <label>Card 1 Role</label>
-                <input type="text" id="setContactRole1" value="BGEN VendettaPyrex">
-            </div>
-            <div class="form-group">
-                <label>Card 1 Image URL</label>
-                <input type="text" id="setContactImg1" value="https://via.placeholder.com/100/000000/FFFFFF?text=User">
-            </div>
-            <div class="form-group">
-                <label>Card 1 Discord ID</label>
-                <input type="text" id="setContactDiscord1" value="XXXXXXXXXXXXXXXX">
-            </div>
-            <div class="form-group">
-                <label>Card 1 Username</label>
-                <input type="text" id="setContactUser1" value="vendettapyrex">
-            </div>
-            <hr style="border-color: rgba(255,255,255,0.1); margin: 20px 0;">
-            <div class="form-group">
-                <label>Card 2 Name</label>
-                <input type="text" id="setContactName2" value="Deputy Director">
-            </div>
-            <div class="form-group">
-                <label>Card 2 Role</label>
-                <input type="text" id="setContactRole2" value="COL PurelyGeon">
-            </div>
-            <div class="form-group">
-                <label>Card 2 Image URL</label>
-                <input type="text" id="setContactImg2" value="https://via.placeholder.com/100/000000/FFFFFF?text=User">
-            </div>
-            <div class="form-group">
-                <label>Card 2 Discord ID</label>
-                <input type="text" id="setContactDiscord2" value="XXXXXXXXXXXXXXXX">
-            </div>
-            <div class="form-group">
-                <label>Card 2 Username</label>
-                <input type="text" id="setContactUser2" value="purelygeon">
-            </div>
-        </div>
-
-        <button class="btn-save" id="saveSettingsBtn">Save Changes</button>
-    </div>
-</div>
-
-
-<div id="adminView" hidden>
-  <div class="card">
-    <div class="hd">
-      <div class="title">Admin Panel</div>
-      <div class="tag">Admins only</div>
-    </div>
-    <div class="bd">
-      <div class="tabs" id="adminTabs">
-        <button class="tabBtn active" data-tab="news">News</button>
-        <button class="tabBtn" data-tab="pages">Pages</button>
-        <button class="tabBtn" data-tab="users">Users</button>
-        <button class="tabBtn" data-tab="audit">Audit</button>
-      </div>
-
-      <div class="tabPanel" id="tab_news">
-        <div class="grid2">
-          <div class="card inner">
-            <div class="hd"><div class="title">Post News</div><div class="tag">Rich text</div></div>
-            <div class="bd">
-              <label class="lbl">Title</label>
-              <input class="in" id="newsTitleIn" placeholder="News title" maxlength="120" />
-              <div class="rteBar">
-                <button class="rteBtn" data-cmd="bold" type="button"><b>B</b></button>
-                <button class="rteBtn" data-cmd="italic" type="button"><i>I</i></button>
-                <button class="rteBtn" data-cmd="underline" type="button"><u>U</u></button>
-                <button class="rteBtn" data-cmd="insertUnorderedList" type="button">• List</button>
-                <button class="rteBtn" data-cmd="insertOrderedList" type="button">1. List</button>
-                <button class="rteBtn" data-link="1" type="button">Link</button>
-                <button class="rteBtn" data-cmd="removeFormat" type="button">Clear</button>
-              </div>
-              <div id="newsBodyEd" class="rte" contenteditable="true"></div>
-              <div class="row">
-                <button class="navbtn primary" id="btnPostNews" type="button">Publish</button>
-                <button class="navbtn" id="btnRefreshNewsAdmin" type="button">Refresh</button>
-                <span class="status" id="newsAdminStatus"></span>
-              </div>
-            </div>
-          </div>
-
-          <div class="card inner">
-            <div class="hd"><div class="title">Recent News</div><div class="tag">Manage</div></div>
-            <div class="bd">
-              <div id="adminNewsList" class="newsList"></div>
-              <div class="status" id="adminNewsEmpty" style="display:none;">No news posts yet.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="tabPanel" id="tab_pages" hidden>
-        <div class="card inner">
-          <div class="hd"><div class="title">Edit Pages</div><div class="tag">Home / About / Contact</div></div>
-          <div class="bd">
-            <div class="row">
-              <select class="in" id="pagePick">
-                <option value="home">Home</option>
-                <option value="about">About</option>
-                <option value="contact">Contact</option>
-              </select>
-              <button class="navbtn" id="btnLoadPage" type="button">Load</button>
-              <button class="navbtn primary" id="btnSavePage" type="button">Save</button>
-              <span class="status" id="pageEditStatus"></span>
-            </div>
-            <div class="grid2">
-              <div>
-                <div class="rteBar">
-                  <button class="rteBtn" data-cmd="bold" type="button"><b>B</b></button>
-                  <button class="rteBtn" data-cmd="italic" type="button"><i>I</i></button>
-                  <button class="rteBtn" data-cmd="underline" type="button"><u>U</u></button>
-                  <button class="rteBtn" data-cmd="insertUnorderedList" type="button">• List</button>
-                  <button class="rteBtn" data-cmd="insertOrderedList" type="button">1. List</button>
-                  <button class="rteBtn" data-link="1" type="button">Link</button>
-                  <button class="rteBtn" data-cmd="removeFormat" type="button">Clear</button>
-                </div>
-                <div id="pageEditor" class="rte" contenteditable="true"></div>
-              </div>
-              <div>
-                <div class="status" style="margin-bottom:8px;">Preview</div>
-                <div id="pagePreview" class="previewBox"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="tabPanel" id="tab_users" hidden>
-        <div class="card inner">
-          <div class="hd"><div class="title">Manage Users</div><div class="tag">Runtime list</div></div>
-          <div class="bd">
-            <div class="grid2">
-              <div>
-                <label class="lbl">Username</label>
-                <input class="in" id="userNameIn" placeholder="Roblox username" />
-                <label class="lbl">Password (leave blank to use shared TOKEN_SECRET)</label>
-                <input class="in" id="userPassIn" placeholder="Password" type="password" />
-                <div class="row" style="gap:10px; flex-wrap:wrap;">
-                  <label class="chk"><input type="checkbox" id="userPrivIn"> Privileged</label>
-                  <label class="chk"><input type="checkbox" id="userAdminIn"> Admin</label>
-                </div>
-                <label class="lbl">Rank</label>
-                <input class="in" id="userRankIn" placeholder="e.g., Brigadier General" />
-                <label class="lbl">Position</label>
-                <input class="in" id="userPosIn" placeholder="e.g., Director of Criminal Investigations" />
-                <div class="row">
-                  <button class="navbtn primary" id="btnUserSave" type="button">Save User</button>
-                  <button class="navbtn" id="btnUserDelete" type="button">Remove User</button>
-                  <button class="navbtn" id="btnUsersRefresh" type="button">Refresh List</button>
-                  <span class="status" id="usersStatus"></span>
-                </div>
-              </div>
-              <div>
-                <div class="tableWrap">
-                  <table>
-                    <thead><tr><th>Username</th><th>Priv</th><th>Admin</th><th>Rank</th><th>Position</th></tr></thead>
-                    <tbody id="usersTbody"></tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-            <div class="status" style="opacity:.8; margin-top:10px;">
-              Note: this edits the runtime user list stored in KV (does not change your Cloudflare secrets).
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="tabPanel" id="tab_audit" hidden>
-        <div class="card inner">
-          <div class="hd"><div class="title">Audit Log</div><div class="tag">Every action</div></div>
-          <div class="bd">
-            <div class="row">
-              <button class="navbtn" id="btnAuditRefresh" type="button">Refresh</button>
-              <button class="navbtn" id="btnAuditMore" type="button">Load more</button>
-              <span class="status" id="auditStatus"></span>
-            </div>
-            <div class="tableWrap">
-              <table>
-                <thead><tr><th>Time</th><th>Actor</th><th>Type</th><th>Detail</th></tr></thead>
-                <tbody id="auditTbody"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-
+    <div class="nav">
+      <button class="btn" data-view="about">About</button>
+      <button class="btn" data-view="news">Home / News</button>
+      <button class="btn" data-view="contact">Contact</button>
+      <button class="btn" data-view="unit" id="unitBtn">Unit Tools</button>
+      <button class="btn primary" data-view="login" id="loginNav">Login</button>
+      <button class="btn hide" data-view="admin" id="adminNav">Admin</button>
+      <button class="btn hide" data-view="logs" id="logsNav">Logs</button>
     </div>
   </div>
 </div>
-<div id="bgcView" hidden style="margin-top:0;">
-<div class="cmdbar">
-<button class="navbtn primary" id="btnRunBGC" type="button">Run Background Check</button>
-<button class="navbtn" id="btnClearBGC" type="button">Clear</button>
-</div>
-<div class="wrap">
-<div class="terminal">
-<div class="bar">
-<div class="dots">
-<div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
-</div>
-<div class="title-mono">Criminal Investigation Division — BGC Terminal</div>
-</div>
-<div class="content">
-<div id="screen" class="screen"></div>
-<div class="right">
-<div class="panel chart">
-<div class="hd"><span>Badge Chart</span><span id="chartStatus" class="pillMini">idle</span></div>
-<div class="bd"><canvas id="chart" height="240"></canvas></div>
-</div>
-<div class="panel">
-<div class="hd"><span>Blacklist Status</span><span id="blStatus" class="pillMini">—</span></div>
-<div class="bd" id="blacklistsBox">Run a check.</div>
-</div>
-<div class="panel">
-<div class="hd"><span>Inventory</span><span id="invStatus" class="pillMini">—</span></div>
-<div class="bd" id="inventoryBox">Run a check.</div>
-</div>
-</div>
-</div>
-<div class="watermark">Criminal Investigation Division</div>
-</div>
-</div>
-</div>
-<div id="recruitView" hidden>
-<div class="row" style="margin-top:0;">
-<div class="status" style="font-weight:800; color:rgba(255,255,255,0.92);">Recruitment Background Checks</div>
-<button class="navbtn" id="btnRecruitRefresh" type="button">Refresh</button>
-</div>
-<div class="status" id="recruitStatus"></div>
-<div class="tableWrap" style="margin-top:12px;">
-<table>
-<thead>
-<tr>
-<th>Username(s)</th>
-<th>Entrance Method</th>
-<th>Status</th>
-<th></th>
-<th>Completed By</th>
-<th>Date</th>
-<th>Validation</th>
-</tr>
-</thead>
-<tbody id="recruitTbody"></tbody>
-</table>
-</div>
-</div>
-<div id="docsView" hidden>
-<div class="row" style="margin-top:0;">
-<div class="status" style="font-weight:800; color:rgba(255,255,255,0.92);">Documents</div>
-<button class="navbtn" id="btnDocsRefresh" type="button">Refresh</button>
-</div>
-<div class="status" id="docsStatus"></div>
-<div class="news" id="docsList" style="margin-top:12px;"></div>
-<div class="card" id="docAclCard" style="margin-top:14px; display:none;">
-<div class="hd">
-<div class="title" id="docAclTitle">Access List</div>
-<div class="tag">Restricted</div>
-</div>
-<div class="bd">
-<div class="status" id="docAclStatus"></div>
-<div class="tableWrap" style="margin-top:10px;">
-<table>
-<thead><tr><th>Email</th><th>Role</th></tr></thead>
-<tbody id="docAclTbody"></tbody>
-</table>
-</div>
-</div>
-</div>
-</div>
-<div id="accessView" hidden>
-<div class="status" style="font-weight:800; color:rgba(255,255,255,0.92);">Access Control</div>
-<div class="status" id="accessStatus" style="margin-top:8px;"></div>
-<div class="row" style="margin-top:12px;">
-<button class="navbtn primary" id="btnGrantOpen" type="button">Grant Access</button>
-<button class="navbtn" id="btnRevokeOpen" type="button">Revoke Access</button>
-<button class="navbtn danger" id="btnRevokeAllOpen" type="button" style="border-color: rgba(255,107,107,0.35); background: rgba(255,107,107,0.10);">Revoke All</button>
-</div>
-<div class="card" style="margin-top:14px;">
-<div class="hd">
-<div class="title">Documents</div>
-<div class="tag">Select Target</div>
-</div>
-<div class="bd">
-<div class="status" id="accessDocsStatus"></div>
-<div class="news" id="accessDocsList"></div>
-</div>
-</div>
-</div>
-<div id="blacklistView" hidden>
-<div class="row" style="margin-top:0;">
-<div class="status" style="font-weight:800; color:rgba(255,255,255,0.92);">Blacklist</div>
-<button class="navbtn" id="btnBlRefresh" type="button">Refresh</button>
-</div>
-<div class="status" id="blStatusMsg"></div>
-<div class="card" style="margin-top:12px;">
-<div class="hd">
-<div class="title">Add User</div>
-<div class="tag">Restricted</div>
-</div>
-<div class="bd">
-<div class="field">
-<label>Username</label>
-<input class="portal" id="blUser" type="text" />
-</div>
-<div class="field">
-<label>Reason</label>
-<input class="portal" id="blReason" type="text" />
-</div>
-<div class="row">
-<button class="navbtn primary" id="btnBlAdd" type="button">Add</button>
-</div>
-</div>
-</div>
-<div class="card" style="margin-top:14px;">
-<div class="hd">
-<div class="title">Entries</div>
-<div class="tag">Restricted</div>
-</div>
-<div class="bd">
-<div class="tableWrap">
-<table>
-<thead><tr><th>Username</th><th>Reason</th><th></th></tr></thead>
-<tbody id="blTbody"></tbody>
-</table>
-</div>
-</div>
-</div>
-</div>
-</div>
-</section>
-</main>
 
-<div id="uiModal" class="modal" hidden>
-  <div class="modalCard">
-    <div class="hd">
-      <div class="title" id="uiModalTitle">Input</div>
-      <button class="navbtn" id="uiModalClose" type="button">Close</button>
+<div class="wrap" style="padding-top:16px;">
+  <div class="grid">
+    <div class="card">
+      <div class="hd"><div>
+        <div class="h" id="viewTitle">About</div>
+        <div class="kicker" id="viewKicker">Information for unit members.</div>
+      </div></div>
+      <div class="bd" id="viewBody"></div>
     </div>
-    <div id="uiModalBody" class="modalBody"></div>
-    <div class="row" style="justify-content:flex-end; gap:10px; margin-top:12px;">
-      <button class="navbtn" id="uiModalCancel" type="button">Cancel</button>
-      <button class="navbtn primary" id="uiModalOk" type="button">OK</button>
+
+    <div class="card">
+      <div class="hd"><div class="h">Quick Actions</div></div>
+      <div class="bd" id="sideBody"></div>
     </div>
-    <div class="status" id="uiModalStatus"></div>
   </div>
 </div>
+
+<div class="footer">© Army Corrections Command Roleplay Unit</div>
 
 <script>
-(() => {
-"use strict";
-const TOOL_API_BASE = "https://the.chastiefola.workers.dev";
-const NEWS_API_BASE = "https://dawn-cell-038d.chastiefola.workers.dev";
-const ADMIN_USERNAME = "VendettaPyrex";
-const PRIV_SET = new Set(["Crimson9952","VendettaPyrex","PurelyGeon"]);
-let TOOL_TOKEN = null;
-let LOGGED_IN_USER = null;
-let IS_ADMIN = false;
-let IS_PRIV = false;
-let NEWS_TOKEN = null;
+const API_BASE = "REPLACE_WITH_YOUR_WORKER_URL";
 
-function show(el){ el.hidden = false; }
-function hide(el){ el.hidden = true; }
-function closeAdminMenu(){ const m = $("adminMenu"); if (m) m.hidden = true; }
-document.addEventListener("click", (e)=>{ 
-  const m = $("adminMenu"); 
-  const btn = $("navAdmin");
-  if (!m || m.hidden) return;
-  if (btn && (btn === e.target || btn.contains(e.target))) return;
-  if (m === e.target || m.contains(e.target)) return;
-  m.hidden = true;
-});
-async function uiModalForm({ title, fields }) {
-  return await new Promise((resolve) => {
-    const modal = $("uiModal");
-    const body = $("uiModalBody");
-    const titleEl = $("uiModalTitle");
-    const statusEl = $("uiModalStatus");
-    titleEl.textContent = title || "Input";
-    statusEl.textContent = "";
-    body.innerHTML = "";
-    const inputs = {};
-    for (const f of fields) {
-      const label = document.createElement("label");
-      label.className = "lbl";
-      label.textContent = f.label || f.name;
-      body.appendChild(label);
+let TOKEN = localStorage.getItem("acc_token") || "";
+let ME = null;
 
-      let inp;
-      if (f.type === "textarea") {
-        inp = document.createElement("textarea");
-        inp.className = "in";
-        inp.rows = f.rows || 4;
-      } else if (f.type === "select") {
-        inp = document.createElement("select");
-        inp.className = "in";
-        for (const opt of (f.options || [])) {
-          const o = document.createElement("option");
-          o.value = opt.value;
-          o.textContent = opt.label;
-          inp.appendChild(o);
-        }
-      } else {
-        inp = document.createElement("input");
-        inp.className = "in";
-        inp.type = f.type || "text";
-      }
-      if (f.placeholder) inp.placeholder = f.placeholder;
-      if (f.value != null) inp.value = f.value;
-      if (f.maxLength) inp.maxLength = f.maxLength;
-      inputs[f.name] = inp;
-      body.appendChild(inp);
-    }
+const $ = (id)=>document.getElementById(id);
+const viewBody = $("viewBody");
+const viewTitle = $("viewTitle");
+const viewKicker = $("viewKicker");
+const sideBody = $("sideBody");
+const who = $("who");
 
-    const close = () => { modal.hidden = true; };
-    $("uiModalClose").onclick = () => { close(); resolve(null); };
-    $("uiModalCancel").onclick = () => { close(); resolve(null); };
-    $("uiModalOk").onclick = () => {
-      const out = {};
-      for (const [k, el] of Object.entries(inputs)) out[k] = (el.value ?? "").toString();
-      close();
-      resolve(out);
-    };
-    modal.hidden = false;
-    // focus first input
-    const first = body.querySelector("input,textarea,select");
-    if (first) first.focus();
-  });
+function setWho(){
+  if (!ME) { who.textContent = "Not logged in"; return; }
+  who.textContent = `${ME.rank || "Member"} ${ME.username} • ${ME.unit}${ME.admin ? " • Admin" : ""}`;
 }
-const $ = (id) => document.getElementById(id);
-function escapeHtml(s){
-return (s ?? "").toString()
-.replaceAll("&","&amp;")
-.replaceAll("<","&lt;")
-.replaceAll(">","&gt;")
-.replaceAll('"',"&quot;")
-.replaceAll("'","&#039;");
-}
-function fmtDate(iso){
-const d = new Date(iso);
-if (isNaN(d.getTime())) return "";
-return d.toLocaleString(undefined, { year:"numeric", month:"short", day:"2-digit", hour:"2-digit", minute:"2-digit" });
-}
-const ALLOWED_TAGS = new Set(["B","STRONG","I","EM","U","S","BR","P","DIV","SPAN","UL","OL","LI","A","BLOCKQUOTE","CODE","PRE","H1","H2","H3","HR"]);
-const ALLOWED_ATTR = { "A": new Set(["href","target","rel"]) };
-function sanitizeHtml(inputHtml){
-const tpl = document.createElement("template");
-tpl.innerHTML = (inputHtml ?? "").toString();
-const walk = (node) => {
-const children = Array.from(node.childNodes);
-for (const child of children){
-if (child.nodeType === Node.ELEMENT_NODE){
-const tag = child.tagName.toUpperCase();
-if (!ALLOWED_TAGS.has(tag)){
-const txt = document.createTextNode(child.textContent || "");
-child.replaceWith(txt);
-continue;
-}
-for (const attr of Array.from(child.attributes)){
-const name = attr.name.toLowerCase();
-const val = attr.value || "";
-if (name.startsWith("on") || name === "srcdoc"){ child.removeAttribute(attr.name); continue; }
-const allowed = ALLOWED_ATTR[tag] || new Set();
-if (!allowed.has(attr.name)){ child.removeAttribute(attr.name); continue; }
-if (tag === "A" && name === "href"){
-const href = val.trim();
-if (!href || /^javascript:/i.test(href) || /^data:/i.test(href)){
-child.removeAttribute("href");
-} else {
-child.setAttribute("target","_blank");
-child.setAttribute("rel","noopener noreferrer");
-}
-}
-}
-walk(child);
-} else if (child.nodeType === Node.COMMENT_NODE){
-child.remove();
-}
-}
-};
-walk(tpl.content);
-return tpl.innerHTML;
-}
-function toolAuthHeaders(extra={}) {
-return { ...(TOOL_TOKEN ? { "Authorization": `Bearer ${TOOL_TOKEN}` } : {}), ...extra };
-}
-async function toolApi(path, opts={}){
-const res = await fetch(`${TOOL_API_BASE}${path}`, opts);
-const data = await res.json().catch(()=> ({}));
-if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
-if (data && data.ok === false) throw new Error(data.error || "Request failed");
-return data;
+function navSync(){
+  $("logoutBtn").classList.toggle("hide", !TOKEN);
+  $("loginNav").classList.toggle("hide", !!TOKEN);
+  $("unitBtn").classList.toggle("hide", !TOKEN);
+  $("adminNav").classList.toggle("hide", !(ME && ME.admin));
+  $("logsNav").classList.toggle("hide", !(ME && ME.admin));
+  setWho();
 }
 
-async function loadPageFromWorker(name){
-  try{
-    const data = await toolApi(`/pages/${encodeURIComponent(name)}`);
-    const html = (data && data.html) ? data.html.toString() : "";
-    return html;
-  } catch {
-    return "";
-  }
-}
-async function renderPageIfExists(name, viewEl){
-  const html = await loadPageFromWorker(name);
-  if (html && html.trim()){
-    viewEl.innerHTML = sanitizeHtml(html);
-    return true;
-  }
-  return false;
+async function api(path, opts={}){
+  const headers = opts.headers || {};
+  headers["Content-Type"] = "application/json";
+  if (TOKEN) headers["Authorization"] = "Bearer " + TOKEN;
+  const res = await fetch(API_BASE + path, { ...opts, headers });
+  const data = await res.json().catch(()=>({}));
+  if (!res.ok) throw new Error(data.error || "Request failed");
+  return data;
 }
 
-async function toolLogin(username, password){
-const data = await toolApi(`/auth/login`, {
-method:"POST",
-headers:{ "Content-Type":"application/json" },
-body: JSON.stringify({ username, password })
-});
-TOOL_TOKEN = data.token;
-LOGGED_IN_USER = username;
-IS_ADMIN = !!data.isAdmin;
-IS_PRIV = !!data.isPriv || PRIV_SET.has(username);
-}
-async function toolLogCommand(cmdString){
-try{
-await toolApi(`/log/command`, {
-method:"POST",
-headers: toolAuthHeaders({ "Content-Type":"application/json" }),
-body: JSON.stringify({ command: cmdString })
-});
-} catch {}
-}
-function newsAuthHeaders(extra={}) {
-return { ...(NEWS_TOKEN ? { "Authorization": `Bearer ${NEWS_TOKEN}` } : {}), ...extra };
-}
-async function newsApi(path, opts={}){
-const res = await fetch(`${NEWS_API_BASE}${path}`, opts);
-const data = await res.json().catch(()=> ({}));
-if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
-if (data && data.ok === false) throw new Error(data.error || "Request failed");
-return data;
-}
-async function newsLogin(username, password){
-const data = await newsApi(`/auth/login`, {
-method:"POST",
-headers:{ "Content-Type":"application/json" },
-body: JSON.stringify({ username, password })
-});
-NEWS_TOKEN = data.token;
-}
-async function fetchNewsPublic(){
-const res = await fetch(`${NEWS_API_BASE}/news`);
-const data = await res.json().catch(()=> ({}));
-if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
-return data.items || [];
-}
-const newsListEl = $("newsList");
-const newsEmptyEl = $("newsEmpty");
-function renderNewsHome(items){
-newsListEl.innerHTML = "";
-if (!items.length){
-newsEmptyEl.style.display = "block";
-return;
-}
-newsEmptyEl.style.display = "none";
-for (const n of items.slice(0, 10)){
-const div = document.createElement("div");
-div.className = "newsItem";
-const safeBody = sanitizeHtml(n.text || "");
-div.innerHTML = `
-<div class="h">
-<div class="t">${escapeHtml(n.title || "Untitled")}</div>
-<div class="d">${escapeHtml(fmtDate(n.createdAt))}</div>
-</div>
-<div class="b">${safeBody || ""}</div>
-`;
-newsListEl.appendChild(div);
-}
-}
-async function refreshNews(){
-const items = await fetchNewsPublic();
-renderNewsHome(items);
-}
-const contentTitle = $("contentTitle");
-const contentTag = $("contentTag");
-const homeView = $("homeView");
-const aboutView = $("aboutView");
-const contactView = $("contactView");
-const loginView = $("loginView");
-const adminView = $("adminView");
-const bgcView = $("bgcView");
-const recruitView = $("recruitView");
-const docsView = $("docsView");
-const accessView = $("accessView");
-const blacklistView = $("blacklistView");
-const navHome = $("navHome");
-const navAbout = $("navAbout");
-const navContact = $("navContact");
-const navLogin = $("navLogin");
-const navBGC = $("navBGC");
-const navRecruit = $("navRecruit");
-const navDocs = $("navDocs");
-const navAccess = $("navAccess");
-const navBlacklist = $("navBlacklist");
-const navAdmin = $("navAdmin");
-const navLogout = $("navLogout");
-const navSettings = $("navSettings"); // New Nav Button
-function setActiveNav(btn){
-[navHome, navAbout, navContact, navLogin, navBGC, navRecruit, navDocs, navAccess, navBlacklist, navAdmin].forEach(b=>{
-if (!b) return;
-b.classList.toggle("active", b === btn);
-});
-}
-function setView(which){
-homeView.hidden = true;
-aboutView.hidden = true;
-contactView.hidden = true;
-loginView.hidden = true;
-adminView.hidden = true;
-bgcView.hidden = true;
-recruitView.hidden = true;
-docsView.hidden = true;
-accessView.hidden = true;
-blacklistView.hidden = true;
-if (which === "home"){
-contentTitle.textContent = "Home";
-contentTag.textContent = "Portal Overview";
-homeView.hidden = false;
-setActiveNav(navHome);
-refreshNews().catch(()=>{});
-return;
-}
-if (which === "about"){
-contentTitle.textContent = "About";
-contentTag.textContent = "Info";
-aboutView.hidden = false;
-setActiveNav(navAbout);
-renderPageIfExists("about", aboutView).catch(()=>{});
-return;
-}
-if (which === "contact"){
-contentTitle.textContent = "Contact";
-contentTag.textContent = "Info";
-contactView.hidden = false;
-setActiveNav(navContact);
-renderPageIfExists("contact", contactView).catch(()=>{});
-return;
-}
-if (which === "login"){
-contentTitle.textContent = "Login";
-contentTag.textContent = "Access Control";
-loginView.hidden = false;
-setActiveNav(navLogin);
-setTimeout(()=>{ try{ $("loginUser").focus(); }catch{} }, 0);
-return;
-}
-if (which === "admin"){
-contentTitle.textContent = "Admin";
-contentTag.textContent = "Website Editor";
-adminView.hidden = false;
-setActiveNav(navAdmin);
-return;
-}
-if (which === "bgc"){
-contentTitle.textContent = "Background Checks";
-contentTag.textContent = "Restricted Tool";
-bgcView.hidden = false;
-setActiveNav(navBGC);
-if (!chart) initChart();
-setTimeout(()=>{ try{ chart.resize(); }catch{} }, 50);
-return;
-}
-if (which === "recruit"){
-contentTitle.textContent = "Recruitment";
-contentTag.textContent = "Requests";
-recruitView.hidden = false;
-setActiveNav(navRecruit);
-loadRecruit().catch(()=>{});
-return;
-}
-if (which === "docs"){
-contentTitle.textContent = "Documents";
-contentTag.textContent = "Restricted";
-docsView.hidden = false;
-setActiveNav(navDocs);
-loadDocs().catch(()=>{});
-return;
-}
-if (which === "access"){
-contentTitle.textContent = "Access Control";
-contentTag.textContent = "Restricted";
-accessView.hidden = false;
-setActiveNav(navAccess);
-loadAccessDocs().catch(()=>{});
-return;
-}
-if (which === "blacklist"){
-contentTitle.textContent = "Blacklist";
-contentTag.textContent = "Restricted";
-blacklistView.hidden = false;
-setActiveNav(navBlacklist);
-loadBlacklist().catch(()=>{});
-return;
-}
-}
-function updateNav(){
-const loggedIn = !!TOOL_TOKEN;
-
-// Public
-navHome.hidden = false;
-navAbout.hidden = false;
-navContact.hidden = false;
-
-// Login/logout
-navLogin.hidden = loggedIn;
-navLogout.hidden = !loggedIn;
-
-// Tools for logged-in users
-navBGC.hidden = !loggedIn;
-navRecruit.hidden = !loggedIn;
-
-// Privileged tools
-navDocs.hidden = !(loggedIn && IS_PRIV);
-navAccess.hidden = !(loggedIn && IS_PRIV);
-navBlacklist.hidden = !(loggedIn && IS_PRIV);
-
-// Admin-only (use Settings button as admin menu trigger)
-navSettings.hidden = !(loggedIn && IS_ADMIN);
-navAdmin.hidden = !(loggedIn && IS_ADMIN); // keep Admin button for admins too (optional)
-  if (typeof enforceAdminNavRules==="function") enforceAdminNavRules();
+function setView(name){
+  document.querySelectorAll("[data-view]").forEach(b => b.classList.remove("primary"));
+  document.querySelector(`[data-view="${name}"]`)?.classList.add("primary");
+  if (name === "about") return renderAbout();
+  if (name === "contact") return renderContact();
+  if (name === "news") return renderNews();
+  if (name === "login") return renderLogin();
+  if (name === "unit") return renderUnit();
+  if (name === "admin") return renderAdmin();
+  if (name === "logs") return renderLogs();
 }
 
-navHome.addEventListener("click", ()=> setView("home"));
-navAbout.addEventListener("click", ()=> setView("about"));
-navContact.addEventListener("click", ()=> setView("contact"));
-navLogin.addEventListener("click", ()=> setView("login"));
-navBGC.addEventListener("click", ()=> setView("bgc"));
-navRecruit.addEventListener("click", ()=> setView("recruit"));
-navDocs.addEventListener("click", ()=> { if (IS_PRIV) setView("docs"); });
-navAccess.addEventListener("click", ()=> { if (IS_PRIV) setView("access"); });
-navBlacklist.addEventListener("click", ()=> { if (IS_PRIV) setView("blacklist"); });
-navAdmin.addEventListener("click", ()=> { if (LOGGED_IN_USER === ADMIN_USERNAME) setView("admin"); });
-navLogout.addEventListener("click", ()=>{
-TOOL_TOKEN = null;
-LOGGED_IN_USER = null;
-IS_ADMIN = false;
-IS_PRIV = false;
-NEWS_TOKEN = null;
-if (screen) screen.textContent = "";
-updateNav();
-setView("about");
+document.querySelectorAll("[data-view]").forEach(btn=>{
+  btn.addEventListener("click", ()=> setView(btn.getAttribute("data-view")));
+});
+$("logoutBtn").addEventListener("click", ()=>{
+  TOKEN=""; ME=null; localStorage.removeItem("acc_token");
+  navSync();
+  setView("about");
 });
 
-// --- ADMIN MENU TRIGGER (Settings button, admins only) ---
-navSettings.addEventListener("click", (e)=>{
-  e.preventDefault();
-  if (!IS_ADMIN) return;
-  const menu = $("adminMenu");
-  if (!menu) return;
-  menu.hidden = !menu.hidden;
-});
-// --- SETTINGS LOGIC ---
-const settingsModal = $("settingsModal");
-const closeSettings = $("closeSettings");
-const saveSettingsBtn = $("saveSettingsBtn");
-
-navSettings.addEventListener("click", () => {
-    // Load current values into inputs
-    $("setAboutTitle").value = $("aboutMainTitle").textContent;
-    $("setBox1Title").value = $("aboutBox1Title").textContent;
-    $("setBox1Desc").value = $("aboutBox1Desc").textContent;
-    $("setBox1Roles").value = $("aboutBox1Roles").innerHTML.replace(/<br>/g, "\n");
-    $("setBox2Title").value = $("aboutBox2Title").textContent;
-    $("setBox2Desc").value = $("aboutBox2Desc").textContent;
-    $("setBox2Roles").value = $("aboutBox2Roles").innerHTML.replace(/<br>/g, "\n");
-
-    $("setContactName1").value = $("contactName1").textContent;
-    $("setContactRole1").value = $("contactRole1").textContent;
-    $("setContactImg1").value = $("contactImg1").src;
-    $("setContactDiscord1").value = $("contactDiscord1").textContent;
-    $("setContactUser1").value = $("contactUser1").textContent;
-
-    $("setContactName2").value = $("contactName2").textContent;
-    $("setContactRole2").value = $("contactRole2").textContent;
-    $("setContactImg2").value = $("contactImg2").src;
-    $("setContactDiscord2").value = $("contactDiscord2").textContent;
-    $("setContactUser2").value = $("contactUser2").textContent;
-
-    settingsModal.classList.add("open");
-});
-
-closeSettings.addEventListener("click", () => {
-    settingsModal.classList.remove("open");
-});
-
-saveSettingsBtn.addEventListener("click", () => {
-    // Update About Page
-    $("aboutMainTitle").textContent = $("setAboutTitle").value;
-    $("aboutBox1Title").textContent = $("setBox1Title").value;
-    $("aboutBox1Desc").textContent = $("setBox1Desc").value;
-    $("aboutBox1Roles").innerHTML = $("setBox1Roles").value.replace(/\n/g, "<br>");
-    $("aboutBox2Title").textContent = $("setBox2Title").value;
-    $("aboutBox2Desc").textContent = $("setBox2Desc").value;
-    $("aboutBox2Roles").innerHTML = $("setBox2Roles").value.replace(/\n/g, "<br>");
-
-    // Update Contact Page
-    $("contactName1").textContent = $("setContactName1").value;
-    $("contactRole1").textContent = $("setContactRole1").value;
-    $("contactImg1").src = $("setContactImg1").value;
-    $("contactDiscord1").textContent = $("setContactDiscord1").value;
-    $("contactUser1").textContent = $("setContactUser1").value;
-
-    $("contactName2").textContent = $("setContactName2").value;
-    $("contactRole2").textContent = $("setContactRole2").value;
-    $("contactImg2").src = $("setContactImg2").value;
-    $("contactDiscord2").textContent = $("setContactDiscord2").value;
-    $("contactUser2").textContent = $("setContactUser2").value;
-
-    // Save to LocalStorage so it persists on refresh
-    const settingsData = {
-        about: {
-            title: $("setAboutTitle").value,
-            b1Title: $("setBox1Title").value, b1Desc: $("setBox1Desc").value, b1Roles: $("setBox1Roles").value,
-            b2Title: $("setBox2Title").value, b2Desc: $("setBox2Desc").value, b2Roles: $("setBox2Roles").value
-        },
-        contact: {
-            c1Name: $("setContactName1").value, c1Role: $("setContactRole1").value, c1Img: $("setContactImg1").value, c1Discord: $("setContactDiscord1").value, c1User: $("setContactUser1").value,
-            c2Name: $("setContactName2").value, c2Role: $("setContactRole2").value, c2Img: $("setContactImg2").value, c2Discord: $("setContactDiscord2").value, c2User: $("setContactUser2").value
-        }
-    };
-    localStorage.setItem('cid_settings', JSON.stringify(settingsData));
-    
-    settingsModal.classList.remove("open");
-    alert("Settings saved!");
-});
-
-// Load settings on startup
-function loadSavedSettings() {
-    const saved = localStorage.getItem('cid_settings');
-    if (saved) {
-        try {
-            const data = JSON.parse(saved);
-            // Apply About
-            if(data.about) {
-                $("aboutMainTitle").textContent = data.about.title;
-                $("aboutBox1Title").textContent = data.about.b1Title;
-                $("aboutBox1Desc").textContent = data.about.b1Desc;
-                $("aboutBox1Roles").innerHTML = data.about.b1Roles.replace(/\n/g, "<br>");
-                $("aboutBox2Title").textContent = data.about.b2Title;
-                $("aboutBox2Desc").textContent = data.about.b2Desc;
-                $("aboutBox2Roles").innerHTML = data.about.b2Roles.replace(/\n/g, "<br>");
-            }
-            // Apply Contact
-            if(data.contact) {
-                $("contactName1").textContent = data.contact.c1Name;
-                $("contactRole1").textContent = data.contact.c1Role;
-                $("contactImg1").src = data.contact.c1Img;
-                $("contactDiscord1").textContent = data.contact.c1Discord;
-                $("contactUser1").textContent = data.contact.c1User;
-
-                $("contactName2").textContent = data.contact.c2Name;
-                $("contactRole2").textContent = data.contact.c2Role;
-                $("contactImg2").src = data.contact.c2Img;
-                $("contactDiscord2").textContent = data.contact.c2Discord;
-                $("contactUser2").textContent = data.contact.c2User;
-            }
-        } catch(e) { console.error("Failed to load settings", e); }
-    }
+async function renderAbout(){
+  viewTitle.textContent = "About";
+  viewKicker.textContent = "Army Corrections Command overview.";
+  sideBody.innerHTML = `
+    <div class="small">If you are a member of CID or JAGC, please log in.</div>
+    <div class="hr"></div>
+    <button class="btn primary" onclick="setView('login')">Login</button>
+  `;
+  const data = await api("/pages/about", { method:"GET", headers:{} }).catch(()=>({ok:true, html:""}));
+  viewBody.innerHTML = data.html?.trim()
+    ? data.html
+    : `<div class="newsItem"><b>Welcome.</b><div class="small" style="margin-top:6px;">This portal provides internal tools for Army Corrections Command subunits.</div></div>`;
 }
 
-const loginForm   = $("loginForm");
-const loginUser   = $("loginUser");
-const loginPass   = $("loginPass");
-const loginStatus = $("loginStatus");
-const loginBtn    = $("loginBtn");
-loginForm.addEventListener("submit", async (e)=>{
-e.preventDefault();
-loginStatus.textContent = "";
-loginStatus.className = "status";
-loginBtn.disabled = true;
-try{
-const u = (loginUser.value || "").trim();
-const p = (loginPass.value || "");
-await toolLogin(u, p);
-if (u === ADMIN_USERNAME){
-await newsLogin(u, p);
-} else {
-NEWS_TOKEN = null;
-}
-loginStatus.textContent = "Access granted.";
-loginStatus.className = "status ok";
-updateNav();
-setView("bgc");
-} catch(err){
-loginStatus.textContent = err?.message || "Login failed";
-loginStatus.className = "status danger";
-} finally{
-loginBtn.disabled = false;
-loginPass.value = "";
-}
-});
-const screen = $("screen");
-function termPrint(text=""){
-const div = document.createElement("div");
-div.textContent = text;
-screen.appendChild(div);
-screen.scrollTop = screen.scrollHeight;
-}
-const TRELLO_SOURCES = [
-{ key: "USAR WIDE", json: "https://trello.com/b/zVRnrvhb/usar-management-mainframe.json", list_name: "USAR Blacklists" },
-{ key: "FORSCOM",   json: "https://trello.com/b/YncjLEbF/forces-command-information-trello.json", list_name: "Blacklists" },
-{ key: "ASOC",      json: "https://trello.com/b/TwIxsGvt/army-special-operations-information.json", list_name: "ASOC Blacklists" },
-{ key: "MPC",       json: "https://trello.com/b/IeGd7MBr/military-police-corps-information-board.json", list_name: "Unit Blacklists" },
-{ key: "TRADOC",    json: "https://trello.com/b/fUwjef3b/training-and-doctrine-command-information.json", list_name: "PERMANENT TRADOC BLACKLISTS" },
-];
-const DISPLAY_ORDER = ["USAR WIDE", "FORSCOM", "ASOC", "MPC", "TRADOC"];
-const INVENTORY_CATEGORIES = {
-"T-Shirts": 2, "Classic Shirts": 11, "Classic Pants": 12, "Hats": 8,
-"Face": 18, "Gear": 19, "Hair Accessories": 41, "Face Accessories": 42,
-"Neck Accessories": 43, "Shoulder Accessories": 44, "Front Accessories": 45,
-"Back Accessories": 46, "Waist Accessories": 47,
-};
-const BASE_DELAY_MS = 250;
-const JITTER_MS = 200;
-const BATCH_DELAY_MS = 900;
-const PHASE_DELAY_MS = 900;
-const MAX_RETRIES_429 = 7;
-function sleep(ms){ return new Promise(r=>setTimeout(r, ms)); }
-async function nap(base=BASE_DELAY_MS){ await sleep(base + Math.random()*JITTER_MS); }
-async function fetchRL(url, opts={}){
-await nap();
-let res = await fetch(url, opts);
-if (res.status !== 429) return res;
-let backoff = 2000;
-for (let i=0; i<MAX_RETRIES_429; i++){
-termPrint(`Rate limited. Sleeping ${(backoff/1000).toFixed(1)}s...`);
-await sleep(backoff);
-backoff = Math.floor(backoff * 1.55);
-await nap(50);
-res = await fetch(url, opts);
-if (res.status !== 429) return res;
-}
-return res;
-}
-async function toolApiRL(path, opts={}){
-const res = await fetchRL(`${TOOL_API_BASE}${path}`, opts);
-const data = await res.json().catch(()=> ({}));
-if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
-if (data && data.ok === false) throw new Error(data.error || "Request failed");
-return data;
-}
-async function trelloFetchBoardJson(trelloUrl){
-const res = await fetchRL(`${TOOL_API_BASE}/trello?url=${encodeURIComponent(trelloUrl)}`, { headers: toolAuthHeaders() });
-const data = await res.json().catch(()=> ({}));
-if (!res.ok) throw new Error(data.error || `Trello HTTP ${res.status}`);
-return data;
-}
-async function robloxUserId(username){
-const data = await toolApiRL(`/roblox/userid`, {
-method:"POST",
-headers: toolAuthHeaders({ "Content-Type":"application/json" }),
-body: JSON.stringify({ username })
-});
-if (data?.data?.length) return String(data.data[0].id);
-throw new Error("User not found");
-}
-async function robloxBadges(userId){
-const out = [];
-let cursor = "";
-while(true){
-const url = cursor ? `/roblox/badges?userId=${encodeURIComponent(userId)}&cursor=${encodeURIComponent(cursor)}`
-: `/roblox/badges?userId=${encodeURIComponent(userId)}`;
-const data = await toolApiRL(url, { headers: toolAuthHeaders() });
-out.push(...(data.data || []));
-cursor = data.nextPageCursor || "";
-if (!cursor) break;
-await sleep(BATCH_DELAY_MS);
-}
-return out;
-}
-async function robloxAwardedDates(userId, badgeIds){
-const STEP = 100;
-const dates = [];
-for (let i=0; i<badgeIds.length; i+=STEP){
-const batch = badgeIds.slice(i, i+STEP);
-const data = await toolApiRL(`/roblox/awardedDates`, {
-method:"POST",
-headers: toolAuthHeaders({ "Content-Type":"application/json" }),
-body: JSON.stringify({ userId, badgeIds: batch })
-});
-(data.data || []).forEach(x => dates.push(x.awardedDate));
-await sleep(BATCH_DELAY_MS);
-}
-return dates;
-}
-async function canViewInventory(userId){
-const data = await toolApiRL(`/roblox/canViewInventory?userId=${encodeURIComponent(userId)}`, { headers: toolAuthHeaders() });
-return !!data.canView;
-}
-async function inventoryItems(userId, assetTypeId){
-const out = [];
-let cursor = "";
-while(true){
-const path =
-`/roblox/inventory?userId=${encodeURIComponent(userId)}&assetTypeId=${encodeURIComponent(assetTypeId)}` +
-(cursor ? `&cursor=${encodeURIComponent(cursor)}` : "");
-const data = await toolApiRL(path, { headers: toolAuthHeaders() });
-out.push(...(data.data || []));
-cursor = data.nextPageCursor || "";
-if (!cursor) break;
-await sleep(BATCH_DELAY_MS);
-}
-return out;
-}
-function normalize(s){ return (s ?? "").toString().trim().toLowerCase(); }
-function usernameInCardName(username, cardName){
-const u = (username ?? "").trim();
-if (!u) return false;
-const cn = (cardName ?? "").trim();
-if (normalize(cn) === "[username]") return false;
-const escaped = u.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-try {
-const re = new RegExp(`(?<![A-Za-z0-9_])${escaped}(?![A-Za-z0-9_])`, "i");
-return re.test(cn);
-} catch {
-const low = cn.toLowerCase();
-const uu = u.toLowerCase();
-const idx = low.indexOf(uu);
-if (idx === -1) return false;
-const before = low[idx-1] || "";
-const after = low[idx+uu.length] || "";
-const word = /[a-z0-9_]/i;
-return !word.test(before) && !word.test(after);
-}
-}
-async function trelloBlacklistStatus(username){
-const results = {};
-TRELLO_SOURCES.forEach(s => results[s.key] = false);
-for (const src of TRELLO_SOURCES){
-try{
-const board = await trelloFetchBoardJson(src.json);
-const lists = board.lists || [];
-const cards = board.cards || [];
-const listIds = lists.filter(l => normalize(l.name) === normalize(src.list_name)).map(l => l.id);
-if (!listIds.length) { results[src.key] = false; continue; }
-let found = false;
-for (const c of cards){
-if (listIds.includes(c.idList) && usernameInCardName(username, c.name || "")) { found = true; break; }
-}
-results[src.key] = found;
-} catch {
-results[src.key] = false;
-}
-await nap(250);
-}
-return results;
-}
-const chartStatus = $("chartStatus");
-const blStatus = $("blStatus");
-const invStatus = $("invStatus");
-const blacklistsBox = $("blacklistsBox");
-const inventoryBox = $("inventoryBox");
-let chart;
-function initChart(){
-const ctx = $("chart").getContext("2d");
-chart = new Chart(ctx, {
-type: "scatter",
-data: { datasets: [{ label: "Badges over Time", data: [], pointRadius: 2 }] },
-options: {
-responsive: true,
-maintainAspectRatio: false,
-parsing: false,
-scales: {
-x: { type: "time", time: { unit: "year" }, ticks: { color: "#8fb3a3" }, grid: { color: "rgba(215,251,230,0.08)" } },
-y: { ticks: { color: "#8fb3a3" }, grid: { color: "rgba(215,251,230,0.08)" } }
-},
-plugins: { legend: { labels: { color: "#8fb3a3" } } }
-}
-});
-}
-function renderBlacklists(statusMap){
-const lines = DISPLAY_ORDER.map(k => `${k} BLACKLIST - ${statusMap[k] ? "YES" : "NO"}`);
-blacklistsBox.textContent = lines.join("\n");
-blStatus.textContent = DISPLAY_ORDER.some(k => statusMap[k]) ? "flags" : "clear";
-}
-function renderInventory(report){
-const frag = document.createDocumentFragment();
-const total = Object.values(report).reduce((a, arr)=>a + (arr?.length||0), 0);
-const head = document.createElement("div");
-head.style.marginBottom = "10px";
-head.innerHTML = `<span class="pillMini">items: ${total}</span>`;
-frag.appendChild(head);
-Object.entries(report).forEach(([cat, items])=>{
-const h = document.createElement("div");
-h.style.marginTop = "10px";
-h.innerHTML = `<span class="pillMini">${escapeHtml(cat)}</span> <span style="opacity:.75">(${items.length})</span>`;
-frag.appendChild(h);
-const ul = document.createElement("ul");
-ul.style.margin = "8px 0 0 18px";
-ul.style.padding = "0";
-items.slice(0, 60).forEach(it=>{
-const li = document.createElement("li");
-li.textContent = `${it.name ?? "Unknown"} (AssetId: ${it.assetId ?? "?"})`;
-ul.appendChild(li);
-});
-if (items.length > 60){
-const li = document.createElement("li");
-li.style.opacity = ".75";
-li.textContent = `…and ${items.length - 60} more`;
-ul.appendChild(li);
-}
-frag.appendChild(ul);
-});
-inventoryBox.innerHTML = "";
-inventoryBox.appendChild(frag);
-}
-async function runCheck(username){
-termPrint("");
-termPrint(`Checking user: ${username}`);
-chartStatus.textContent = "running";
-blStatus.textContent = "…";
-invStatus.textContent = "…";
-blacklistsBox.textContent = "Running…";
-inventoryBox.textContent = "Running…";
-await toolLogCommand(`check ${username}`);
-const bl = await trelloBlacklistStatus(username);
-renderBlacklists(bl);
-await sleep(PHASE_DELAY_MS);
-const userId = await robloxUserId(username);
-termPrint(`UserId: ${userId}`);
-await sleep(PHASE_DELAY_MS);
-const canView = await canViewInventory(userId);
-if (!canView){
-invStatus.textContent = "private";
-inventoryBox.textContent = "Inventory is private.";
-} else {
-const report = {};
-for (const [cat, typeId] of Object.entries(INVENTORY_CATEGORIES)){
-try{
-const items = await inventoryItems(userId, typeId);
-report[cat] = items.map(x => ({ name: x.name, assetId: x.assetId }));
-} catch {
-report[cat] = [];
-}
-await sleep(250);
-}
-invStatus.textContent = "done";
-renderInventory(report);
-}
-await sleep(PHASE_DELAY_MS);
-const badges = await robloxBadges(userId);
-const badgeIds = badges.map(b=>b.id).filter(Boolean);
-const dates = await robloxAwardedDates(userId, badgeIds);
-const parsed = dates.map(s => new Date(s)).filter(d => !isNaN(d.getTime())).sort((a,b)=>a-b);
-const points = parsed.map((d, idx)=>({ x: d, y: idx+1 }));
-chart.data.datasets[0].data = points;
-chart.update();
-chartStatus.textContent = "done";
-termPrint("Done.");
-}
-$("btnRunBGC").addEventListener("click", async ()=>{
-const r = await uiModalForm({ title:"Run Background Check", fields:[
-  { name:"username", label:"Roblox Username", placeholder:"Username" }
-]});
-if (!r) return;
-const u = (r.username || "").trim();
-if (!u) return;
-try{
-await runCheck(u.trim());
-} catch(e){
-termPrint(`ERROR: ${e.message || "Failed"}`);
-chartStatus.textContent = "error";
-}
-});
-$("btnClearBGC").addEventListener("click", ()=>{
-screen.textContent = "";
-blacklistsBox.textContent = "Run a check.";
-inventoryBox.textContent = "Run a check.";
-blStatus.textContent = "—";
-invStatus.textContent = "—";
-chartStatus.textContent = "idle";
-if (chart){
-chart.data.datasets[0].data = [];
-chart.update();
-}
-});
-const recruitStatus = $("recruitStatus");
-const recruitTbody = $("recruitTbody");
-function flagSvg(){
-return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 1 21h22L12 2zm0 6c.6 0 1 .4 1 1v5a1 1 0 1 1-2 0V9c0-.6.4-1 1-1zm0 10a1.25 1.25 0 1 1 0 2.5A1.25 1.25 0 0 1 12 18z"/></svg>`;
-}
-async function loadRecruit(){
-recruitStatus.textContent = "";
-recruitStatus.className = "status";
-recruitTbody.innerHTML = "";
-try{
-const data = await toolApi(`/recruit/list`, { headers: toolAuthHeaders() });
-const items = data.items || [];
-for (const it of items){
-const tr = document.createElement("tr");
-const flagged = (it.flaggedReason || "").trim();
-const userHtml = `${escapeHtml(it.usernames || "")}` + (flagged ? ` <span class="flagIcon" data-tip="${escapeHtml("RED FLAGGED: " + flagged)}">${flagSvg()}</span>` : "");
-const statusVal = (it.status || "PENDING").toUpperCase();
-const validationVal = (it.validation || "PENDING").toUpperCase();
-const validationPill = (validationVal === "APPROVED")
-? `<span class="pillMini ok">APPROVED</span>`
-: (validationVal === "REJECTED")
-? `<span class="pillMini warn">REJECTED</span>`
-: `<span class="pillMini">PENDING</span>`;
-const statusSelect = `
-<select class="portal" data-row="${it.rowIndex}" style="max-width:180px;">
-${["PENDING","IN_PROGRESS","COMPLETED","HOLD"].map(x => `<option value="${x}" ${x===statusVal?"selected":""}>${x}</option>`).join("")}
-</select>
-`;
-const updateBtn = `<button class="miniBtn" data-upd="${it.rowIndex}">Update</button>`;
-const validBtns = (IS_PRIV)
-? `<div style="display:flex; gap:8px; justify-content:flex-start;">
-<button class="miniBtn good" data-ok="${it.rowIndex}">✓</button>
-<button class="miniBtn danger" data-no="${it.rowIndex}">✕</button>
-</div>`
-: ``;
-tr.innerHTML = `
-<td>${userHtml}</td>
-<td>${escapeHtml(it.entrance || "")}</td>
-<td>${statusSelect}</td>
-<td>${updateBtn}</td>
-<td>${escapeHtml(it.completedBy || "")}</td>
-<td>${escapeHtml(it.date ? fmtDate(it.date) : "")}</td>
-<td>
-<div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-${validationPill}
-${validBtns}
-${it.validatedBy ? `<span style="opacity:.85; font-size:12px;">${escapeHtml(it.validatedBy)}</span>` : ``}
-</div>
-</td>
-`;
-recruitTbody.appendChild(tr);
-}
-recruitTbody.querySelectorAll("button[data-upd]").forEach(btn=>{
-btn.addEventListener("click", async ()=>{
-const row = Number(btn.getAttribute("data-upd"));
-const sel = recruitTbody.querySelector(`select[data-row="${row}"]`);
-const status = sel ? sel.value : "PENDING";
-try{
-btn.disabled = true;
-await toolApi(`/recruit/update`, {
-method:"POST",
-headers: toolAuthHeaders({ "Content-Type":"application/json" }),
-body: JSON.stringify({ rowIndex: row, status })
-});
-await loadRecruit();
-} catch(e){
-recruitStatus.textContent = e.message || "Failed";
-recruitStatus.className = "status danger";
-} finally{
-btn.disabled = false;
-}
-});
-});
-recruitTbody.querySelectorAll("button[data-ok]").forEach(btn=>{
-btn.addEventListener("click", async ()=>{
-const row = Number(btn.getAttribute("data-ok"));
-try{
-btn.disabled = true;
-await toolApi(`/recruit/validate`, {
-method:"POST",
-headers: toolAuthHeaders({ "Content-Type":"application/json" }),
-body: JSON.stringify({ rowIndex: row, approved: true })
-});
-await loadRecruit();
-} catch(e){
-recruitStatus.textContent = e.message || "Failed";
-recruitStatus.className = "status danger";
-} finally{ btn.disabled = false; }
-});
-});
-recruitTbody.querySelectorAll("button[data-no]").forEach(btn=>{
-btn.addEventListener("click", async ()=>{
-const row = Number(btn.getAttribute("data-no"));
-try{
-btn.disabled = true;
-await toolApi(`/recruit/validate`, {
-method:"POST",
-headers: toolAuthHeaders({ "Content-Type":"application/json" }),
-body: JSON.stringify({ rowIndex: row, approved: false })
-});
-await loadRecruit();
-} catch(e){
-recruitStatus.textContent = e.message || "Failed";
-recruitStatus.className = "status danger";
-} finally{ btn.disabled = false; }
-});
-});
-} catch(e){
-recruitStatus.textContent = e.message || "Failed";
-recruitStatus.className = "status danger";
-}
-}
-$("btnRecruitRefresh").addEventListener("click", ()=> loadRecruit());
-const docsStatus = $("docsStatus");
-const docsList = $("docsList");
-const docAclCard = $("docAclCard");
-const docAclTitle = $("docAclTitle");
-const docAclStatus = $("docAclStatus");
-const docAclTbody = $("docAclTbody");
-async function loadDocs(){
-docsStatus.textContent = "";
-docsStatus.className = "status";
-docsList.innerHTML = "";
-docAclCard.style.display = "none";
-try{
-const data = await toolApi(`/docs/list`, { headers: toolAuthHeaders() });
-const items = data.items || [];
-for (const d of items){
-const box = document.createElement("div");
-box.className = "newsItem";
-box.innerHTML = `
-<div class="h">
-<div class="t">${escapeHtml(d.title || "Document")}</div>
-<div class="d">${escapeHtml(d.clearance || "")}</div>
-</div>
-<div style="margin-top:10px; display:flex; justify-content:flex-end;">
-<button class="navbtn" data-doc="${escapeHtml(d.id)}">See Access</button>
-</div>
-`;
-docsList.appendChild(box);
-}
-docsList.querySelectorAll("button[data-doc]").forEach(btn=>{
-btn.addEventListener("click", async ()=>{
-const id = btn.getAttribute("data-doc");
-if (!id) return;
-try{
-btn.disabled = true;
-docAclCard.style.display = "block";
-docAclStatus.textContent = "";
-docAclStatus.className = "status";
-docAclTbody.innerHTML = "";
-const acl = await toolApi(`/docs/acl?id=${encodeURIComponent(id)}`, { headers: toolAuthHeaders() });
-docAclTitle.textContent = acl.title || "Access List";
-const entries = acl.entries || [];
-for (const p of entries){
-const tr = document.createElement("tr");
-tr.innerHTML = `<td>${escapeHtml(p.email || "")}</td><td>${escapeHtml((p.role||"").toUpperCase())}</td>`;
-docAclTbody.appendChild(tr);
-}
-} catch(e){
-docAclStatus.textContent = e.message || "Failed";
-docAclStatus.className = "status danger";
-} finally{
-btn.disabled = false;
-}
-});
-});
-} catch(e){
-docsStatus.textContent = e.message || "Failed";
-docsStatus.className = "status danger";
-}
-}
-$("btnDocsRefresh").addEventListener("click", ()=> loadDocs());
-const accessStatus = $("accessStatus");
-const accessDocsStatus = $("accessDocsStatus");
-const accessDocsList = $("accessDocsList");
-let accessDocsCache = [];
-async function loadAccessDocs(){
-accessStatus.textContent = "";
-accessStatus.className = "status";
-accessDocsStatus.textContent = "";
-accessDocsStatus.className = "status";
-accessDocsList.innerHTML = "";
-accessDocsCache = [];
-try{
-const data = await toolApi(`/docs/list`, { headers: toolAuthHeaders() });
-accessDocsCache = data.items || [];
-for (const d of accessDocsCache){
-const box = document.createElement("div");
-box.className = "newsItem";
-box.innerHTML = `
-<div class="h">
-<div class="t">${escapeHtml(d.title || "Document")}</div>
-<div class="d">${escapeHtml(d.clearance || "")}</div>
-</div>
-<div style="margin-top:10px; display:flex; justify-content:flex-end;">
-<span class="pillMini" data-docsel="${escapeHtml(d.id)}">ID: ${escapeHtml(d.id)}</span>
-</div>
-`;
-accessDocsList.appendChild(box);
-}
-accessDocsStatus.textContent = "Select a document ID when prompted.";
-} catch(e){
-accessDocsStatus.textContent = e.message || "Failed";
-accessDocsStatus.className = "status danger";
-}
-}
-async function promptDocId(){
-const r = await uiModalForm({ title:"Document", fields:[
-  { name:"id", label:"Document ID", placeholder:"Enter document ID" }
-]});
-if (!r) return null;
-const id = (r.id || "").trim();
-if (!id) return null;
-const ok = accessDocsCache.some(x => String(x.id) === String(id).trim());
-if (!ok){
-alert("Invalid document ID.");
-return null;
-}
-return String(id).trim();
-}
-$("btnGrantOpen").addEventListener("click", async ()=>{
-accessStatus.textContent = "";
-accessStatus.className = "status";
-const id = await promptDocId();
-if (!id) return;
-const r = await uiModalForm({ title:"Grant Access", fields:[
-  { name:"email", label:"Email", placeholder:"user@example.com" },
-  { name:"role", label:"Permissions", placeholder:"viewer or editor" }
-]});
-if (!r) return;
-const email = (r.email || "").trim();
-const role = (r.role || "").trim();
-if (!email || !role) return;
-const sure = confirm(`Grant ${role} to ${email} on document ${id}?`);
-if (!sure) return;
-try{
-await toolApi(`/docs/grant`, {
-method:"POST",
-headers: toolAuthHeaders({ "Content-Type":"application/json" }),
-body: JSON.stringify({ id, email, role: role.toLowerCase()==="editor" ? "writer" : "reader" })
-});
-accessStatus.textContent = "Done.";
-accessStatus.className = "status ok";
-} catch(e){
-accessStatus.textContent = e.message || "Failed";
-accessStatus.className = "status danger";
-}
-});
-$("btnRevokeOpen").addEventListener("click", async ()=>{
-accessStatus.textContent = "";
-accessStatus.className = "status";
-const id = await promptDocId();
-if (!id) return;
-const r = await uiModalForm({ title:"Revoke Access", fields:[
-  { name:"email", label:"Email", placeholder:"user@example.com" },
-  { name:"reason", label:"Reason", placeholder:"Why revoke?" }
-]});
-if (!r) return;
-const email = (r.email || "").trim();
-const reason = (r.reason || "").trim();
-if (!email || !reason) return;
-const sure = confirm(`Revoke access for ${email} on document ${id}?`);
-if (!sure) return;
-try{
-await toolApi(`/docs/revoke`, {
-method:"POST",
-headers: toolAuthHeaders({ "Content-Type":"application/json" }),
-body: JSON.stringify({ id, email, reason })
-});
-accessStatus.textContent = "Done.";
-accessStatus.className = "status ok";
-} catch(e){
-accessStatus.textContent = e.message || "Failed";
-accessStatus.className = "status danger";
-}
-});
-$("btnRevokeAllOpen").addEventListener("click", async ()=>{
-accessStatus.textContent = "";
-accessStatus.className = "status";
-const r = await uiModalForm({ title:"Revoke Access", fields:[
-  { name:"email", label:"Email", placeholder:"user@example.com" },
-  { name:"reason", label:"Reason", placeholder:"Why revoke?" }
-]});
-if (!r) return;
-const email = (r.email || "").trim();
-const reason = (r.reason || "").trim();
-if (!email || !reason) return;
-const sure = confirm(`Revoke ALL document access for ${email}?`);
-if (!sure) return;
-try{
-await toolApi(`/docs/revokeAll`, {
-method:"POST",
-headers: toolAuthHeaders({ "Content-Type":"application/json" }),
-body: JSON.stringify({ email, reason })
-});
-accessStatus.textContent = "Done.";
-accessStatus.className = "status ok";
-} catch(e){
-accessStatus.textContent = e.message || "Failed";
-accessStatus.className = "status danger";
-}
-});
-const blStatusMsg = $("blStatusMsg");
-const blTbody = $("blTbody");
-async function loadBlacklist(){
-blStatusMsg.textContent = "";
-blStatusMsg.className = "status";
-blTbody.innerHTML = "";
-try{
-const data = await toolApi(`/blacklist/list`, { headers: toolAuthHeaders() });
-const items = data.items || [];
-for (const it of items){
-const tr = document.createElement("tr");
-tr.innerHTML = `
-<td>${escapeHtml(it.username || "")}</td>
-<td>${escapeHtml(it.reason || "")}</td>
-<td style="text-align:right;">
-<button class="miniBtn danger" data-del="${escapeHtml(it.username || "")}">Remove</button>
-</td>
-`;
-blTbody.appendChild(tr);
-}
-blTbody.querySelectorAll("button[data-del]").forEach(btn=>{
-btn.addEventListener("click", async ()=>{
-const u = btn.getAttribute("data-del");
-if (!u) return;
-const sure = confirm(`Remove ${u} from blacklist?`);
-if (!sure) return;
-try{
-btn.disabled = true;
-await toolApi(`/blacklist/remove`, {
-method:"POST",
-headers: toolAuthHeaders({ "Content-Type":"application/json" }),
-body: JSON.stringify({ username: u })
-});
-await loadBlacklist();
-if (!recruitView.hidden) await loadRecruit();
-} catch(e){
-blStatusMsg.textContent = e.message || "Failed";
-blStatusMsg.className = "status danger";
-} finally{
-btn.disabled = false;
-}
-});
-});
-} catch(e){
-blStatusMsg.textContent = e.message || "Failed";
-blStatusMsg.className = "status danger";
-}
-}
-$("btnBlRefresh").addEventListener("click", ()=> loadBlacklist());
-$("btnBlAdd").addEventListener("click", async ()=>{
-blStatusMsg.textContent = "";
-blStatusMsg.className = "status";
-const u = ($("blUser").value || "").trim();
-const r = ($("blReason").value || "").trim();
-if (!u || !r){
-blStatusMsg.textContent = "Username and reason required.";
-blStatusMsg.className = "status danger";
-return;
-}
-try{
-await toolApi(`/blacklist/add`, {
-method:"POST",
-headers: toolAuthHeaders({ "Content-Type":"application/json" }),
-body: JSON.stringify({ username: u, reason: r })
-});
-$("blUser").value = "";
-$("blReason").value = "";
-await loadBlacklist();
-if (!recruitView.hidden) await loadRecruit();
-blStatusMsg.textContent = "Added.";
-blStatusMsg.className = "status ok";
-} catch(e){
-blStatusMsg.textContent = e.message || "Failed";
-blStatusMsg.className = "status danger";
-}
-});
-updateNav();
-setView("home");
-refreshNews().catch(()=>{});
-loadSavedSettings(); // Load settings on startup
-
-/* =========================
-   ADMIN MENU + PANEL
-   ========================= */
-function initAdminMenu(){
-  const btn = $("navAdmin");
-  const menu = $("adminMenu");
-  if (!btn || !menu) return;
-
-  btn.addEventListener("click", (e)=>{
-    e.preventDefault();
-    if (!IS_ADMIN) return;
-    menu.hidden = !menu.hidden;
-  });
-
-  const openTab = (tab) => {
-    setView("admin");
-    // tabs
-    for (const b of document.querySelectorAll("#adminTabs .tabBtn")){
-      b.classList.toggle("active", b.dataset.tab === tab);
-    }
-    for (const p of document.querySelectorAll("#adminView .tabPanel")){
-      p.hidden = true;
-    }
-    const panel = $("tab_" + tab);
-    if (panel) panel.hidden = false;
-  };
-
-  $("adminMenuOpenPanel").addEventListener("click", ()=>{ closeAdminMenu(); openTab("news"); });
-  $("adminMenuPages").addEventListener("click", ()=>{ closeAdminMenu(); openTab("pages"); });
-  $("adminMenuUsers").addEventListener("click", ()=>{ closeAdminMenu(); openTab("users"); loadUsers(); });
-  $("adminMenuNews").addEventListener("click", ()=>{ closeAdminMenu(); openTab("news"); refreshAdminNews(); });
-  $("adminMenuAudit").addEventListener("click", ()=>{ closeAdminMenu(); openTab("audit"); refreshAudit(true); });
-
-  for (const b of document.querySelectorAll("#adminTabs .tabBtn")){
-    b.addEventListener("click", ()=>{
-      openTab(b.dataset.tab);
-      if (b.dataset.tab === "users") loadUsers();
-      if (b.dataset.tab === "audit") refreshAudit(true);
-      if (b.dataset.tab === "news") refreshAdminNews();
-    });
-  }
+async function renderContact(){
+  viewTitle.textContent = "Contact";
+  viewKicker.textContent = "Contact and links.";
+  sideBody.innerHTML = `<div class="small">Admins can edit this page in the Admin panel.</div>`;
+  const data = await api("/pages/contact", { method:"GET", headers:{} }).catch(()=>({ok:true, html:""}));
+  viewBody.innerHTML = data.html?.trim()
+    ? data.html
+    : `<div class="newsItem"><b>Contact</b><div class="small" style="margin-top:6px;">Add your Discord/server contact information here.</div></div>`;
 }
 
-function rteBind(container){
-  container.addEventListener("click", async (e)=>{
-    const btn = e.target.closest(".rteBtn");
-    if (!btn) return;
-    const cmd = btn.dataset.cmd;
-    if (btn.dataset.link){
-      const r = await uiModalForm({ title:"Insert Link", fields:[
-        { name:"href", label:"URL", placeholder:"https://..." }
-      ]});
-      if (!r) return;
-      const href = (r.href || "").trim();
-      if (!href) return;
-      document.execCommand("createLink", false, href);
-      return;
-    }
-    if (cmd) document.execCommand(cmd, false, null);
-  });
+async function renderNews(){
+  viewTitle.textContent = "Home / News";
+  viewKicker.textContent = "Announcements posted by administrators.";
+  sideBody.innerHTML = `
+    <div class="small">News is visible to everyone.</div>
+    ${ME && ME.admin ? `<div class="hr"></div><button class="btn primary" onclick="setView('admin')">Post News</button>` : ``}
+  `;
+  const data = await api("/news", { method:"GET", headers:{} });
+  const items = data.items || [];
+  viewBody.innerHTML = items.length ? items.map(renderNewsItem).join("") :
+    `<div class="newsItem"><b>No posts yet.</b><div class="small" style="margin-top:6px;">Admins can post announcements from the Admin page.</div></div>`;
 }
 
-rteBind(document);
-initAdminMenu();
-
-async function refreshAdminNews(){
-  if (!IS_ADMIN) return;
-  const list = $("adminNewsList");
-  const empty = $("adminNewsEmpty");
-  const status = $("newsAdminStatus");
-  status.textContent = "";
-  try{
-    const items = await fetchNewsPublic();
-    list.innerHTML = "";
-    if (!items.length){ empty.style.display = "block"; return; }
-    empty.style.display = "none";
-    for (const n of items.slice(0, 20)){
-      const div = document.createElement("div");
-      div.className = "newsItem";
-      const safeBody = sanitizeHtml(n.text || "");
-      const meta = await formatAuthor(n.createdBy || "");
-      div.innerHTML = `
-        <div class="h">
-          <div class="t">${escapeHtml(n.title || "")}</div>
-          <div class="d">${fmtDate(n.createdAt || "")}</div>
+function renderNewsItem(it){
+  const a = it.author || {};
+  const who = `${a.rank ? a.rank + " " : ""}${a.username || "Admin"}${a.position ? " • " + a.position : ""}`;
+  const dt = it.createdAt ? new Date(it.createdAt).toLocaleString() : "";
+  return `
+    <div class="newsItem">
+      <div style="display:flex; justify-content:space-between; gap:10px; align-items:flex-start;">
+        <div>
+          <div style="font-weight:800; font-size:15px; color:var(--gold)">${escapeHtml(it.title || "")}</div>
+          <div class="newsMeta"><span>${escapeHtml(who)}</span><span>•</span><span>${escapeHtml(dt)}</span></div>
         </div>
-        <div class="author">${meta}</div>
-        <div class="b">${safeBody}</div>
-        <div class="row" style="justify-content:flex-end;">
-          <button class="navbtn" data-del="${escapeHtml(n.id||"")}" type="button">Delete</button>
+        ${ME && ME.admin ? `<button class="btn" onclick="deleteNews('${it.id}')">Delete</button>` : ``}
+      </div>
+      <div class="hr"></div>
+      <div>${it.html || ""}</div>
+    </div>
+  `;
+}
+
+async function deleteNews(id){
+  if (!confirm("Delete this post?")) return;
+  await api("/news/"+encodeURIComponent(id), { method:"DELETE" });
+  await renderNews();
+}
+
+function renderLogin(){
+  viewTitle.textContent = "Login";
+  viewKicker.textContent = "Sign in to access unit tools.";
+  sideBody.innerHTML = `<div class="small">Accounts are managed by administrators.</div>`;
+  viewBody.innerHTML = `
+    <label class="lbl">Username</label>
+    <input class="in" id="lu" autocomplete="username" placeholder="Roblox username"/>
+    <label class="lbl">Password</label>
+    <input class="in" id="lp" type="password" autocomplete="current-password" placeholder="Password"/>
+    <div class="row" style="margin-top:12px;">
+      <button class="btn primary" onclick="doLogin()">Login</button>
+      <button class="btn" onclick="setView('news')">View News</button>
+    </div>
+    <div class="small" id="loginMsg" style="margin-top:10px;"></div>
+  `;
+}
+
+async function doLogin(){
+  const u = $("lu").value.trim();
+  const p = $("lp").value;
+  $("loginMsg").textContent = "Signing in...";
+  try{
+    const data = await api("/auth/login", { method:"POST", body: JSON.stringify({ username:u, password:p }) });
+    TOKEN = data.token;
+    localStorage.setItem("acc_token", TOKEN);
+    await loadMe();
+    $("loginMsg").textContent = "Logged in.";
+    setView("unit");
+  }catch(e){
+    $("loginMsg").textContent = "Unauthorized.";
+  }
+}
+
+async function loadMe(){
+  if (!TOKEN) { ME=null; navSync(); return; }
+  try{
+    const data = await api("/auth/me", { method:"GET" });
+    ME = data.user;
+  }catch{
+    ME=null; TOKEN=""; localStorage.removeItem("acc_token");
+  }
+  navSync();
+}
+
+async function renderUnit(){
+  if (!ME) return setView("login");
+  viewTitle.textContent = "Unit Tools";
+  viewKicker.textContent = `You are in ${ME.unit}. You can only access your unit's classified tools.`;
+  sideBody.innerHTML = `
+    <div class="small"><b>Lookup Background Status</b></div>
+    <label class="lbl">Member Username</label>
+    <input class="in" id="qUser" placeholder="Enter username"/>
+    <button class="btn primary" style="margin-top:10px;" onclick="bgLookup()">Check</button>
+    <div class="hr"></div>
+    <div class="small">Admins can manage users, news, and pages.</div>
+    ${ME.admin ? `<button class="btn" style="margin-top:10px;" onclick="setView('admin')">Admin Panel</button>` : ``}
+  `;
+  viewBody.innerHTML = `
+    <div class="newsItem">
+      <b>${ME.unit} Background Checks</b>
+      <div class="small" style="margin-top:6px;">Search a member to view status. If you have edit permission, you can update statuses.</div>
+    </div>
+    <div id="bgBox" style="margin-top:10px;"></div>
+  `;
+}
+
+async function bgLookup(){
+  const username = $("qUser").value.trim();
+  const box = $("bgBox");
+  if (!username) return;
+  box.innerHTML = `<div class="newsItem">Loading…</div>`;
+  try{
+    const data = await api(`/unit/background/get?unit=${encodeURIComponent(ME.unit)}&username=${encodeURIComponent(username)}`, { method:"GET" });
+    const r = data.result;
+    if (!r) { box.innerHTML = `<div class="newsItem"><b>Not found.</b></div>`; return; }
+    box.innerHTML = (ME.unit === "JAGC") ? renderJagcBg(r, username) : renderCidBg(r, username);
+  }catch(e){
+    box.innerHTML = `<div class="newsItem"><b>Error.</b><div class="small">${escapeHtml(e.message||"")}</div></div>`;
+  }
+}
+
+function renderJagcBg(r, username){
+  return `
+    <div class="newsItem">
+      <b>${escapeHtml(username)}</b>
+      <div class="newsMeta"><span>Discord: ${escapeHtml(r.discordUsername||"")}</span><span>•</span><span>ID: ${escapeHtml(r.discordId||"")}</span></div>
+      <div class="hr"></div>
+      <div class="row">
+        <div>
+          <div class="small">Stage 1</div>
+          <input class="in" id="j_s1" value="${escapeAttr(r.stage1||"")}" />
         </div>
-      `;
-      div.querySelector("button[data-del]")?.addEventListener("click", async ()=>{
-        const id = n.id;
-        if (!id) return;
-        try{
-          await ensureNewsAdminLogin();
-          await newsApi(`/news/${encodeURIComponent(id)}`, { method:"DELETE", headers: newsAuthHeaders() });
-          status.textContent = "Deleted.";
-          await refreshAdminNews();
-        } catch(e){ status.textContent = e.message || "Delete failed"; }
-      });
-      list.appendChild(div);
-    }
-  } catch(e){
-    status.textContent = e.message || "Failed";
-  }
+        <div>
+          <div class="small">Stage 2</div>
+          <input class="in" id="j_s2" value="${escapeAttr(r.stage2||"")}" />
+        </div>
+      </div>
+      <label class="lbl">Result</label>
+      <input class="in" id="j_res" value="${escapeAttr(r.result||"")}" />
+      <div class="row" style="margin-top:12px;">
+        <button class="btn primary" onclick="bgUpdateJAGC('${escapeAttr(username)}')">Update</button>
+      </div>
+    </div>
+  `;
 }
 
-async function ensureNewsAdminLogin(){
-  if (NEWS_TOKEN) return;
-  // Use same credentials you used for TOOL login
-  // (news worker expects TOKEN_SECRET as password)
-  await newsLogin(LOGGED_IN_USER, $("passIn")?.value || "");
+function renderCidBg(r, username){
+  return `
+    <div class="newsItem">
+      <b>${escapeHtml(username)}</b>
+      <div class="newsMeta"><span>Entrance: ${escapeHtml(r.entranceMethod||"")}</span><span>•</span><span>Performed: ${escapeHtml(r.performedBy||"")} ${escapeHtml(r.performedOn||"")}</span></div>
+      <div class="hr"></div>
+      <label class="lbl">Notes</label>
+      <textarea class="in" id="c_notes" rows="3">${escapeHtml(r.notes||"")}</textarea>
+      <div class="row" style="margin-top:10px;">
+        <div>
+          <div class="small">Overall Status</div>
+          <input class="in" id="c_overall" value="${escapeAttr(r.overall||"")}" placeholder="Failed / Passed / Pending / On Hold"/>
+        </div>
+        <div>
+          <div class="small">Enhanced Security</div>
+          <input class="in" id="c_enh" value="${escapeAttr(r.enhanced||"")}" placeholder="Failed / Passed / Pending / On Hold"/>
+        </div>
+      </div>
+      <label class="lbl">Background Check</label>
+      <input class="in" id="c_bg" value="${escapeAttr(r.background||"")}" placeholder="Failed / Passed / Pending / On Hold"/>
+      <div class="row" style="margin-top:12px;">
+        <button class="btn primary" onclick="bgUpdateCID('${escapeAttr(username)}')">Update</button>
+      </div>
+      <div class="small" style="margin-top:10px;">Approval can only be set by PurelyGeon (server-side enforced).</div>
+    </div>
+  `;
 }
 
-$("btnRefreshNewsAdmin")?.addEventListener("click", refreshAdminNews);
-
-$("btnPostNews")?.addEventListener("click", async ()=>{
-  const status = $("newsAdminStatus");
-  status.textContent = "";
-  const title = ($("newsTitleIn").value || "").trim();
-  const htmlBody = ($("newsBodyEd").innerHTML || "").trim();
-  const text = sanitizeHtml(htmlBody);
-  if (!title || !text){ status.textContent = "Title and body required."; return; }
-  try{
-    await ensureNewsAdminLogin();
-    await newsApi("/news", {
-      method:"POST",
-      headers: newsAuthHeaders({ "Content-Type":"application/json" }),
-      body: JSON.stringify({ title, text })
-    });
-    $("newsTitleIn").value = "";
-    $("newsBodyEd").innerHTML = "";
-    status.textContent = "Published.";
-    await refreshAdminNews();
-  } catch(e){
-    status.textContent = e.message || "Failed";
-  }
-});
-
-/* Author formatting */
-const _robloxIdCache = new Map();
-async function getRobloxUserIdByName(username){
-  const key = (username||"").toLowerCase();
-  if (_robloxIdCache.has(key)) return _robloxIdCache.get(key);
-  try{
-    const res = await fetch("https://users.roblox.com/v1/usernames/users", {
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify({ usernames:[username], excludeBannedUsers:false })
-    });
-    const data = await res.json().catch(()=>({}));
-    const id = data?.data?.[0]?.id || null;
-    _robloxIdCache.set(key, id);
-    return id;
-  } catch {
-    _robloxIdCache.set(key, null);
-    return null;
-  }
-}
-async function getHeadshotUrl(username){
-  const id = await getRobloxUserIdByName(username);
-  if (!id) return "";
-  try{
-    const res = await fetch(`https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${encodeURIComponent(id)}&size=150x150&format=Png&isCircular=true`);
-    const data = await res.json().catch(()=>({}));
-    return data?.data?.[0]?.imageUrl || "";
-  } catch { return ""; }
-}
-async function formatAuthor(username){
-  const u = (username||"").trim();
-  if (!u) return "";
-  let rank = "";
-  let pos = "";
-  if (u.toLowerCase() === "vendettapyrex"){
-    rank = "Brigadier General";
-    pos = "Director of Criminal Investigations";
-  }
-  // If we have runtime user metadata (admin can set), try to load once lazily
-  // (best-effort; doesn't block)
-  const avatar = await getHeadshotUrl(u);
-  const img = avatar ? `<img class="av" src="${escapeHtml(avatar)}" alt="">` : `<div class="av ph">${escapeHtml(u[0]||"?")}</div>`;
-  const meta = (rank || pos) ? `<div class="am"><div class="au">${escapeHtml(u)}</div><div class="ar">${escapeHtml(rank)}${rank&&pos?" • ":""}${escapeHtml(pos)}</div></div>` : `<div class="am"><div class="au">${escapeHtml(u)}</div></div>`;
-  return `<div class="authorRow">${img}${meta}</div>`;
+async function bgUpdateJAGC(username){
+  const stage1 = $("j_s1").value.trim();
+  const stage2 = $("j_s2").value.trim();
+  const result = $("j_res").value.trim();
+  await api("/unit/background/update", { method:"POST", body: JSON.stringify({ unit:"JAGC", username, stage1, stage2, result }) });
+  await bgLookup();
 }
 
-/* Add small CSS for author row into existing styles via runtime (safe) */
-const authorStyle = document.createElement("style");
-authorStyle.textContent = `
-.authorRow{ display:flex; align-items:center; gap:10px; margin:8px 0 6px; }
-.authorRow .av{ width:34px; height:34px; border-radius:999px; border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.06); }
-.authorRow .av.ph{ display:flex; align-items:center; justify-content:center; font-weight:900; }
-.authorRow .au{ font-weight:900; }
-.authorRow .ar{ opacity:.85; font-weight:700; font-size:.9em; }
-`;
-document.head.appendChild(authorStyle);
-
-/* Pages editor */
-$("btnLoadPage")?.addEventListener("click", async ()=>{
-  const status = $("pageEditStatus");
-  status.textContent = "";
-  const name = $("pagePick").value;
-  try{
-    const data = await toolApi(`/pages/${encodeURIComponent(name)}`);
-    $("pageEditor").innerHTML = sanitizeHtml(data.html || "");
-    $("pagePreview").innerHTML = sanitizeHtml(data.html || "");
-    status.textContent = "Loaded.";
-  } catch(e){ status.textContent = e.message || "Load failed"; }
-});
-$("pageEditor")?.addEventListener("input", ()=>{
-  $("pagePreview").innerHTML = sanitizeHtml($("pageEditor").innerHTML || "");
-});
-$("btnSavePage")?.addEventListener("click", async ()=>{
-  const status = $("pageEditStatus");
-  status.textContent = "";
-  const name = $("pagePick").value;
-  const htmlBody = sanitizeHtml($("pageEditor").innerHTML || "");
-  try{
-    await toolApi(`/pages/set`, {
-      method:"POST",
-      headers: toolAuthHeaders({ "Content-Type":"application/json" }),
-      body: JSON.stringify({ name, html: htmlBody })
-    });
-    status.textContent = "Saved.";
-  } catch(e){ status.textContent = e.message || "Save failed"; }
-});
-
-/* Users manager */
-async function loadUsers(){
-  const status = $("usersStatus");
-  status.textContent = "";
-  try{
-    const data = await toolApi("/users/list", { headers: toolAuthHeaders() });
-    const tbody = $("usersTbody");
-    tbody.innerHTML = "";
-    for (const u of (data.users || [])){
-      const tr = document.createElement("tr");
-      tr.innerHTML = `<td>${escapeHtml(u.username)}</td><td>${u.priv ? "Yes" : ""}</td><td>${u.admin ? "Yes" : ""}</td><td>${escapeHtml(u.rank||"")}</td><td>${escapeHtml(u.position||"")}</td>`;
-      tr.addEventListener("click", ()=>{
-        $("userNameIn").value = u.username || "";
-        $("userPassIn").value = "";
-        $("userPrivIn").checked = !!u.priv;
-        $("userAdminIn").checked = !!u.admin;
-        $("userRankIn").value = u.rank || "";
-        $("userPosIn").value = u.position || "";
-      });
-      tbody.appendChild(tr);
-    }
-    status.textContent = "Loaded.";
-  } catch(e){ status.textContent = e.message || "Failed"; }
-}
-$("btnUsersRefresh")?.addEventListener("click", loadUsers);
-$("btnUserSave")?.addEventListener("click", async ()=>{
-  const status = $("usersStatus");
-  status.textContent = "";
-  const username = ($("userNameIn").value || "").trim();
-  const password = ($("userPassIn").value || "").toString();
-  if (!username){ status.textContent = "Username required."; return; }
-  try{
-    await toolApi("/users/set", {
-      method:"POST",
-      headers: toolAuthHeaders({ "Content-Type":"application/json" }),
-      body: JSON.stringify({
-        username,
-        password: password || "",
-        priv: $("userPrivIn").checked,
-        admin: $("userAdminIn").checked,
-        rank: ($("userRankIn").value || "").trim(),
-        position: ($("userPosIn").value || "").trim()
-      })
-    });
-    status.textContent = "Saved.";
-    await loadUsers();
-  } catch(e){ status.textContent = e.message || "Save failed"; }
-});
-$("btnUserDelete")?.addEventListener("click", async ()=>{
-  const status = $("usersStatus");
-  status.textContent = "";
-  const username = ($("userNameIn").value || "").trim();
-  if (!username){ status.textContent = "Username required."; return; }
-  try{
-    await toolApi("/users/delete", {
-      method:"POST",
-      headers: toolAuthHeaders({ "Content-Type":"application/json" }),
-      body: JSON.stringify({ username })
-    });
-    status.textContent = "Removed.";
-    $("userNameIn").value = ""; $("userPassIn").value=""; $("userPrivIn").checked=false; $("userAdminIn").checked=false;
-    await loadUsers();
-  } catch(e){ status.textContent = e.message || "Remove failed"; }
-});
-
-/* Audit log */
-let auditCursor = "";
-async function refreshAudit(reset){
-  const status = $("auditStatus");
-  status.textContent = "";
-  if (reset){ auditCursor = ""; $("auditTbody").innerHTML = ""; }
-  try{
-    const q = auditCursor ? `?limit=100&cursor=${encodeURIComponent(auditCursor)}` : `?limit=100`;
-    const data = await toolApi(`/audit${q}`, { headers: toolAuthHeaders() });
-    const tbody = $("auditTbody");
-    for (const it of (data.items || [])){
-      const tr = document.createElement("tr");
-      tr.innerHTML = `<td>${escapeHtml(fmtDate(it.ts||""))}</td><td>${escapeHtml(it.actor||"")}</td><td>${escapeHtml(it.type||"")}</td><td>${escapeHtml(JSON.stringify(it.detail||{}))}</td>`;
-      tbody.appendChild(tr);
-    }
-    auditCursor = data.nextCursor || "";
-    status.textContent = "Loaded.";
-  } catch(e){ status.textContent = e.message || "Failed"; }
-}
-$("btnAuditRefresh")?.addEventListener("click", ()=>refreshAudit(true));
-$("btnAuditMore")?.addEventListener("click", ()=>refreshAudit(false));
-
-/* =========================
-   NAV VISIBILITY TWEAKS
-   ========================= */
-function enforceAdminNavRules(){
-  // Remove settings for everyone (replaced by admin menu)
-  if ($("navSettings")) $("navSettings").hidden = true;
-  // Only show admin button/menu for admins
-  if ($("navAdmin")) $("navAdmin").hidden = !IS_ADMIN;
-  if ($("adminMenu")) $("adminMenu").hidden = true;
+async function bgUpdateCID(username){
+  const notes = $("c_notes").value;
+  const overall = $("c_overall").value.trim();
+  const enhanced = $("c_enh").value.trim();
+  const background = $("c_bg").value.trim();
+  await api("/unit/background/update", { method:"POST", body: JSON.stringify({ unit:"CID", username, notes, overall, enhanced, background }) });
+  await bgLookup();
 }
 
+async function renderAdmin(){
+  if (!ME || !ME.admin) return setView("news");
+  viewTitle.textContent = "Admin Panel";
+  viewKicker.textContent = "Manage pages, news, and users (VendettaPyrex only).";
+  sideBody.innerHTML = `<div class="small"><b>Admin shortcuts</b></div>
+    <button class="btn" style="margin-top:10px;" onclick="setView('logs')">Open Logs</button>
+    <button class="btn" style="margin-top:10px;" onclick="setView('news')">View News</button>`;
+  viewBody.innerHTML = `
+    <div class="newsItem">
+      <b>Post News</b>
+      <label class="lbl">Title</label>
+      <input class="in" id="n_title" placeholder="Announcement title"/>
+      <label class="lbl">Content</label>
+      <div class="rte" id="n_html" contenteditable="true"></div>
+      <div class="row" style="margin-top:12px;">
+        <button class="btn primary" onclick="postNews()">Post</button>
+      </div>
+    </div>
+
+    <div class="hr"></div>
+
+    <div class="newsItem">
+      <b>Edit Pages</b>
+      <div class="row" style="margin-top:10px;">
+        <button class="btn" onclick="loadPageEditor('about')">Edit About</button>
+        <button class="btn" onclick="loadPageEditor('contact')">Edit Contact</button>
+      </div>
+      <div id="pageEditor" style="margin-top:10px;"></div>
+    </div>
+
+    <div class="hr"></div>
+
+    <div class="newsItem">
+      <b>Users</b>
+      <div class="small" style="margin-top:6px;">Add/remove users. Choose unit (CID/JAGC) and rank.</div>
+      <div class="row" style="margin-top:10px;">
+        <div>
+          <label class="lbl">Username</label>
+          <input class="in" id="u_name" placeholder="Roblox username"/>
+        </div>
+        <div>
+          <label class="lbl">Password</label>
+          <input class="in" id="u_pass" placeholder="Set password"/>
+        </div>
+      </div>
+      <div class="row" style="margin-top:10px;">
+        <div>
+          <label class="lbl">Unit</label>
+          <select class="in" id="u_unit">
+            <option value="CID">Army Corrections Command (CID)</option>
+            <option value="JAGC">JAGC</option>
+          </select>
+        </div>
+        <div>
+          <label class="lbl">Rank</label>
+          <select class="in" id="u_rank">${armyRanksOptions()}</select>
+        </div>
+      </div>
+      <label class="lbl">Position</label>
+      <input class="in" id="u_pos" placeholder="e.g., Investigator / Legal Officer"/>
+      <div class="row" style="margin-top:12px;">
+        <button class="btn primary" onclick="userAdd()">Add / Update</button>
+        <button class="btn" onclick="userRemove()">Remove</button>
+        <button class="btn" onclick="userRefresh()">Refresh List</button>
+      </div>
+      <div id="usersList" style="margin-top:12px;"></div>
+    </div>
+  `;
+  await userRefresh();
+}
+
+async function postNews(){
+  const title = $("n_title").value.trim();
+  const html = $("n_html").innerHTML.trim();
+  await api("/news", { method:"POST", body: JSON.stringify({ title, html }) });
+  $("n_title").value=""; $("n_html").innerHTML="";
+  alert("Posted.");
+}
+
+async function loadPageEditor(name){
+  const data = await api("/pages/"+name, { method:"GET" });
+  $("pageEditor").innerHTML = `
+    <div class="small"><b>Editing ${escapeHtml(name)}</b></div>
+    <div class="row" style="margin-top:10px;">
+      <button class="btn" onclick="savePage('${name}')">Save</button>
+      <button class="btn" onclick="previewPage()">Preview</button>
+    </div>
+    <label class="lbl">HTML Content</label>
+    <div class="rte" id="p_html" contenteditable="true"></div>
+    <div class="hr"></div>
+    <div class="small"><b>Preview</b></div>
+    <div class="newsItem" id="p_prev" style="margin-top:8px;"></div>
+  `;
+  $("p_html").innerHTML = data.html || "";
+  $("p_prev").innerHTML = data.html || "";
+}
+async function savePage(name){
+  const html = $("p_html").innerHTML;
+  await api("/pages/set", { method:"POST", body: JSON.stringify({ name, html }) });
+  alert("Saved.");
+}
+function previewPage(){
+  $("p_prev").innerHTML = $("p_html").innerHTML;
+}
+
+async function userAdd(){
+  const username = $("u_name").value.trim();
+  const password = $("u_pass").value;
+  const unit = $("u_unit").value;
+  const rank = $("u_rank").value;
+  const position = $("u_pos").value.trim();
+  await api("/users/add", { method:"POST", body: JSON.stringify({ username, password, unit, rank, position, admin: username==="VendettaPyrex" }) });
+  await userRefresh();
+}
+async function userRemove(){
+  const username = $("u_name").value.trim();
+  if (!username) return;
+  if (!confirm("Remove "+username+"?")) return;
+  await api("/users/remove", { method:"POST", body: JSON.stringify({ username }) });
+  await userRefresh();
+}
+async function userRefresh(){
+  const data = await api("/users/list", { method:"GET" });
+  const rows = data.users || [];
+  $("usersList").innerHTML = rows.length ? rows.map(u=>`
+    <div class="logLine">
+      <div><b>${escapeHtml(u.rank||"Member")} ${escapeHtml(u.username)}</b> • ${escapeHtml(u.unit||"")}${u.admin?" • Admin":""}</div>
+      <div class="small">${escapeHtml(u.position||"")}</div>
+    </div>
+  `).join("") : `<div class="small">No users.</div>`;
+}
+
+async function renderLogs(){
+  if (!ME || !ME.admin) return setView("news");
+  viewTitle.textContent = "Logs";
+  viewKicker.textContent = "Audit log of actions.";
+  sideBody.innerHTML = `<div class="small">Format: “Rank Username performed action”.</div>`;
+  const data = await api("/logs?limit=100", { method:"GET" });
+  const items = data.items || [];
+  viewBody.innerHTML = items.length ? items.map(x=>`
+    <div class="logLine">
+      <div style="color:var(--gold); font-weight:800">${escapeHtml(x.line || "")}</div>
+      <div class="small">${escapeHtml(new Date(x.ts).toLocaleString())}</div>
+    </div>
+  `).join("") : `<div class="newsItem"><b>No logs yet.</b></div>`;
+}
+
+function escapeHtml(str){
+  return (str ?? "").toString().replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+function escapeAttr(str){ return escapeHtml(str).replace(/"/g,"&quot;"); }
+function armyRanksOptions(){
+  const ranks = [
+    "Private (E-1)","Private (E-2)","Private First Class (E-3)","Specialist (E-4)","Corporal (E-4)",
+    "Sergeant (E-5)","Staff Sergeant (E-6)","Sergeant First Class (E-7)","Master Sergeant (E-8)","First Sergeant (E-8)",
+    "Sergeant Major (E-9)","Command Sergeant Major (E-9)","Sergeant Major of the Army (E-9)",
+    "Warrant Officer 1 (W-1)","Chief Warrant Officer 2 (W-2)","Chief Warrant Officer 3 (W-3)","Chief Warrant Officer 4 (W-4)","Chief Warrant Officer 5 (W-5)",
+    "Second Lieutenant (O-1)","First Lieutenant (O-2)","Captain (O-3)","Major (O-4)","Lieutenant Colonel (O-5)","Colonel (O-6)",
+    "Brigadier General (O-7)","Major General (O-8)","Lieutenant General (O-9)","General (O-10)"
+  ];
+  return ranks.map(r=>`<option value="${escapeAttr(r)}">${escapeHtml(r)}</option>`).join("");
+}
+
+(async ()=>{
+  await loadMe();
+  navSync();
+  setView("about");
 })();
 </script>
 </body>
