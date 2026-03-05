@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Army Corrections Command</title>
+<title>Army Corrections Command Portal</title>
 <style>
 :root{
   --bg0:#040b06; --bg1:#07140b;
@@ -92,7 +92,7 @@ a{ color:var(--gold); text-decoration:none; }
       <img src="USACIDC_SSI.PNG" alt="ACC"/>
       <div>
         <div class="t1">Army Corrections Command</div>
-        <div class="t2">  <span style="color:var(--gold);font-weight:700">Duty. Honor. Justice.</span></div>
+        <div class="t2">Motto: <span style="color:var(--gold);font-weight:700">Duty. Honor. Justice.</span></div>
       </div>
       <div style="margin-left:auto; display:flex; gap:8px; align-items:center;">
         <span id="who" class="badge">Not logged in</span>
@@ -129,10 +129,11 @@ a{ color:var(--gold); text-decoration:none; }
   </div>
 </div>
 
-<div class="footer">© Army Corrections Command - MGEN VendettaPyrex</div>
+<div class="footer">© Army Corrections Command Roleplay Unit</div>
 
 <script>
-const API_BASE = "https://the.chastiefola.workers.dev";
+const API_BASE_RAW = "REPLACE_WITH_YOUR_WORKER_URL";
+const API_BASE = API_BASE_RAW.replace(/\/+$/,"");
 
 let TOKEN = localStorage.getItem("acc_token") || "";
 let ME = null;
@@ -249,7 +250,7 @@ async function renderContact(){
 
 async function renderNews(){
   viewTitle.textContent = "Home / News";
-  viewKicker.textContent = "Announcements posted by ACC High Command.";
+  viewKicker.textContent = "Announcements posted by administrators.";
   sideBody.innerHTML = `
     <div class="small">News is visible to everyone.</div>
     ${ME && ME.admin ? `<div class="hr"></div><button class="btn primary" onclick="setView('admin')">Post News</button>` : ``}
@@ -257,7 +258,7 @@ async function renderNews(){
   const data = await api("/news", { method:"GET", headers:{} });
   const items = data.items || [];
   viewBody.innerHTML = items.length ? items.map(renderNewsItem).join("") :
-    `<div class="newsItem"><b>No posts yet.</b><div class="small" style="margin-top:6px;">HICOM can post news.</div></div>`;
+    `<div class="newsItem"><b>No posts yet.</b><div class="small" style="margin-top:6px;">Admins can post announcements from the Admin page.</div></div>`;
 }
 
 function renderNewsItem(it){
@@ -591,11 +592,12 @@ function escapeHtml(str){
 function escapeAttr(str){ return escapeHtml(str).replace(/"/g,"&quot;"); }
 function armyRanksOptions(){
   const ranks = [
-    "Private (E2)","Private First Class (E3)","Corporal (E4B)",
-    "Sergeant (E5)","Staff Sergeant (E-6)","Sergeant First Class (E7)","First Sergeant (E8A)",
-    "Sergeant Major (E9)","Command Sergeant Major (E9)","Sergeant Major of the Army (E9)",
-    "Second Lieutenant (O1)","First Lieutenant (O2)","Captain (O3)","Major (O4)","Lieutenant Colonel (O5)","Colonel (O6)",
-    "Brigadier General (O7)","Major General (O8)","Lieutenant General (O9)","General (O10)"
+    "Private (E-1)","Private (E-2)","Private First Class (E-3)","Specialist (E-4)","Corporal (E-4)",
+    "Sergeant (E-5)","Staff Sergeant (E-6)","Sergeant First Class (E-7)","Master Sergeant (E-8)","First Sergeant (E-8)",
+    "Sergeant Major (E-9)","Command Sergeant Major (E-9)","Sergeant Major of the Army (E-9)",
+    "Warrant Officer 1 (W-1)","Chief Warrant Officer 2 (W-2)","Chief Warrant Officer 3 (W-3)","Chief Warrant Officer 4 (W-4)","Chief Warrant Officer 5 (W-5)",
+    "Second Lieutenant (O-1)","First Lieutenant (O-2)","Captain (O-3)","Major (O-4)","Lieutenant Colonel (O-5)","Colonel (O-6)",
+    "Brigadier General (O-7)","Major General (O-8)","Lieutenant General (O-9)","General (O-10)"
   ];
   return ranks.map(r=>`<option value="${escapeAttr(r)}">${escapeHtml(r)}</option>`).join("");
 }
@@ -608,5 +610,3 @@ function armyRanksOptions(){
 </script>
 </body>
 </html>
-
-
