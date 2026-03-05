@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Army Corrections Command Portal</title>
+<title>Army Corrections Command</title>
 <style>
 :root{
   --bg0:#040b06; --bg1:#07140b;
@@ -92,7 +92,7 @@ a{ color:var(--gold); text-decoration:none; }
       <img src="USACIDC_SSI.PNG" alt="ACC"/>
       <div>
         <div class="t1">Army Corrections Command</div>
-        <div class="t2">Motto: <span style="color:var(--gold);font-weight:700">Duty. Honor. Justice.</span></div>
+        <div class="t2">  <span style="color:var(--gold);font-weight:700">Duty. Honor. Justice.</span></div>
       </div>
       <div style="margin-left:auto; display:flex; gap:8px; align-items:center;">
         <span id="who" class="badge">Not logged in</span>
@@ -129,10 +129,10 @@ a{ color:var(--gold); text-decoration:none; }
   </div>
 </div>
 
-<div class="footer">© Army Corrections Command Roleplay Unit</div>
+<div class="footer">© Army Corrections Command - MGEN VendettaPyrex</div>
 
 <script>
-const API_BASE = "REPLACE_WITH_YOUR_WORKER_URL";
+const API_BASE = "https://the.chastiefola.workers.dev/";
 
 let TOKEN = localStorage.getItem("acc_token") || "";
 let ME = null;
@@ -249,7 +249,7 @@ async function renderContact(){
 
 async function renderNews(){
   viewTitle.textContent = "Home / News";
-  viewKicker.textContent = "Announcements posted by administrators.";
+  viewKicker.textContent = "Announcements posted by ACC High Command.";
   sideBody.innerHTML = `
     <div class="small">News is visible to everyone.</div>
     ${ME && ME.admin ? `<div class="hr"></div><button class="btn primary" onclick="setView('admin')">Post News</button>` : ``}
@@ -257,7 +257,7 @@ async function renderNews(){
   const data = await api("/news", { method:"GET", headers:{} });
   const items = data.items || [];
   viewBody.innerHTML = items.length ? items.map(renderNewsItem).join("") :
-    `<div class="newsItem"><b>No posts yet.</b><div class="small" style="margin-top:6px;">Admins can post announcements from the Admin page.</div></div>`;
+    `<div class="newsItem"><b>No posts yet.</b><div class="small" style="margin-top:6px;">HICOM can post news.</div></div>`;
 }
 
 function renderNewsItem(it){
@@ -608,3 +608,4 @@ function armyRanksOptions(){
 </script>
 </body>
 </html>
+
