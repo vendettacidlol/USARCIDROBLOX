@@ -105,6 +105,9 @@ a{ color:var(--gold); text-decoration:none; }
       <button class="btn" data-view="news">Home / News</button>
       <button class="btn" data-view="contact">Contact</button>
       <button class="btn" data-view="unit" id="unitBtn">Unit Tools</button>
+      <button class="btn hide" id="qaBgBtn">Background Checks</button>
+      <button class="btn hide" id="qaPersonnelBtn">Personnel</button>
+      <button class="btn hide" id="qaDocsBtn">Documents</button>
       <button class="btn primary" data-view="login" id="loginNav">Login</button>
       <button class="btn hide" data-view="admin" id="adminNav">Admin</button>
       <button class="btn hide" data-view="logs" id="logsNav">Logs</button>
@@ -146,6 +149,12 @@ const viewKicker = $("viewKicker");
 const sideBody = $("sideBody");
 const who = $("who");
 
+function openUnitTab(tab){
+  if (!ME) return setView("login");
+  CURRENT_UNIT_TAB = tab;
+  setView("unit");
+}
+
 function setWho(){
   if (!ME) { who.textContent = "Not logged in"; return; }
   who.textContent = `${ME.rank || "Member"} ${ME.username} • ${ME.unit}${ME.admin ? " • Admin" : ""}`;
@@ -156,6 +165,10 @@ function navSync(){
   $("unitBtn").classList.toggle("hide", !TOKEN);
   $("adminNav").classList.toggle("hide", !(ME && ME.admin));
   $("logsNav").classList.toggle("hide", !(ME && ME.admin));
+  const showQuick = !!ME;
+  $("qaBgBtn").classList.toggle("hide", !showQuick);
+  $("qaPersonnelBtn").classList.toggle("hide", !showQuick);
+  $("qaDocsBtn").classList.toggle("hide", !showQuick);
   setWho();
 }
 
@@ -218,6 +231,9 @@ function setView(name){
 document.querySelectorAll("[data-view]").forEach(btn=>{
   btn.addEventListener("click", ()=> setView(btn.getAttribute("data-view")));
 });
+$("qaBgBtn").addEventListener("click", ()=> openUnitTab("bg"));
+$("qaPersonnelBtn").addEventListener("click", ()=> openUnitTab("personnel"));
+$("qaDocsBtn").addEventListener("click", ()=> openUnitTab("docs"));
 $("logoutBtn").addEventListener("click", ()=>{
   TOKEN=""; ME=null; SESSION_KEY=""; localStorage.removeItem("acc_token"); localStorage.removeItem("acc_session_key");
   navSync();
@@ -337,11 +353,9 @@ async function renderUnit(){
   viewTitle.textContent = "Unit Tools";
   viewKicker.textContent = `Classified access: ${ME.unit}.`;
   sideBody.innerHTML = `
-    <div class="small"><b>Tools</b></div>
+    <div class="small"><b>Quick Actions moved to the toolbar</b></div>
     <div class="hr"></div>
-    <button class="btn" onclick="unitTab('bg')">Background Checks</button>
-    <button class="btn" style="margin-top:8px;" onclick="unitTab('personnel')">Personnel Lookup</button>
-    <button class="btn" style="margin-top:8px;" onclick="unitTab('docs')">Documents</button>
+    <div class="small">Use the top bar to switch between Background Checks, Personnel, and Documents.</div>
     <div class="hr"></div>
     ${ME.admin ? `<button class="btn primary" onclick="setView('admin')">Admin Panel</button>` : `<div class="small">For access changes, contact an admin.</div>`}
   `;
@@ -353,10 +367,11 @@ async function renderUnit(){
     </div>
     <div id="unitBox" style="margin-top:10px;"></div>
   `;
-  unitTab("bg");
+  unitTab(CURRENT_UNIT_TAB || "bg");
 }
 
 function unitTab(tab){
+  CURRENT_UNIT_TAB = tab;
   const box = $("unitBox");
   if (tab === "bg") {
     box.innerHTML = `
