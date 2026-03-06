@@ -335,23 +335,162 @@ async function loadMe(){
 async function renderUnit(){
   if (!ME) return setView("login");
   viewTitle.textContent = "Unit Tools";
-  viewKicker.textContent = `You are in ${ME.unit}. You can only access your unit's classified tools.`;
+  viewKicker.textContent = `Classified access: ${ME.unit}.`;
   sideBody.innerHTML = `
-    <div class="small"><b>Lookup Background Status</b></div>
-    <label class="lbl">Member Username</label>
-    <input class="in" id="qUser" placeholder="Enter username"/>
-    <button class="btn primary" style="margin-top:10px;" onclick="bgLookup()">Check</button>
+    <div class="small"><b>Tools</b></div>
     <div class="hr"></div>
-    <div class="small">Admins can manage users, news, and pages.</div>
-    ${ME.admin ? `<button class="btn" style="margin-top:10px;" onclick="setView('admin')">Admin Panel</button>` : ``}
+    <button class="btn" onclick="unitTab('bg')">Background Checks</button>
+    <button class="btn" style="margin-top:8px;" onclick="unitTab('personnel')">Personnel Lookup</button>
+    <button class="btn" style="margin-top:8px;" onclick="unitTab('docs')">Documents</button>
+    <div class="hr"></div>
+    ${ME.admin ? `<button class="btn primary" onclick="setView('admin')">Admin Panel</button>` : `<div class="small">For access changes, contact an admin.</div>`}
   `;
+
   viewBody.innerHTML = `
     <div class="newsItem">
-      <b>${ME.unit} Background Checks</b>
-      <div class="small" style="margin-top:6px;">Search a member to view status. If you have edit permission, you can update statuses.</div>
+      <b>${ME.unit} Tools</b>
+      <div class="small" style="margin-top:6px;">Select a tool on the right. All actions are logged.</div>
     </div>
-    <div id="bgBox" style="margin-top:10px;"></div>
+    <div id="unitBox" style="margin-top:10px;"></div>
   `;
+  unitTab("bg");
+}
+
+function unitTab(tab){
+  const box = $("unitBox");
+  if (tab === "bg") {
+    box.innerHTML = `
+      <div class="newsItem">
+        <b>Background Checks</b>
+        <div class="small" style="margin-top:6px;">Lookup and (if enabled) update statuses for your unit.</div>
+        <label class="lbl">Member Username</label>
+        <input class="in" id="qUser" placeholder="Enter username"/>
+        <button class="btn primary" style="margin-top:10px;" onclick="bgLookup()">Check</button>
+      </div>
+      <div id="bgBox" style="margin-top:10px;"></div>
+    `;
+    return;
+  }
+  if (tab === "personnel") {
+    box.innerHTML = `
+      <div class="newsItem">
+        <b>Personnel Lookup</b>
+        <div class="small" style="margin-top:6px;">Search your unit roster.</div>
+        <label class="lbl">Personnel Username</label>
+        <input class="in" id="pUser" placeholder="Enter username"/>
+        <button class="btn primary" style="margin-top:10px;" onclick="personnelLookupUI()">Lookup</button>
+      </div>
+      <div id="pBox" style="margin-top:10px;"></div>
+    `;
+    return;
+  }
+  if (tab === "docs") {
+    box.innerHTML = `
+      <div class="newsItem">
+        <b>Documents</b>
+        <div class="small" style="margin-top:6px;">Classified documents for ${ME.unit}. Admins can edit.</div>
+        <button class="btn primary" style="margin-top:10px;" onclick="docsRefresh()">Refresh</button>
+        ${ME.admin ? `<button class="btn" style="margin-top:10px;" onclick="docsEditor()">Admin: Edit Documents</button>` : ``}
+      </div>
+      <div id="dBox" style="margin-top:10px;"></div>
+    `;
+    docsRefresh();
+    return;
+  }
+}
+
+
+async function personnelLookupUI(){
+  const username = $("pUser").value.trim();
+  const box = $("pBox");
+  if (!username) return;
+  box.innerHTML = `<div class="newsItem">Loading…</div>`;
+  try{
+    const data = await api(`/unit/personnel/get?unit=${encodeURIComponent(ME.unit)}&username=${encodeURIComponent(username)}`, { method:"GET" });
+    const r = data.record;
+    if (!r) { box.innerHTML = `<div class="newsItem"><b>Not found.</b></div>`; return; }
+    box.innerHTML = `
+      <div class="newsItem">
+        <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+          <div>
+            <div style="font-weight:900; font-size:16px; color:var(--gold)">${escapeHtml(r.username)}</div>
+            <div class="newsMeta">
+              <span>Unit: ${escapeHtml(r.unit)}</span>
+              <span>•</span><span>Paygrade: ${escapeHtml(r.paygrade||"")}</span>
+              ${r.status?`<span>•</span><span>Status: ${escapeHtml(r.status)}</span>`:""}
+            </div>
+          </div>
+          <span class="badge">${escapeHtml(r.position||"")}</span>
+        </div>
+        <div class="hr"></div>
+        <div class="row">
+          <div><div class="small">Timezone</div><div>${escapeHtml(r.timezone||"—")}</div></div>
+          <div><div class="small">Join Date</div><div>${escapeHtml(r.joinDate||"—")}</div></div>
+        </div>
+      </div>
+    `;
+  }catch(e){
+    box.innerHTML = `<div class="newsItem"><b>Error.</b><div class="small">${escapeHtml(e.message||"")}</div></div>`;
+  }
+}
+
+async function docsRefresh(){
+  const box = $("dBox");
+  box.innerHTML = `<div class="newsItem">Loading…</div>`;
+  try{
+    const data = await api(`/unit/docs/list?unit=${encodeURIComponent(ME.unit)}`, { method:"GET" });
+    const items = data.items || [];
+    box.innerHTML = items.length ? items.map(d=>`
+      <div class="newsItem">
+        <div style="display:flex; justify-content:space-between; gap:10px; align-items:flex-start;">
+          <div style="font-weight:900; color:var(--gold)">${escapeHtml(d.title||"")}</div>
+          ${ME.admin ? `<button class="btn" onclick="docsEditor('${d.id}')">Edit</button>` : ``}
+        </div>
+        <div class="hr"></div>
+        <div>${d.html||""}</div>
+        <div class="newsMeta"><span>Updated: ${escapeHtml(new Date(d.updatedAt).toLocaleString())}</span>${d.updatedBy?`<span>•</span><span>${escapeHtml(d.updatedBy)}</span>`:""}</div>
+      </div>
+    `).join("") : `<div class="newsItem"><b>No documents yet.</b></div>`;
+  }catch(e){
+    box.innerHTML = `<div class="newsItem"><b>Error.</b><div class="small">${escapeHtml(e.message||"")}</div></div>`;
+  }
+}
+
+async function docsEditor(editId=""){
+  if (!ME.admin) return;
+  const box = $("dBox");
+  let cur = null;
+  try{
+    const data = await api(`/unit/docs/list?unit=${encodeURIComponent(ME.unit)}`, { method:"GET" });
+    const items = data.items || [];
+    cur = items.find(x=>x.id===editId) || null;
+  }catch{}
+  box.innerHTML = `
+    <div class="newsItem">
+      <b>Document Editor (${ME.unit})</b>
+      <div class="small" style="margin-top:6px;">Create or edit documents. Saved to KV.</div>
+      <label class="lbl">Title</label>
+      <input class="in" id="doc_title" value="${escapeAttr(cur?.title||"")}" placeholder="Document title"/>
+      <label class="lbl">Content</label>
+      <div class="rte" id="doc_html" contenteditable="true">${cur?.html||""}</div>
+      <div class="row" style="margin-top:12px;">
+        <button class="btn primary" onclick="docsSave('${escapeAttr(cur?.id||"")}')">Save</button>
+        ${cur ? `<button class="btn" onclick="docsDelete('${escapeAttr(cur.id)}')">Delete</button>` : ``}
+        <button class="btn" onclick="docsRefresh()">Back</button>
+      </div>
+    </div>
+  `;
+}
+async function docsSave(id){
+  const title = $("doc_title").value.trim();
+  const html = $("doc_html").innerHTML;
+  await api("/unit/docs/upsert", { method:"POST", body: JSON.stringify({ unit: ME.unit, id, title, html }) });
+  await docsRefresh();
+}
+async function docsDelete(id){
+  if (!confirm("Delete this document?")) return;
+  await api("/unit/docs/delete", { method:"POST", body: JSON.stringify({ unit: ME.unit, id }) });
+  await docsRefresh();
 }
 
 async function bgLookup(){
@@ -474,6 +613,10 @@ async function renderAdmin(){
     <div class="newsItem">
       <b>Users</b>
       <div class="small" style="margin-top:6px;">Add/remove users. Choose unit (CID/JAGC) and rank.</div>
+<div class="row" style="margin-top:10px;">
+  <button class="btn" onclick="adminOpenDocs(\'CID\')">Edit CID Documents</button>
+  <button class="btn" onclick="adminOpenDocs(\'JAGC\')">Edit JAGC Documents</button>
+</div>
       <div class="row" style="margin-top:10px;">
         <div>
           <label class="lbl">Username</label>
@@ -602,6 +745,16 @@ function armyRanksOptions(){
   return ranks.map(r=>`<option value="${escapeAttr(r)}">${escapeHtml(r)}</option>`).join("");
 }
 
+
+function adminOpenDocs(unit){
+  if (!ME?.admin) return;
+  // Open Unit Tools -> Documents for selected unit (view only uses ME.unit for calls)
+  const prev = ME.unit;
+  ME.unit = unit;
+  setView("unit");
+  unitTab("docs");
+  // keep ME.unit switched while viewing docs; admin can switch back via logout/login if needed
+}
 (async ()=>{
   await loadMe();
   navSync();
@@ -610,4 +763,3 @@ function armyRanksOptions(){
 </script>
 </body>
 </html>
-
