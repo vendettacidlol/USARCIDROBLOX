@@ -13,9 +13,13 @@
       --text:#f5f6f3;
       --muted:#b9c2b7;
       --gold:#e0b94f;
+      --gold-2:#c9a23b;
       --shadow:0 20px 60px rgba(0,0,0,.38);
       --radius:18px;
       --content-w:1240px;
+      --light:#ededeb;
+      --light-line:#cfcfc9;
+      --ink:#191d1a;
     }
 
     *{box-sizing:border-box}
@@ -34,29 +38,31 @@
     .site-header{
       position:sticky; top:0; z-index:80;
       backdrop-filter: blur(12px);
-      background:linear-gradient(180deg, rgba(8,10,9,.92), rgba(8,10,9,.76));
-      border-bottom:1px solid rgba(224,185,79,.18);
+      background:linear-gradient(180deg, rgba(8,10,9,.95), rgba(8,10,9,.82));
+      border-bottom:1px solid rgba(224,185,79,.28);
     }
     .header-inner{
       max-width:var(--content-w);
       margin:0 auto;
       padding:0 22px;
       min-height:76px;
-      display:flex;
+      display:grid;
+      grid-template-columns:160px 1fr 160px;
       align-items:center;
-      justify-content:space-between;
       gap:18px;
     }
-    .menu-btn,.search-btn{
+    .menu-btn,.account-btn{
       appearance:none;border:0;background:none;color:var(--text);
       display:flex;align-items:center;gap:12px;cursor:pointer;
       font-weight:700;letter-spacing:.04em;text-transform:uppercase;font-size:13px;
       padding:12px 0;
     }
-    .menu-btn .icon, .search-btn .icon{
+    .account-btn{justify-self:end}
+    .menu-btn .icon, .account-btn .icon{
       font-size:28px;line-height:1;color:var(--gold);width:28px;text-align:center
     }
     .brand{
+      justify-self:center;
       display:flex;align-items:center;gap:12px;font-weight:800;
       letter-spacing:.06em;text-transform:uppercase;
     }
@@ -156,16 +162,155 @@
     }
     .feature-block h3{margin:0 0 8px;font-size:17px}
     .feature-block p{margin:0;color:var(--muted);line-height:1.7;font-size:15px}
-    .leader-card{
-      display:grid;grid-template-columns:112px 1fr;gap:18px;align-items:start;
-      padding:18px;border-radius:18px;background:rgba(20,26,21,.72);border:1px solid rgba(224,185,79,.08)
+
+    .leader-page{
+      background:var(--light);
+      color:var(--ink);
+      border-radius:22px;
+      overflow:hidden;
+      box-shadow:var(--shadow);
+      border:1px solid rgba(255,255,255,.06);
     }
-    .leader-photo{
-      width:112px;height:128px;border-radius:16px;object-fit:cover;border:1px solid rgba(224,185,79,.12)
+    .leader-hero{
+      min-height:405px;
+      position:relative;
+      display:flex;
+      align-items:flex-end;
+      padding:48px 56px;
+      background-size:cover;
+      background-position:center;
     }
-    .leader-name{font-size:20px;font-weight:850;margin:0 0 6px}
-    .leader-role{font-size:13px;text-transform:uppercase;letter-spacing:.12em;color:var(--gold);font-weight:800;margin-bottom:10px}
-    .leader-bio{margin:0;color:var(--muted);line-height:1.72;font-size:15px}
+    .leader-hero::before{
+      content:"";
+      position:absolute; inset:0;
+      background:
+        linear-gradient(90deg, rgba(8,10,9,.62) 0%, rgba(8,10,9,.36) 42%, rgba(8,10,9,.08) 100%),
+        linear-gradient(180deg, rgba(8,10,9,.08) 0%, rgba(8,10,9,.38) 100%);
+    }
+    .leader-hero-content{position:relative; z-index:1; max-width:760px}
+    .leader-badge{
+      width:102px;height:102px;background:#fff;border-radius:4px;padding:10px;
+      display:grid;place-items:center;box-shadow:0 8px 28px rgba(0,0,0,.22);margin-bottom:18px
+    }
+    .leader-badge-star{
+      width:54px;height:54px;border:4px solid #b28b28;
+      clip-path:polygon(50% 0%,61% 36%,98% 36%,68% 57%,79% 92%,50% 70%,21% 92%,32% 57%,2% 36%,39% 36%);
+      background:transparent;
+    }
+    .leader-super{
+      color:#f0c845;
+      font-size:15px;
+      font-weight:800;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      margin-bottom:10px;
+    }
+    .leader-heading{
+      margin:0;
+      color:#fff;
+      font-size:clamp(42px,5vw,62px);
+      font-weight:900;
+      letter-spacing:-.04em;
+      line-height:1.02;
+    }
+    .leader-tabs{
+      display:flex;justify-content:center;gap:56px;
+      background:#e5e5e2;color:#202320;
+      border-bottom:4px solid #b7b7b2;
+    }
+    .leader-tab{
+      position:relative;
+      padding:18px 0;
+      font-size:20px;
+      font-weight:900;
+      letter-spacing:.02em;
+      text-transform:uppercase;
+    }
+    .leader-tab.active::after{
+      content:"";
+      position:absolute;left:0;right:0;bottom:-4px;height:4px;background:#f0c845;
+    }
+    .leader-bio-wrap{
+      padding:42px 50px 48px;
+      background:#f3f3f0;
+    }
+    .leader-body-grid{
+      display:grid;
+      grid-template-columns:320px 1fr;
+      gap:34px;
+      align-items:start;
+    }
+    .leader-side-card{
+      background:#fff;
+      border:1px solid #dadad5;
+      border-radius:18px;
+      overflow:hidden;
+      box-shadow:0 10px 30px rgba(0,0,0,.08);
+    }
+    .leader-side-image{width:100%;aspect-ratio:4/5;object-fit:cover}
+    .leader-side-meta{padding:18px 18px 20px}
+    .leader-side-name{font-size:26px;font-weight:900;margin:0 0 8px;color:#1b201c}
+    .leader-side-role{font-size:12px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#81691f}
+    .leader-copy-card{
+      background:#fff;
+      border:1px solid #dadad5;
+      border-radius:18px;
+      padding:28px 30px;
+      box-shadow:0 10px 30px rgba(0,0,0,.08);
+    }
+    .leader-copy-card h3{
+      margin:0 0 14px;
+      font-size:28px;
+      line-height:1.1;
+      color:#1b201c;
+      letter-spacing:-.03em;
+    }
+    .leader-copy-card p{
+      margin:0;
+      color:#3a403b;
+      font-size:17px;
+      line-height:1.85;
+    }
+    .leader-list{
+      display:grid;
+      gap:20px;
+    }
+    .leader-list-item{
+      display:grid;
+      grid-template-columns:180px 1fr;
+      gap:22px;
+      background:#fff;
+      border:1px solid #dadad5;
+      border-radius:18px;
+      padding:18px;
+      box-shadow:0 10px 30px rgba(0,0,0,.08);
+    }
+    .leader-list-item img{
+      width:100%;
+      aspect-ratio:4/5;
+      object-fit:cover;
+      border-radius:14px;
+    }
+    .leader-list-item h4{
+      margin:0 0 8px;
+      font-size:28px;
+      color:#1b201c;
+      letter-spacing:-.03em;
+    }
+    .leader-list-item .role{
+      margin-bottom:12px;
+      font-size:12px;
+      font-weight:900;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:#81691f;
+    }
+    .leader-list-item p{
+      margin:0;
+      color:#3a403b;
+      line-height:1.8;
+      font-size:16px;
+    }
 
     .btn-row{display:flex;flex-wrap:wrap;gap:12px}
     .btn{
@@ -202,7 +347,7 @@
     .textarea{min-height:130px;resize:vertical;line-height:1.6}
     .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
     .form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
-    @media (max-width: 860px){ .form-grid,.form-grid-3{grid-template-columns:1fr} }
+    @media (max-width: 860px){ .form-grid,.form-grid-3,.leader-body-grid,.leader-list-item{grid-template-columns:1fr} }
     .divider{height:1px;background:rgba(224,185,79,.10);margin:8px 0}
 
     .queue-item{
@@ -271,13 +416,16 @@
     .hidden{display:none !important}
 
     @media (max-width: 760px){
-      .header-inner,.mega-top{padding-left:16px;padding-right:16px}
+      .header-inner,.mega-top{padding-left:16px;padding-right:16px;grid-template-columns:120px 1fr 120px}
       .page-shell{padding-left:16px;padding-right:16px}
       .hero-content{padding:28px 24px 28px}
-      .menu-btn span.label, .search-btn span.label{display:none}
+      .menu-btn span.label, .account-btn span.label{display:none}
       .brand-text{font-size:15px}
-      .leader-card{grid-template-columns:1fr}
-      .leader-photo{width:100%;height:260px}
+      .leader-hero{padding:26px 22px}
+      .leader-bio-wrap{padding:20px}
+      .leader-tabs{gap:30px}
+      .leader-tab{font-size:16px}
+      .leader-heading{font-size:40px}
     }
   </style>
 </head>
@@ -297,9 +445,8 @@
         </div>
       </div>
 
-      <button class="search-btn" id="signinShortcutBtn" type="button">
-        <span class="label" id="signinShortcutText">Sign In</span>
-        <span class="icon">⌕</span>
+      <button class="account-btn" id="accountShortcutBtn" type="button">
+        <span class="label" id="accountShortcutText">Sign In</span>
       </button>
     </div>
   </header>
@@ -344,8 +491,8 @@
         <div class="mega-cta">
           <div class="mega-box" data-page="who-we-are"><span>Roleplay Notice</span><span>→</span></div>
           <div class="mega-box" data-page="organization"><span>Operations</span><span>→</span></div>
-          <div class="mega-box" data-page="battalion-leadership"><span>Documents</span><span>→</span></div>
-          <div class="mega-box" data-page="login"><span>Contact / Sign In</span><span>→</span></div>
+          <div class="mega-box" data-page="battalion-leadership"><span>Leadership</span><span>→</span></div>
+          <div class="mega-box" data-page="login"><span>Account</span><span>→</span></div>
         </div>
       </div>
     </div>
@@ -372,7 +519,7 @@
       </div>
     </section>
 
-    <div class="content-grid">
+    <div class="content-grid" id="standardLayout">
       <section class="card">
         <div class="card-head">
           <div>
@@ -393,10 +540,12 @@
         <div class="card-body" id="sideContent"></div>
       </aside>
     </div>
+
+    <div id="leaderLayout" class="hidden"></div>
   </main>
 
   <script>
-    const API_BASE = "https://the.chastiefola.workers.dev";
+    const API_BASE = "YOUR_WORKER_URL_HERE";
 
     const SITE_DATA = {
       whoWeAre: {
@@ -453,43 +602,47 @@
       },
       leaders: {
         "provost-marshal-general": {
-          title: "Provost Marshal General",
+          roleLabel: "Provost Marshal General",
           kicker: "Command leadership biography",
-          role: "Provost Marshal General",
           name: "Name Placeholder",
-          image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80",
-          bio: "Edit this biography in the SITE_DATA block. Replace the placeholder image, name, role, and paragraph with your own command information."
+          image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=1200&q=80",
+          banner: "https://images.unsplash.com/photo-1516321497487-e288fb19713f?auto=format&fit=crop&w=1800&q=80",
+          bioTitle: "Biography",
+          bio: "Edit this biography in the SITE_DATA block. Replace the placeholder image, name, role, banner, and paragraph with your own command information."
         },
         "commanding-officer": {
-          title: "Commanding Officer",
+          roleLabel: "Commanding Officer",
           kicker: "Command leadership biography",
-          role: "Commanding Officer",
           name: "Name Placeholder",
-          image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=900&q=80",
-          bio: "Edit this biography in the SITE_DATA block. Replace the placeholder image, name, role, and paragraph with your own command information."
+          image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=1200&q=80",
+          banner: "https://images.unsplash.com/photo-1516321497487-e288fb19713f?auto=format&fit=crop&w=1800&q=80",
+          bioTitle: "Biography",
+          bio: "Edit this biography in the SITE_DATA block. Replace the placeholder image, name, role, banner, and paragraph with your own command information."
         },
         "command-sergeant-major": {
-          title: "Command Sergeant Major",
+          roleLabel: "Command Sergeant Major",
           kicker: "Command leadership biography",
-          role: "Command Sergeant Major",
           name: "Name Placeholder",
-          image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80",
-          bio: "Edit this biography in the SITE_DATA block. Replace the placeholder image, name, role, and paragraph with your own command information."
+          image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=1200&q=80",
+          banner: "https://images.unsplash.com/photo-1516321497487-e288fb19713f?auto=format&fit=crop&w=1800&q=80",
+          bioTitle: "Biography",
+          bio: "Edit this biography in the SITE_DATA block. Replace the placeholder image, name, role, banner, and paragraph with your own command information."
         },
         "battalion-leadership": {
-          title: "Battalion Leadership",
+          roleLabel: "Battalion Leadership",
           kicker: "Senior staff and subordinate leaders",
+          banner: "https://images.unsplash.com/photo-1516321497487-e288fb19713f?auto=format&fit=crop&w=1800&q=80",
           leaders: [
             {
               role: "Battalion Commander",
               name: "Name Placeholder",
-              image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=900&q=80",
+              image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=1200&q=80",
               bio: "Replace with the battalion command biography."
             },
             {
               role: "Executive Officer",
               name: "Name Placeholder",
-              image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80",
+              image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=1200&q=80",
               bio: "Replace with the executive officer biography."
             }
           ]
@@ -505,6 +658,7 @@
     };
 
     const HERO_PAGES = new Set(["who-we-are"]);
+    const LEADER_PAGES = new Set(["provost-marshal-general","commanding-officer","command-sergeant-major","battalion-leadership"]);
     const $ = (id) => document.getElementById(id);
 
     function escapeHtml(value){
@@ -539,7 +693,7 @@
 
     function setAuthUi(){
       const loggedIn = !!state.me;
-      $("signinShortcutText").textContent = loggedIn ? "Account" : "Sign In";
+      $("accountShortcutText").textContent = loggedIn ? "Account" : "Sign In";
       $("internalMenuCol").classList.toggle("hidden", !loggedIn);
       $("highCommandLink").classList.toggle("hidden", !(loggedIn && state.me && state.me.admin));
 
@@ -578,8 +732,10 @@
       `;
     }
 
-    function syncHero(pageKey){
+    function syncLayouts(pageKey){
       $("hero").classList.toggle("hidden", !HERO_PAGES.has(pageKey));
+      $("standardLayout").classList.toggle("hidden", LEADER_PAGES.has(pageKey));
+      $("leaderLayout").classList.toggle("hidden", !LEADER_PAGES.has(pageKey));
     }
 
     function renderPublicPage(key){
@@ -596,36 +752,69 @@
     function renderLeaderPage(key){
       const page = SITE_DATA.leaders[key];
       if (!page) return renderPublicPage("who-we-are");
-      $("pageTitle").textContent = page.title;
-      $("pageKicker").textContent = page.kicker;
 
       if (key === "battalion-leadership") {
-        $("mainContent").innerHTML = `
-          <div class="stack">
-            ${page.leaders.map(item => `
-              <article class="leader-card">
-                <img class="leader-photo" src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}">
-                <div>
-                  <div class="leader-role">${escapeHtml(item.role)}</div>
-                  <h3 class="leader-name">${escapeHtml(item.name)}</h3>
-                  <p class="leader-bio">${escapeHtml(item.bio)}</p>
-                </div>
-              </article>
-            `).join("")}
-          </div>
+        $("leaderLayout").innerHTML = `
+          <section class="leader-page">
+            <div class="leader-hero" style="background-image:url('${escapeHtml(page.banner)}')">
+              <div class="leader-hero-content">
+                <div class="leader-badge"><div class="leader-badge-star"></div></div>
+                <div class="leader-super">${escapeHtml(page.roleLabel)}</div>
+                <h1 class="leader-heading">Army Corrections Command</h1>
+              </div>
+            </div>
+            <div class="leader-tabs">
+              <div class="leader-tab active">Bio</div>
+              <div class="leader-tab">Leadership</div>
+            </div>
+            <div class="leader-bio-wrap">
+              <div class="leader-list">
+                ${page.leaders.map(item => `
+                  <article class="leader-list-item">
+                    <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}">
+                    <div>
+                      <div class="role">${escapeHtml(item.role)}</div>
+                      <h4>${escapeHtml(item.name)}</h4>
+                      <p>${escapeHtml(item.bio)}</p>
+                    </div>
+                  </article>
+                `).join("")}
+              </div>
+            </div>
+          </section>
         `;
         return;
       }
 
-      $("mainContent").innerHTML = `
-        <article class="leader-card">
-          <img class="leader-photo" src="${escapeHtml(page.image)}" alt="${escapeHtml(page.name)}">
-          <div>
-            <div class="leader-role">${escapeHtml(page.role)}</div>
-            <h3 class="leader-name">${escapeHtml(page.name)}</h3>
-            <p class="leader-bio">${escapeHtml(page.bio)}</p>
+      $("leaderLayout").innerHTML = `
+        <section class="leader-page">
+          <div class="leader-hero" style="background-image:url('${escapeHtml(page.banner)}')">
+            <div class="leader-hero-content">
+              <div class="leader-badge"><div class="leader-badge-star"></div></div>
+              <div class="leader-super">${escapeHtml(page.roleLabel)}</div>
+              <h1 class="leader-heading">${escapeHtml(page.name)}</h1>
+            </div>
           </div>
-        </article>
+          <div class="leader-tabs">
+            <div class="leader-tab active">Bio</div>
+            <div class="leader-tab">Overview</div>
+          </div>
+          <div class="leader-bio-wrap">
+            <div class="leader-body-grid">
+              <aside class="leader-side-card">
+                <img class="leader-side-image" src="${escapeHtml(page.image)}" alt="${escapeHtml(page.name)}">
+                <div class="leader-side-meta">
+                  <div class="leader-side-role">${escapeHtml(page.roleLabel)}</div>
+                  <h2 class="leader-side-name">${escapeHtml(page.name)}</h2>
+                </div>
+              </aside>
+              <article class="leader-copy-card">
+                <h3>${escapeHtml(page.bioTitle || "Biography")}</h3>
+                <p>${escapeHtml(page.bio)}</p>
+              </article>
+            </div>
+          </div>
+        </section>
       `;
     }
 
@@ -868,7 +1057,6 @@
             </div>
           </article>
         `).join("");
-        $("mainContent").querySelectorAll(".btn-row .btn").forEach(()=>{});
       }catch(err){
         wrap.innerHTML = `<div class="alert">${escapeHtml(err.message)}</div>`;
       }
@@ -1001,13 +1189,13 @@
     function renderPage(pageKey){
       state.currentPage = pageKey;
       closeMenu();
-      syncHero(pageKey);
+      syncLayouts(pageKey);
 
       if (pageKey === "login") return renderLogin();
       if (pageKey === "internal-panel") return renderInternalPanel();
       if (pageKey === "high-command") return renderHighCommand();
 
-      if (["provost-marshal-general","commanding-officer","command-sergeant-major","battalion-leadership"].includes(pageKey)) {
+      if (LEADER_PAGES.has(pageKey)) {
         return renderLeaderPage(pageKey);
       }
 
@@ -1046,7 +1234,7 @@
     $("menuOverlay").addEventListener("click", (event) => {
       if (event.target === $("menuOverlay")) closeMenu();
     });
-    $("signinShortcutBtn").addEventListener("click", () => {
+    $("accountShortcutBtn").addEventListener("click", () => {
       renderPage(state.me ? "internal-panel" : "login");
     });
 
