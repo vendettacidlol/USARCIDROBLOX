@@ -3,1241 +3,1045 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Army Corrections Command</title>
+  <title>Army Corrections Command Roleplay Portal</title>
   <style>
     :root{
-      --bg:#0a0c0b;
-      --bg-soft:#121615;
-      --bg-panel:#111514;
-      --ink:#f3f3ee;
-      --muted:#b9c0b5;
-      --gold:#f1c33b;
-      --gold-soft:rgba(241,195,59,.16);
-      --green:#2f5b39;
-      --green-soft:rgba(47,91,57,.22);
-      --line:rgba(241,195,59,.26);
-      --line-soft:rgba(255,255,255,.08);
-      --danger:#e66f6f;
-      --shadow:0 20px 60px rgba(0,0,0,.45);
-      --radius:22px;
-      --nav-h:74px;
-      --max:1280px;
+      --bg:#0a0d0b;
+      --panel:#111612;
+      --panel-2:#171d18;
+      --panel-3:#1e2620;
+      --line:#2b332d;
+      --line-2:#39443b;
+      --text:#f5f6f3;
+      --muted:#b9c2b7;
+      --gold:#e0b94f;
+      --gold-soft:#8f7740;
+      --green:#203126;
+      --green-2:#2a4030;
+      --danger:#9d4a4a;
+      --shadow:0 20px 60px rgba(0,0,0,.38);
+      --radius:18px;
+      --radius-sm:12px;
+      --content-w:1240px;
     }
+
     *{box-sizing:border-box}
-    html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:Inter,Segoe UI,Roboto,Arial,sans-serif}
     body{
       background:
-        radial-gradient(900px 480px at 20% 0%, rgba(47,91,57,.22), transparent 55%),
-        radial-gradient(760px 420px at 86% 10%, rgba(241,195,59,.08), transparent 52%),
-        linear-gradient(180deg,#131311 0%, #090a09 36%, #090a09 100%);
+        radial-gradient(1000px 500px at 50% -10%, rgba(224,185,79,.08), transparent 60%),
+        radial-gradient(900px 420px at 15% 0%, rgba(58,93,63,.14), transparent 55%),
+        linear-gradient(180deg,#080a09 0%,#0c100d 100%);
       min-height:100vh;
     }
     a{color:inherit;text-decoration:none}
-    button,input,textarea,select{font:inherit}
+    button,input,select,textarea{font:inherit}
     img{max-width:100%;display:block}
-    .shell{max-width:var(--max);margin:0 auto;padding:0 24px}
-    .topbar{
-      position:sticky;top:0;z-index:60;height:var(--nav-h);
-      display:flex;align-items:center;
-      background:rgba(13,14,13,.95);
-      backdrop-filter:blur(12px);
-      border-bottom:1px solid var(--line);
+
+    .site-header{
+      position:sticky; top:0; z-index:80;
+      backdrop-filter: blur(12px);
+      background:linear-gradient(180deg, rgba(8,10,9,.92), rgba(8,10,9,.76));
+      border-bottom:1px solid rgba(224,185,79,.18);
     }
-    .topbar-inner{
-      width:100%;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:18px;
+    .header-inner{
+      max-width:var(--content-w);
+      margin:0 auto;
+      padding:0 22px;
+      min-height:76px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:18px;
     }
-    .top-left,.top-right,.brand{display:flex;align-items:center}
-    .top-right{justify-content:flex-end;gap:14px}
-    .menu-btn,.search-btn,.login-btn,.logout-btn,.menu-link{
-      appearance:none;border:0;background:none;color:var(--ink);cursor:pointer;
+    .menu-btn,.search-btn{
+      appearance:none;border:0;background:none;color:var(--text);
+      display:flex;align-items:center;gap:12px;cursor:pointer;
+      font-weight:700;letter-spacing:.04em;text-transform:uppercase;font-size:13px;
+      padding:12px 0;
     }
-    .menu-btn,.search-btn,.login-btn,.logout-btn{
-      display:inline-flex;align-items:center;gap:12px;
-      padding:8px 10px;border-radius:999px;
-      letter-spacing:.05em;font-weight:700;text-transform:uppercase;
+    .menu-btn .icon, .search-btn .icon{
+      font-size:28px;line-height:1;color:var(--gold)
     }
-    .menu-btn:hover,.search-btn:hover,.login-btn:hover,.logout-btn:hover{background:rgba(255,255,255,.06)}
-    .menu-icon{font-size:28px;line-height:1}
     .brand{
-      justify-content:center;gap:12px;color:#fff;font-weight:800;
-      letter-spacing:.03em;font-size:19px;text-transform:uppercase;
+      display:flex;align-items:center;gap:12px;font-weight:800;
+      letter-spacing:.06em;text-transform:uppercase;
     }
-    .brand-star{color:var(--gold);font-size:26px;line-height:1}
-    .brand-small{display:block;font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.14em}
-    .search-btn svg{width:25px;height:25px;stroke:currentColor}
-    .status-chip{
-      display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--line-soft);
-      border-radius:999px;background:rgba(255,255,255,.04);font-size:12px;color:var(--muted);
+    .brand-star{
+      width:22px;height:22px;border:2px solid var(--gold);clip-path:polygon(50% 0%,61% 36%,98% 36%,68% 57%,79% 92%,50% 70%,21% 92%,32% 57%,2% 36%,39% 36%);
+      background:transparent;
+      flex:none;
     }
-    .status-chip strong{color:var(--ink)}
-    .gold-link{color:var(--gold);font-weight:700}
-
-    .overlay{
-      position:fixed;inset:var(--nav-h) 0 0 0;z-index:55;
-      background:linear-gradient(180deg, rgba(14,15,14,.99), rgba(8,9,8,.99));
-      border-top:1px solid var(--line);
-      transform:translateY(-110%);
-      transition:transform .24s ease;
-      overflow:auto;
-    }
-    body.menu-open .overlay{transform:translateY(0)}
-    .overlay-inner{max-width:var(--max);margin:0 auto;padding:30px 24px 48px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:34px}
-    .overlay h3{
-      margin:0 0 18px;color:var(--gold);font-size:15px;letter-spacing:.06em;text-transform:uppercase
-    }
-    .overlay .col a,.overlay .col button{
-      display:block;width:100%;text-align:left;padding:11px 0;background:none;border:0;color:#fff;cursor:pointer;font-size:16px
-    }
-    .overlay .col a:hover,.overlay .col button:hover{color:var(--gold)}
-    .overlay-rail{
-      display:grid;gap:14px
-    }
-    .rail-card{
-      display:flex;justify-content:space-between;align-items:center;
-      border:1px solid var(--line-soft);background:rgba(255,255,255,.05);
-      padding:18px 20px;border-radius:18px;font-weight:800;text-transform:uppercase;letter-spacing:.04em
-    }
-    .rail-card:hover{border-color:var(--line);background:var(--gold-soft);color:#fff}
-    .rail-card span:last-child{color:var(--gold);font-size:24px}
-    .overlay-note{
-      grid-column:1/-1;margin-top:10px;padding-top:18px;border-top:1px solid var(--line-soft);color:var(--muted);font-size:14px
-    }
-
+    .brand-text{font-size:17px}
+    .brand-sub{display:block;font-weight:600;font-size:11px;color:var(--muted);letter-spacing:.12em;margin-top:2px}
+    .page-shell{max-width:var(--content-w);margin:0 auto;padding:28px 22px 64px}
     .hero{
-      position:relative;padding:44px 0 20px
+      position:relative;
+      overflow:hidden;
+      border:1px solid rgba(224,185,79,.16);
+      border-radius:26px;
+      min-height:420px;
+      box-shadow:var(--shadow);
+      background:
+        linear-gradient(90deg, rgba(8,10,9,.78) 0%, rgba(8,10,9,.72) 36%, rgba(8,10,9,.36) 68%, rgba(8,10,9,.22) 100%),
+        linear-gradient(0deg, rgba(8,10,9,.10), rgba(8,10,9,.10)),
+        url("https://images.unsplash.com/photo-1521295121783-8a321d551ad2?auto=format&fit=crop&w=1800&q=80") center/cover no-repeat;
     }
-    .hero-grid{
-      display:grid;grid-template-columns:minmax(0,1.15fr) 360px;gap:22px;align-items:stretch
+    .hero::after{
+      content:"";
+      position:absolute;inset:0;
+      background:linear-gradient(180deg, transparent 0%, rgba(8,10,9,.18) 48%, rgba(8,10,9,.52) 100%);
+      pointer-events:none;
     }
-    .hero-card,.side-card,.panel{
-      background:linear-gradient(180deg,rgba(17,21,20,.96),rgba(9,11,10,.96));
-      border:1px solid var(--line-soft);
-      border-radius:28px;
+    .hero-content{
+      position:relative;z-index:1;
+      width:min(680px, 100%);
+      padding:42px 40px 38px;
+      display:flex;flex-direction:column;gap:18px;
+    }
+    .eyebrow{
+      display:inline-flex;align-items:center;gap:10px;
+      text-transform:uppercase;font-size:12px;font-weight:800;
+      letter-spacing:.16em;color:var(--gold);
+    }
+    .eyebrow::before{
+      content:"";display:block;width:32px;height:1px;background:var(--gold)
+    }
+    h1{
+      margin:0;font-size:clamp(36px,4vw,58px);line-height:1.02;letter-spacing:-.03em;
+      font-weight:900;
+    }
+    .hero-copy{
+      margin:0;color:#d9dfd8;font-size:18px;line-height:1.68;max-width:60ch;
+    }
+    .hero-meta{
+      display:flex;flex-wrap:wrap;gap:12px;margin-top:4px
+    }
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;
+      background:rgba(15,19,16,.72);border:1px solid rgba(224,185,79,.16);
+      color:#d6ddd4;font-size:13px;font-weight:700
+    }
+    .notice{
+      margin-top:18px;padding:14px 16px;border-radius:14px;
+      background:rgba(17,22,18,.82);border:1px solid rgba(224,185,79,.16);
+      color:var(--muted);font-size:13px;line-height:1.6
+    }
+
+    .content-grid{
+      margin-top:26px;
+      display:grid;grid-template-columns:1.25fr .75fr;gap:22px
+    }
+    @media (max-width: 980px){ .content-grid{grid-template-columns:1fr} }
+
+    .card{
+      background:linear-gradient(180deg, rgba(17,22,18,.96), rgba(12,16,13,.96));
+      border:1px solid rgba(224,185,79,.12);
+      border-radius:22px;
       box-shadow:var(--shadow);
       overflow:hidden;
     }
-    .hero-card{
-      min-height:420px;display:grid;align-items:end;position:relative;
-      background-size:cover;background-position:center center;
+    .card-head{
+      padding:20px 22px;border-bottom:1px solid rgba(224,185,79,.10);
+      display:flex;align-items:center;justify-content:space-between;gap:16px
     }
-    .hero-card::before{
-      content:"";position:absolute;inset:0;background:
-        linear-gradient(180deg, rgba(5,6,5,.22) 0%, rgba(5,6,5,.58) 38%, rgba(5,6,5,.88) 100%);
+    .card-title{
+      margin:0;font-size:20px;font-weight:850;letter-spacing:-.02em
     }
-    .hero-content{position:relative;z-index:1;padding:34px}
-    .eyebrow{
-      display:inline-flex;align-items:center;gap:10px;color:var(--gold);font-size:12px;font-weight:800;
-      letter-spacing:.16em;text-transform:uppercase
+    .card-kicker{
+      margin-top:4px;font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);font-weight:700
     }
-    .eyebrow::before{
-      content:"";display:inline-block;width:42px;height:1px;background:var(--gold)
+    .card-body{padding:22px}
+    .muted{color:var(--muted)}
+    .stack{display:flex;flex-direction:column;gap:16px}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    @media (max-width: 700px){ .grid-2{grid-template-columns:1fr} }
+
+    .feature-block{
+      padding:18px;border-radius:18px;background:rgba(20,26,21,.72);border:1px solid rgba(224,185,79,.08)
     }
-    .hero h1,.page-header h1{margin:16px 0 12px;font-size:clamp(34px,5vw,64px);line-height:1.02;text-transform:uppercase}
-    .hero p.lead,.page-header p{max-width:62ch;font-size:18px;color:#e0e5de}
-    .hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+    .feature-block h3{margin:0 0 8px;font-size:17px}
+    .feature-block p{margin:0;color:var(--muted);line-height:1.7;font-size:15px}
+    .leader-card{
+      display:grid;grid-template-columns:112px 1fr;gap:18px;align-items:start;
+      padding:18px;border-radius:18px;background:rgba(20,26,21,.72);border:1px solid rgba(224,185,79,.08)
+    }
+    .leader-photo{
+      width:112px;height:128px;border-radius:16px;object-fit:cover;border:1px solid rgba(224,185,79,.12)
+    }
+    .leader-name{font-size:20px;font-weight:850;margin:0 0 6px}
+    .leader-role{font-size:13px;text-transform:uppercase;letter-spacing:.12em;color:var(--gold);font-weight:800;margin-bottom:10px}
+    .leader-bio{margin:0;color:var(--muted);line-height:1.72;font-size:15px}
+
+    .btn-row{display:flex;flex-wrap:wrap;gap:12px}
     .btn{
-      appearance:none;border:1px solid var(--line-soft);background:rgba(255,255,255,.04);color:var(--ink);
-      padding:13px 18px;border-radius:14px;font-weight:800;cursor:pointer;letter-spacing:.03em
+      appearance:none;border:1px solid rgba(224,185,79,.16);background:#171d18;color:var(--text);
+      border-radius:999px;padding:12px 18px;font-weight:800;letter-spacing:.02em;cursor:pointer;
+      transition:.2s ease;box-shadow:0 8px 24px rgba(0,0,0,.18)
     }
-    .btn:hover{border-color:var(--line);background:rgba(255,255,255,.08)}
-    .btn-primary{background:var(--gold);border-color:var(--gold);color:#17130a}
-    .btn-primary:hover{filter:brightness(1.03)}
-    .btn-danger{border-color:rgba(230,111,111,.55);color:#fff;background:rgba(230,111,111,.08)}
-    .btn-small{padding:10px 14px;font-size:14px;border-radius:12px}
-    .side-card{padding:24px}
-    .side-card h2{margin:0 0 8px;font-size:20px;text-transform:uppercase}
-    .side-card p{margin:0 0 18px;color:var(--muted);font-size:14px;line-height:1.6}
-    .quick-links{display:grid;gap:10px;margin-top:14px}
-    .quick-links button,.quick-links a{
-      display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-radius:16px;
-      border:1px solid var(--line-soft);background:rgba(255,255,255,.03);font-weight:700
+    .btn:hover{transform:translateY(-1px);border-color:rgba(224,185,79,.32);background:#1a211b}
+    .btn-primary{
+      background:linear-gradient(180deg, #d6b04b, #b59137);
+      color:#10130f;border-color:#d6b04b
     }
-    .quick-links button:hover,.quick-links a:hover{border-color:var(--line);background:var(--gold-soft)}
-    .signin-card{
-      margin-top:18px;padding:18px;border-radius:20px;border:1px solid var(--line);
-      background:linear-gradient(180deg,var(--gold-soft),rgba(255,255,255,.03));
-    }
-    .signin-card h3{margin:0 0 6px;font-size:16px;text-transform:uppercase}
-    .signin-card p{margin:0;color:#eee9cf;font-size:13px}
-    .signin-card .btn{width:100%;margin-top:14px}
+    .btn-primary:hover{background:linear-gradient(180deg, #dfbb58, #bc993d)}
+    .btn-danger{background:#251717;border-color:#5d3232;color:#f0d7d7}
+    .btn-block{width:100%;justify-content:center}
 
-    .main{
-      padding:12px 0 54px
+    .form-shell{max-width:850px}
+    .field{display:flex;flex-direction:column;gap:8px}
+    .field label{
+      font-size:12px;text-transform:uppercase;letter-spacing:.12em;font-weight:800;color:#c7cfc5
     }
-    .layout{
-      display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:22px
+    .input, .textarea, .select{
+      width:100%;padding:14px 15px;border-radius:14px;
+      border:1px solid rgba(224,185,79,.14);
+      background:#0f1411;color:var(--text);outline:none;
+      transition:border-color .18s ease, box-shadow .18s ease, background .18s ease;
     }
-    .panel-header{
-      padding:24px 26px 0
+    .input::placeholder,.textarea::placeholder{color:#7e897f}
+    .input:focus,.textarea:focus,.select:focus{
+      border-color:rgba(224,185,79,.42);
+      box-shadow:0 0 0 4px rgba(224,185,79,.10);
+      background:#111712;
     }
-    .panel-body{padding:22px 26px 26px}
-    .section-tag{
-      color:var(--gold);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.16em
-    }
-    .section-title{
-      margin:10px 0 8px;font-size:30px;line-height:1.12;text-transform:uppercase
-    }
-    .section-copy{margin:0;color:var(--muted);font-size:16px;line-height:1.75}
-    .body-copy p{line-height:1.82;color:#e1e4de;margin:0 0 18px}
-    .body-copy ul{margin:0 0 18px 20px;color:#e1e4de}
-    .body-copy li{margin:8px 0}
-    .bio-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:10px}
-    .bio-card{
-      border:1px solid var(--line-soft);border-radius:20px;overflow:hidden;background:rgba(255,255,255,.03)
-    }
-    .bio-photo{aspect-ratio:4/3;background:#1a201c center/cover no-repeat}
-    .bio-info{padding:18px}
-    .bio-name{font-size:24px;font-weight:800;text-transform:uppercase}
-    .bio-role{color:var(--gold);font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin-top:6px}
-    .bio-text{color:#d8ddd6;line-height:1.7;font-size:15px;margin-top:12px}
-    .page-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
-    .info-card{
-      border:1px solid var(--line-soft);border-radius:20px;padding:20px;background:rgba(255,255,255,.03)
-    }
-    .info-card h3{margin:0 0 8px;font-size:20px;text-transform:uppercase}
-    .info-card p{margin:0;color:var(--muted);line-height:1.65}
-    .sidebar-stack{display:grid;gap:22px}
-    .sidebar-card{
-      background:linear-gradient(180deg,rgba(18,22,21,.96),rgba(10,12,11,.96));
-      border:1px solid var(--line-soft);
-      border-radius:24px;
-      box-shadow:var(--shadow);
-      padding:22px;
-    }
-    .sidebar-card h3{margin:0 0 12px;font-size:18px;text-transform:uppercase}
-    .sidebar-card p{margin:0;color:var(--muted);line-height:1.7;font-size:14px}
-    .sidebar-card .list{display:grid;gap:10px;margin-top:16px}
-    .sidebar-card .list-item{
-      display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid var(--line-soft)
-    }
-    .sidebar-card .list-item strong{display:block}
-    .sidebar-card .list-item span{color:var(--muted);font-size:13px;line-height:1.5}
-    .banner{
-      border:1px solid var(--line);background:var(--gold-soft);color:#f6f0da;padding:14px 16px;border-radius:16px;margin-bottom:18px
-    }
-    .hidden{display:none!important}
+    .textarea{min-height:130px;resize:vertical;line-height:1.6}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+    @media (max-width: 860px){ .form-grid,.form-grid-3{grid-template-columns:1fr} }
+    .divider{height:1px;background:rgba(224,185,79,.10);margin:8px 0}
 
-    .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-    .form-grid .full{grid-column:1/-1}
-    label{display:block;font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
-    .input,.textarea,.select{
-      width:100%;border:1px solid var(--line-soft);background:rgba(255,255,255,.03);color:var(--ink);
-      border-radius:14px;padding:14px 15px;outline:none
-    }
-    .input:focus,.textarea:focus,.select:focus{border-color:var(--line);box-shadow:0 0 0 3px rgba(241,195,59,.12)}
-    .textarea{min-height:140px;resize:vertical}
-    .form-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}
-    .form-note{margin-top:16px;color:var(--muted);font-size:13px;line-height:1.7}
-    .split-header{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:16px}
-    .split-header .meta{color:var(--muted);font-size:14px}
     .queue-item{
-      border:1px solid var(--line-soft);border-radius:20px;padding:20px;background:rgba(255,255,255,.03)
+      padding:18px;border-radius:18px;background:rgba(20,26,21,.72);
+      border:1px solid rgba(224,185,79,.08);display:flex;flex-direction:column;gap:12px
     }
-    .queue-item + .queue-item{margin-top:16px}
-    .queue-item .id{color:var(--gold);font-weight:800;letter-spacing:.08em;text-transform:uppercase}
-    .queue-meta{display:flex;flex-wrap:wrap;gap:10px 18px;margin:10px 0 14px;color:var(--muted);font-size:14px}
-    .queue-content{display:grid;gap:12px;line-height:1.75}
-    .queue-content strong{color:#fff}
-    .empty-state{
-      border:1px dashed var(--line-soft);border-radius:20px;padding:32px;text-align:center;color:var(--muted)
+    .queue-top{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;flex-wrap:wrap}
+    .queue-id{font-size:13px;text-transform:uppercase;letter-spacing:.14em;color:var(--gold);font-weight:900}
+    .queue-title{font-size:18px;font-weight:850}
+    .queue-meta{color:var(--muted);font-size:14px;line-height:1.7}
+    .status{
+      display:inline-flex;align-items:center;padding:7px 10px;border-radius:999px;border:1px solid rgba(224,185,79,.16);
+      background:#151a16;color:#d7ddd5;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.12em
     }
-    .gate{
-      position:fixed;inset:0;z-index:80;background:rgba(4,5,4,.78);backdrop-filter:blur(8px);
-      display:none;align-items:center;justify-content:center;padding:24px
-    }
-    .gate.show{display:flex}
-    .gate-card{
-      width:min(980px,100%);display:grid;grid-template-columns:1.05fr .95fr;
-      border-radius:28px;overflow:hidden;border:1px solid var(--line);box-shadow:var(--shadow);
-      background:linear-gradient(180deg,#111413,#0a0b0a)
-    }
-    .gate-visual{
-      min-height:360px;padding:34px;display:flex;flex-direction:column;justify-content:flex-end;
-      background:
-        linear-gradient(180deg, rgba(8,9,8,.15), rgba(8,9,8,.92)),
-        url("https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1400&q=80") center/cover no-repeat;
-    }
-    .gate-visual h2{margin:16px 0 10px;font-size:42px;line-height:1.05;text-transform:uppercase}
-    .gate-visual p{margin:0;color:#e4e6df;max-width:44ch;line-height:1.8}
-    .gate-form{padding:34px}
-    .gate-form h3{margin:0 0 8px;font-size:26px;text-transform:uppercase}
-    .gate-form p{margin:0 0 18px;color:var(--muted);line-height:1.7}
-    .gate-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
-    .message{
-      margin-top:14px;font-size:14px;color:var(--muted);min-height:22px
-    }
-    .message.error{color:#ffb3b3}
-    .message.success{color:#b8efbf}
-    .footer{
-      border-top:1px solid var(--line);padding:28px 0 42px;color:var(--muted);font-size:13px
-    }
-    .footer-inner{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap}
 
-    @media (max-width:1100px){
-      .hero-grid,.layout,.gate-card,.overlay-inner{grid-template-columns:1fr}
-      .bio-grid,.page-grid,.form-grid{grid-template-columns:1fr}
-      .topbar-inner{grid-template-columns:1fr auto}
-      .brand{justify-content:flex-start}
-      .top-right .status-chip{display:none}
+    .login-panel{
+      width:min(520px,100%);margin:0 auto
     }
-    @media (max-width:760px){
-      .shell{padding:0 16px}
-      .overlay-inner{padding:24px 16px 40px}
-      .hero-content,.side-card,.panel-body,.panel-header,.sidebar-card,.gate-form,.gate-visual{padding:22px}
-      .hero h1,.page-header h1{font-size:34px}
-      .menu-btn span.menu-label,.search-btn span,.login-btn span,.logout-btn span{display:none}
-      .brand{font-size:15px}
-      .brand-small{display:none}
+    .login-title{font-size:34px;font-weight:900;letter-spacing:-.03em;margin:0 0 8px}
+    .login-copy{margin:0 0 22px;color:var(--muted);line-height:1.75}
+    .small-note{font-size:12px;color:var(--muted);line-height:1.6}
+    .alert{
+      padding:14px 15px;border-radius:14px;border:1px solid rgba(224,185,79,.12);background:#161c17;color:#dbe2d9
+    }
+
+    .menu-overlay{
+      position:fixed;inset:0;background:rgba(5,7,6,.78);backdrop-filter:blur(8px);
+      display:none;z-index:120
+    }
+    .menu-overlay.open{display:block}
+    .mega{
+      position:absolute;left:0;right:0;top:0;
+      background:linear-gradient(180deg,#111311 0%,#0d100e 100%);
+      border-bottom:1px solid rgba(224,185,79,.16);
+      min-height:100vh;
+      color:var(--text)
+    }
+    .mega-top{
+      max-width:var(--content-w);margin:0 auto;padding:0 22px;
+      min-height:76px;display:flex;align-items:center;justify-content:space-between;gap:16px
+    }
+    .mega-grid{
+      max-width:var(--content-w);margin:0 auto;padding:28px 22px 40px;
+      display:grid;grid-template-columns:1fr 1fr 1fr 280px;gap:36px
+    }
+    @media (max-width: 1080px){ .mega-grid{grid-template-columns:1fr 1fr} }
+    @media (max-width: 760px){ .mega-grid{grid-template-columns:1fr} }
+    .mega-col h4{
+      margin:0 0 18px;font-size:15px;font-weight:900;color:var(--gold);
+      text-transform:uppercase;letter-spacing:.12em
+    }
+    .mega-col a{
+      display:block;padding:10px 0;color:#eef2ee;font-size:18px;line-height:1.3
+    }
+    .mega-col a:hover{color:var(--gold)}
+    .mega-cta{
+      display:flex;flex-direction:column;gap:12px
+    }
+    .mega-box{
+      background:#222523;border:1px solid rgba(224,185,79,.10);border-radius:0;padding:22px 20px;
+      display:flex;align-items:center;justify-content:space-between;
+      font-weight:900;text-transform:uppercase;letter-spacing:.06em
+    }
+    .mega-box span:last-child{color:var(--gold);font-size:26px;line-height:1}
+
+    .hide{display:none !important}
+
+    @media (max-width: 760px){
+      .header-inner,.mega-top{padding-left:16px;padding-right:16px}
+      .page-shell{padding-left:16px;padding-right:16px}
+      .hero-content{padding:28px 24px 28px}
+      .menu-btn span.label, .search-btn span.label{display:none}
+      .brand-text{font-size:15px}
+      .leader-card{grid-template-columns:1fr}
+      .leader-photo{width:100%;height:260px}
     }
   </style>
 </head>
 <body>
-  <header class="topbar">
-    <div class="shell topbar-inner">
-      <div class="top-left">
-        <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="menuOverlay">
-          <span class="menu-icon" id="menuIcon">☰</span>
-          <span class="menu-label">Menu</span>
-        </button>
-      </div>
+  <header class="site-header">
+    <div class="header-inner">
+      <button class="menu-btn" id="menuOpenBtn" type="button" aria-label="Open navigation">
+        <span class="icon">×</span>
+        <span class="label">Menu</span>
+      </button>
 
-      <div class="brand" aria-label="Army Corrections Command">
-        <span class="brand-star">★</span>
+      <div class="brand">
+        <div class="brand-star"></div>
         <div>
-          <div>U.S. Army</div>
-          <span class="brand-small">Army Corrections Command</span>
+          <div class="brand-text">U.S. Army</div>
+          <span class="brand-sub">Army Corrections Command Roleplay Portal</span>
         </div>
       </div>
 
-      <div class="top-right">
-        <span class="status-chip" id="statusChip"><strong>Public Access</strong> <span>Restricted tools require sign in</span></span>
-        <button class="search-btn" id="searchBtn" title="Open secure access">
-          <span>Search</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="M20 20L16.65 16.65"></path></svg>
-        </button>
-        <button class="login-btn" id="loginToggle"><span>Secure Sign In</span></button>
-        <button class="logout-btn hidden" id="logoutBtn"><span>Log Out</span></button>
-      </div>
+      <button class="search-btn" id="signinShortcutBtn" type="button">
+        <span class="label" id="signinShortcutText">Sign In</span>
+        <span class="icon">⌕</span>
+      </button>
     </div>
   </header>
 
-  <aside class="overlay" id="menuOverlay" aria-hidden="true">
-    <div class="overlay-inner">
-      <div class="col">
-        <h3>About</h3>
-        <button class="menu-link" data-page="who-we-are">Who We Are</button>
-        <button class="menu-link" data-page="organization">Organization</button>
-      </div>
-
-      <div class="col">
-        <h3>Leadership</h3>
-        <button class="menu-link" data-page="provost-marshal-general">Provost Marshal General</button>
-        <button class="menu-link" data-page="commanding-officer">Commanding Officer</button>
-        <button class="menu-link" data-page="command-sergeant-major">Command Sergeant Major</button>
-        <button class="menu-link" data-page="battalion-leadership">Battalion Leadership</button>
-      </div>
-
-      <div class="col hidden" id="internalMenuCol">
-        <h3>ACC Internal Panel</h3>
-        <button class="menu-link" data-page="internal-home">Internal Overview</button>
-        <button class="menu-link" data-page="ban-request">Ban Request Form</button>
-        <button class="menu-link" data-page="io-request">Inquiry Order Request</button>
-      </div>
-
-      <div class="overlay-rail">
-        <button class="rail-card menu-link" data-page="public-home">
-          <span>Newsroom</span>
-          <span>→</span>
+  <div class="menu-overlay" id="menuOverlay" aria-hidden="true">
+    <div class="mega">
+      <div class="mega-top">
+        <button class="menu-btn" id="menuCloseBtn" type="button" aria-label="Close navigation">
+          <span class="icon">×</span>
+          <span class="label">Menu</span>
         </button>
-        <button class="rail-card menu-link hidden" id="highCommandRail" data-page="high-command">
-          <span>High Command Panel</span>
-          <span>→</span>
-        </button>
-        <button class="rail-card" id="gateRail">
-          <span>Secure Access</span>
-          <span>→</span>
-        </button>
-      </div>
 
-      <div class="overlay-note">
-        Public visitors may view command information. Internal workflows, request processing, and administrative records are restricted by account permissions, unit assignment, and role.
-      </div>
-    </div>
-  </aside>
-
-  <div class="gate" id="gate">
-    <div class="gate-card">
-      <div class="gate-visual">
-        <span class="eyebrow">Army Corrections Command</span>
-        <h2>Secure command portal</h2>
-        <p>Use your authorized username and password to access internal roleplay logistics, request processing, and command-only tools. Public command information remains available below.</p>
-      </div>
-
-      <div class="gate-form">
-        <h3>Sign in</h3>
-        <p>Credentials are validated by your Cloudflare Worker. The site will only reveal internal pages after successful authentication.</p>
-
-        <label for="loginUser">Username</label>
-        <input class="input" id="loginUser" autocomplete="username" placeholder="Enter username" />
-
-        <label for="loginPass">Password</label>
-        <input class="input" id="loginPass" type="password" autocomplete="current-password" placeholder="Enter password" />
-
-        <div class="gate-actions">
-          <button class="btn btn-primary" id="gateLoginBtn">Sign In</button>
-          <button class="btn" id="gateContinueBtn">Continue to Public Site</button>
+        <div class="brand">
+          <div class="brand-star"></div>
+          <div class="brand-text">U.S. Army</div>
         </div>
 
-        <div class="message" id="gateMessage"></div>
+        <div style="width:74px"></div>
+      </div>
+
+      <div class="mega-grid">
+        <div class="mega-col">
+          <h4>About</h4>
+          <a href="#" data-page="who-we-are">Who We Are</a>
+          <a href="#" data-page="organization">Organization</a>
+        </div>
+
+        <div class="mega-col">
+          <h4>Leadership</h4>
+          <a href="#" data-page="provost-marshal-general">Provost Marshal General</a>
+          <a href="#" data-page="commanding-officer">Commanding Officer</a>
+          <a href="#" data-page="command-sergeant-major">Command Sergeant Major</a>
+          <a href="#" data-page="battalion-leadership">Battalion Leadership</a>
+        </div>
+
+        <div class="mega-col">
+          <h4>Internal</h4>
+          <a href="#" data-page="internal-panel">ACC Internal Panel</a>
+          <a href="#" data-page="high-command">High Command Panel</a>
+        </div>
+
+        <div class="mega-cta">
+          <div class="mega-box"><span>Roleplay Notice</span><span>→</span></div>
+          <div class="mega-box"><span>Operations</span><span>→</span></div>
+          <div class="mega-box"><span>Documents</span><span>→</span></div>
+          <div class="mega-box"><span>Contact</span><span>→</span></div>
+        </div>
       </div>
     </div>
   </div>
 
-  <section class="hero">
-    <div class="shell hero-grid">
-      <article class="hero-card" id="heroCard">
-        <div class="hero-content">
-          <span class="eyebrow" id="heroEyebrow">Army Corrections Command</span>
-          <h1 id="heroTitle">Command information and secure internal access</h1>
-          <p class="lead" id="heroLead">This portal provides public-facing command information while protecting internal operational workflows for the Criminal Investigation Division, Judge Advocate General Corps, and authorized command staff.</p>
-          <div class="hero-actions">
-            <button class="btn btn-primary" data-page-jump="public-home">Enter public site</button>
-            <button class="btn" id="heroSignInBtn">Secure sign in</button>
+  <main class="page-shell">
+    <section class="hero" id="hero">
+      <div class="hero-content">
+        <div class="eyebrow">Army Corrections Command</div>
+        <h1>Operational access, command documents, and internal case workflows.</h1>
+        <p class="hero-copy">
+          Secure roleplay portal for Army Corrections Command personnel, with protected internal forms,
+          leadership pages, and command review workflows for Ban Requests and Inquiry Orders.
+        </p>
+        <div class="hero-meta">
+          <span class="pill">CID access controls</span>
+          <span class="pill">JAGC protected documents</span>
+          <span class="pill">High Command review queue</span>
+        </div>
+        <div class="notice">
+          This portal is for a roleplay environment and should remain clearly distinct from any real government service.
+          Public visitors can view only general pages. Internal sections require authentication and role-based access.
+        </div>
+      </div>
+    </section>
+
+    <div class="content-grid">
+      <section class="card">
+        <div class="card-head">
+          <div>
+            <h2 class="card-title" id="pageTitle">Who We Are</h2>
+            <div class="card-kicker" id="pageKicker">Army Corrections Command roleplay information</div>
           </div>
         </div>
-      </article>
-
-      <aside class="side-card">
-        <h2>Portal access</h2>
-        <p>Public visitors can browse command information and leadership biographies. Internal forms, investigative workflows, and High Command approvals remain hidden until you are signed in.</p>
-
-        <div class="quick-links">
-          <button data-page-jump="who-we-are"><span>Who We Are</span><span>→</span></button>
-          <button data-page-jump="organization"><span>Organization</span><span>→</span></button>
-          <button data-page-jump="battalion-leadership"><span>Leadership</span><span>→</span></button>
-        </div>
-
-        <div class="signin-card" id="miniSignInCard">
-          <h3>Restricted access required</h3>
-          <p>CID, JAGC, and command personnel must use secure sign-in to access the ACC Internal Panel and approval queues.</p>
-          <button class="btn btn-primary" id="miniSignInBtn">Open secure sign in</button>
-        </div>
-      </aside>
-    </div>
-  </section>
-
-  <main class="main">
-    <div class="shell layout">
-      <section class="panel" id="mainPanel">
-        <div class="panel-header page-header">
-          <div class="section-tag" id="contentTag">Public Information</div>
-          <h1 id="contentTitle">Command home</h1>
-          <p id="contentSummary">Browse the public command pages or sign in to reveal internal tools.</p>
-        </div>
-        <div class="panel-body" id="contentBody"></div>
+        <div class="card-body" id="mainContent"></div>
       </section>
 
-      <aside class="sidebar-stack">
-        <section class="sidebar-card">
-          <h3>Access status</h3>
-          <p id="sidebarAccessText">You are currently viewing the public portion of the site. Internal forms and protected pages remain hidden until you authenticate.</p>
-          <div class="list" id="accessFacts"></div>
-        </section>
-
-        <section class="sidebar-card">
-          <h3>Routing</h3>
-          <p>Adjust the editable configuration at the top of this file to replace page text, leadership biographies, image URLs, and menu visibility without touching the layout code.</p>
-          <div class="list" id="routingLinks"></div>
-        </section>
+      <aside class="card">
+        <div class="card-head">
+          <div>
+            <h2 class="card-title">Access</h2>
+            <div class="card-kicker">Portal status</div>
+          </div>
+        </div>
+        <div class="card-body" id="sideContent"></div>
       </aside>
     </div>
   </main>
 
-  <footer class="footer">
-    <div class="shell footer-inner">
-      <div>Army Corrections Command roleplay portal · Green and gold theme · Command pages are intentionally configurable in source.</div>
-      <div>Public pages remain accessible. Internal panels require secure sign in.</div>
-    </div>
-  </footer>
-
   <script>
-    /*
-      =============================================================
-      EDITABLE CONFIG
-      =============================================================
-      Replace the text, image URLs, biographies, and leadership data below.
-      This keeps all page content easy to edit without changing the layout.
-    */
-    const API_BASE = "the.chastiefola.workers.dev";
+    const API_BASE = "YOUR_WORKER_URL_HERE";
 
-    const SITE_CONFIG = {
-      heroImage: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1600&q=80",
-      sidebarFactsPublic: [
-        ["Portal state", "Public information only"],
-        ["Protected sections", "ACC Internal Panel and High Command"],
-        ["Authentication", "Username and password handled by worker secrets"]
-      ],
-      sidebarFactsPrivate(user){
-        const adminText = user.admin ? "Enabled" : "Not assigned";
-        return [
-          ["Signed in as", `${user.rank} ${user.username}`],
-          ["Unit", user.unit],
-          ["Position", user.position || "Not listed"],
-          ["Admin access", adminText]
-        ];
-      },
-      routingLinks(user){
-        const links = [
-          { label: "Who We Are", desc: "Public command overview", page: "who-we-are" },
-          { label: "Organization", desc: "Unit structure and mission lines", page: "organization" },
-          { label: "Leadership", desc: "Command biographies", page: "battalion-leadership" }
-        ];
-        if(user){
-          links.push({ label: "Internal Overview", desc: "Restricted internal landing page", page: "internal-home" });
-          links.push({ label: "Inquiry Order Request", desc: "Available to CID and JAGC", page: "io-request" });
-          if(user.unit === "CID" || user.admin){
-            links.push({ label: "Ban Request Form", desc: "Restricted to CID access", page: "ban-request" });
-          }
-          if(user.admin){
-            links.push({ label: "High Command Panel", desc: "Request approval workflow", page: "high-command" });
-          }
-        }
-        return links;
-      },
-      pages: {
-        "public-home": {
-          tag: "Public Information",
-          title: "Army Corrections Command",
-          summary: "A public-facing command portal with private operational workflows concealed behind secure authentication.",
-          heroTitle: "Command information and secure internal access",
-          heroLead: "Browse public command material, leadership pages, and organization summaries. Internal forms appear only for authorized personnel after successful sign in.",
-          body: `
-            <div class="banner">This home page is public. Internal pages remain hidden until you authenticate with an authorized account.</div>
-            <div class="page-grid">
-              <article class="info-card">
-                <h3>Command purpose</h3>
-                <p>The Army Corrections Command portal supports roleplay command communications, leadership biographies, organization references, and secure internal logistics.</p>
-              </article>
-              <article class="info-card">
-                <h3>Protected operations</h3>
-                <p>Ban request processing, inquiry order routing, and High Command decision workflows are restricted by unit assignment and account authority.</p>
-              </article>
-              <article class="info-card">
-                <h3>Units</h3>
-                <p>The two primary subunits are the Criminal Investigation Division and the Judge Advocate General Corps. Their tool visibility differs after sign-in.</p>
-              </article>
-              <article class="info-card">
-                <h3>Editable source</h3>
-                <p>Leadership photos, public text, and biographies are all configured from the source variables at the top of the file for quick changes.</p>
-              </article>
+    const SITE_DATA = {
+      whoWeAre: {
+        title: "Who We Are",
+        kicker: "Mission and purpose",
+        html: `
+          <div class="stack">
+            <div class="feature-block">
+              <h3>Command Overview</h3>
+              <p>
+                Army Corrections Command coordinates investigative, judicial, and command-support roleplay workflows.
+                The portal is designed to centralize command pages, protected operational forms, and leadership information
+                while maintaining clear separation between public-facing content and internal staff tools.
+              </p>
             </div>
-          `
-        },
-        "who-we-are": {
-          tag: "About",
-          title: "Who We Are",
-          summary: "Public command overview page.",
-          heroTitle: "Who We Are",
-          heroLead: "Present the mission, command role, history, and purpose of the Army Corrections Command in a style similar to a formal government landing page.",
-          body: `
-            <div class="body-copy">
-              <p>Army Corrections Command oversees roleplay command administration, discipline workflows, legal support coordination, and investigative support routing. This page is public-facing and can be rewritten to mirror your server's exact lore, chain of command, and operational tone.</p>
-              <p>Use this page to explain the command's function, its relationship to internal subunits, and the purpose of restricted portals that support investigations, legal review, and command-level approvals.</p>
-              <ul>
-                <li>Mission statement</li>
-                <li>Command responsibilities</li>
-                <li>Operational values</li>
-                <li>Roleplay doctrine and standards</li>
-              </ul>
+            <div class="grid-2">
+              <div class="feature-block">
+                <h3>Mission</h3>
+                <p>Provide a structured command portal for secure roleplay administration, documentation, and oversight.</p>
+              </div>
+              <div class="feature-block">
+                <h3>Core Focus</h3>
+                <p>Operational readiness, role-based access control, disciplined case handling, and smooth internal workflow.</p>
+              </div>
             </div>
-          `
-        },
-        "organization": {
-          tag: "About",
-          title: "Organization",
-          summary: "Public structure and subunit overview.",
-          heroTitle: "Organization",
-          heroLead: "Map the command structure, main units, and reporting lines in a format that feels formal and easy to update.",
-          body: `
-            <div class="page-grid">
-              <article class="info-card">
-                <h3>Army Corrections Command</h3>
-                <p>Top-level command authority for protected workflows, oversight, and administration. High Command can review and decide on request traffic.</p>
-              </article>
-              <article class="info-card">
+          </div>
+        `
+      },
+      organization: {
+        title: "Organization",
+        kicker: "Command structure",
+        html: `
+          <div class="stack">
+            <div class="feature-block">
+              <h3>Army Corrections Command</h3>
+              <p>
+                The command operates with two major internal roleplay elements. The Criminal Investigation Division handles
+                protected investigative actions and Ban Request submission. The Judge Advocate General Corps handles legal review,
+                inquiry support, and related command processes.
+              </p>
+            </div>
+            <div class="grid-2">
+              <div class="feature-block">
                 <h3>Criminal Investigation Division</h3>
-                <p>Investigative unit responsible for sensitive inquiries, evidence collection, and CID-only access to the Ban Request workflow.</p>
-              </article>
-              <article class="info-card">
+                <p>CID handles sensitive investigative work, protected requests, and operational fact-gathering.</p>
+              </div>
+              <div class="feature-block">
                 <h3>Judge Advocate General Corps</h3>
-                <p>Legal services unit supporting judges, prosecutors, defense counsel, and inquiry-order workflow participation.</p>
-              </article>
-              <article class="info-card">
-                <h3>Command leadership</h3>
-                <p>Public biographies for the Provost Marshal General, Commanding Officer, Command Sergeant Major, and Battalion Leadership are managed as editable data objects.</p>
-              </article>
+                <p>JAGC supports judicial review, advocacy, legal processing, and inquiry documentation.</p>
+              </div>
             </div>
-          `
-        }
+          </div>
+        `
       },
-      leadership: {
+      leaders: {
         "provost-marshal-general": {
-          tag: "Leadership",
           title: "Provost Marshal General",
-          summary: "Editable leadership biography page.",
-          heroTitle: "Provost Marshal General",
-          heroLead: "Replace the image URL, rank, name, and biography text below with your command's actual roleplay leadership details.",
-          people: [
-            {
-              name: "Firstname Lastname",
-              role: "Provost Marshal General",
-              image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=1200&q=80",
-              bio: "This biography block is fully editable from the source. Use it to summarize command experience, authority, priorities, and roleplay background."
-            }
-          ]
+          kicker: "Command leadership biography",
+          role: "Provost Marshal General",
+          name: "Name Placeholder",
+          image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80",
+          bio: "Edit this biography in the SITE_DATA block. Replace the placeholder image, name, role, and paragraph with your own command information."
         },
         "commanding-officer": {
-          tag: "Leadership",
           title: "Commanding Officer",
-          summary: "Editable leadership biography page.",
-          heroTitle: "Commanding Officer",
-          heroLead: "Use this section for the primary commanding officer biography and public command summary.",
-          people: [
-            {
-              name: "Firstname Lastname",
-              role: "Commanding Officer",
-              image: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&w=1200&q=80",
-              bio: "This biography card can be edited in one place. Replace the text with the rank, service history, and command focus you want shown publicly."
-            }
-          ]
+          kicker: "Command leadership biography",
+          role: "Commanding Officer",
+          name: "Name Placeholder",
+          image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=900&q=80",
+          bio: "Edit this biography in the SITE_DATA block. Replace the placeholder image, name, role, and paragraph with your own command information."
         },
         "command-sergeant-major": {
-          tag: "Leadership",
           title: "Command Sergeant Major",
-          summary: "Editable leadership biography page.",
-          heroTitle: "Command Sergeant Major",
-          heroLead: "Use this page for the senior enlisted leadership biography and command priorities.",
-          people: [
-            {
-              name: "Firstname Lastname",
-              role: "Command Sergeant Major",
-              image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=1200&q=80",
-              bio: "Replace this with your command sergeant major's biography, public duties, and areas of focus."
-            }
-          ]
+          kicker: "Command leadership biography",
+          role: "Command Sergeant Major",
+          name: "Name Placeholder",
+          image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80",
+          bio: "Edit this biography in the SITE_DATA block. Replace the placeholder image, name, role, and paragraph with your own command information."
         },
         "battalion-leadership": {
-          tag: "Leadership",
           title: "Battalion Leadership",
-          summary: "Editable battalion leadership biography grid.",
-          heroTitle: "Battalion Leadership",
-          heroLead: "Show multiple leaders on one page. Add or remove cards from the array below without changing the layout.",
-          people: [
+          kicker: "Senior staff and subordinate leaders",
+          leaders: [
             {
-              name: "Firstname Lastname",
-              role: "Battalion Executive Officer",
-              image: "https://images.unsplash.com/photo-1504593811423-6dd665756598?auto=format&fit=crop&w=1200&q=80",
-              bio: "Editable role summary for the battalion executive officer."
+              role: "Battalion Commander",
+              name: "Name Placeholder",
+              image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=900&q=80",
+              bio: "Replace with the battalion command biography."
             },
             {
-              name: "Firstname Lastname",
-              role: "Battalion Operations Officer",
-              image: "https://images.unsplash.com/photo-1506795660198-e95c77602129?auto=format&fit=crop&w=1200&q=80",
-              bio: "Editable role summary for the battalion operations officer."
+              role: "Executive Officer",
+              name: "Name Placeholder",
+              image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80",
+              bio: "Replace with the executive officer biography."
             }
           ]
         }
       }
-    };
-
-    const ACCESS_RULES = {
-      "internal-home": user => !!user,
-      "io-request": user => !!user && (user.unit === "CID" || user.unit === "JAGC" || user.admin),
-      "ban-request": user => !!user && (user.unit === "CID" || user.admin),
-      "high-command": user => !!user && !!user.admin
     };
 
     const state = {
       token: localStorage.getItem("acc_token") || "",
-      user: null,
-      currentPage: "public-home",
-      firstVisitGateShown: !sessionStorage.getItem("acc_gate_seen")
+      me: null,
+      currentPage: "who-we-are",
+      queueType: "ban"
     };
 
-    const el = {
-      body: document.body,
-      menuBtn: document.getElementById("menuBtn"),
-      menuIcon: document.getElementById("menuIcon"),
-      menuOverlay: document.getElementById("menuOverlay"),
-      gate: document.getElementById("gate"),
-      gateLoginBtn: document.getElementById("gateLoginBtn"),
-      gateContinueBtn: document.getElementById("gateContinueBtn"),
-      gateMessage: document.getElementById("gateMessage"),
-      loginUser: document.getElementById("loginUser"),
-      loginPass: document.getElementById("loginPass"),
-      loginToggle: document.getElementById("loginToggle"),
-      logoutBtn: document.getElementById("logoutBtn"),
-      searchBtn: document.getElementById("searchBtn"),
-      heroSignInBtn: document.getElementById("heroSignInBtn"),
-      miniSignInBtn: document.getElementById("miniSignInBtn"),
-      gateRail: document.getElementById("gateRail"),
-      statusChip: document.getElementById("statusChip"),
-      heroCard: document.getElementById("heroCard"),
-      heroEyebrow: document.getElementById("heroEyebrow"),
-      heroTitle: document.getElementById("heroTitle"),
-      heroLead: document.getElementById("heroLead"),
-      contentTag: document.getElementById("contentTag"),
-      contentTitle: document.getElementById("contentTitle"),
-      contentSummary: document.getElementById("contentSummary"),
-      contentBody: document.getElementById("contentBody"),
-      internalMenuCol: document.getElementById("internalMenuCol"),
-      highCommandRail: document.getElementById("highCommandRail"),
-      sidebarAccessText: document.getElementById("sidebarAccessText"),
-      accessFacts: document.getElementById("accessFacts"),
-      routingLinks: document.getElementById("routingLinks"),
-      statusText: document.getElementById("statusChip")
-    };
-
-    async function api(path, options = {}){
-      const headers = { "Content-Type": "application/json", ...(options.headers || {}) };
-      if(state.token) headers.Authorization = "Bearer " + state.token;
-      const response = await fetch(API_BASE.replace(/\/+$/,"") + path, { ...options, headers });
-      const payload = await response.json().catch(() => ({}));
-      if(!response.ok){
-        throw new Error(payload.error || "Request failed");
-      }
-      return payload;
-    }
-
-    function openGate(prefill = ""){
-      if(prefill) el.loginUser.value = prefill;
-      el.gate.classList.add("show");
-      document.body.style.overflow = "hidden";
-      setGateMessage("", "");
-      setTimeout(() => el.loginUser.focus(), 60);
-    }
-
-    function closeGate(){
-      el.gate.classList.remove("show");
-      document.body.style.overflow = "";
-      sessionStorage.setItem("acc_gate_seen", "1");
-    }
-
-    function setGateMessage(text, type = ""){
-      el.gateMessage.textContent = text;
-      el.gateMessage.className = "message" + (type ? " " + type : "");
-    }
-
-    function toggleMenu(force){
-      const next = typeof force === "boolean" ? force : !document.body.classList.contains("menu-open");
-      document.body.classList.toggle("menu-open", next);
-      el.menuBtn.setAttribute("aria-expanded", String(next));
-      el.menuOverlay.setAttribute("aria-hidden", String(!next));
-      el.menuIcon.textContent = next ? "✕" : "☰";
-    }
+    const $ = (id) => document.getElementById(id);
 
     function escapeHtml(value){
       return String(value ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#39;");
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#39;");
     }
 
-    function isAllowed(page){
-      const rule = ACCESS_RULES[page];
-      return rule ? rule(state.user) : true;
+    async function api(path, options = {}){
+      const headers = Object.assign(
+        { "Content-Type": "application/json" },
+        options.headers || {}
+      );
+      if (state.token) headers["Authorization"] = `Bearer ${state.token}`;
+      const res = await fetch(API_BASE + path, { ...options, headers });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || "Request failed");
+      return data;
     }
 
-    function pageExists(page){
-      return !!SITE_CONFIG.pages[page] || !!SITE_CONFIG.leadership[page] || ACCESS_RULES[page];
-    }
+    function openMenu(){ $("menuOverlay").classList.add("open"); }
+    function closeMenu(){ $("menuOverlay").classList.remove("open"); }
 
-    function renderSidebar(){
-      const facts = state.user ? SITE_CONFIG.sidebarFactsPrivate(state.user) : SITE_CONFIG.sidebarFactsPublic;
-      el.accessFacts.innerHTML = facts.map(([title, value]) => `
-        <div class="list-item">
-          <div><strong>${escapeHtml(title)}</strong><span>${escapeHtml(value)}</span></div>
+    function setAuthUi(){
+      const loggedIn = !!state.me;
+      $("signinShortcutText").textContent = loggedIn ? "Account" : "Sign In";
+
+      $("sideContent").innerHTML = loggedIn ? `
+        <div class="stack">
+          <div class="alert">
+            <div style="font-weight:900; margin-bottom:6px">${escapeHtml(state.me.rank || "Member")} ${escapeHtml(state.me.username)}</div>
+            <div class="small-note">Unit: ${escapeHtml(state.me.unit)}${state.me.position ? ` · ${escapeHtml(state.me.position)}` : ""}${state.me.admin ? " · Administrator" : ""}</div>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="renderPage('internal-panel')">ACC Internal Panel</button>
+            ${state.me.admin ? `<button class="btn" onclick="renderPage('high-command')">High Command</button>` : ""}
+            <button class="btn" onclick="logout()">Sign Out</button>
+          </div>
+          <div class="feature-block">
+            <h3>Access Rules</h3>
+            <p>
+              CID may submit Ban Requests. CID and JAGC may submit Inquiry Orders.
+              High Command tools are limited to administrator accounts.
+            </p>
+          </div>
         </div>
-      `).join("");
+      ` : `
+        <div class="stack">
+          <div class="feature-block">
+            <h3>Public Access</h3>
+            <p>Visitors can view public command pages. Internal tools and command queues are protected behind sign-in.</p>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary btn-block" onclick="renderPage('login')">Sign In</button>
+          </div>
+          <div class="small-note">
+            This roleplay portal intentionally presents itself as a fictional command site and should not be used to imitate any real government service.
+          </div>
+        </div>
+      `;
+    }
 
-      el.routingLinks.innerHTML = SITE_CONFIG.routingLinks(state.user).map(item => `
-        <button class="list-item" onclick="navigate('${item.page}')">
-          <div><strong>${escapeHtml(item.label)}</strong><span>${escapeHtml(item.desc)}</span></div>
-          <div class="gold-link">→</div>
-        </button>
-      `).join("");
+    function renderPublicPage(key){
+      const map = {
+        "who-we-are": SITE_DATA.whoWeAre,
+        "organization": SITE_DATA.organization
+      };
+      const page = map[key] || SITE_DATA.whoWeAre;
+      $("pageTitle").textContent = page.title;
+      $("pageKicker").textContent = page.kicker;
+      $("mainContent").innerHTML = page.html;
+    }
 
-      if(state.user){
-        el.sidebarAccessText.textContent = `Signed in as ${state.user.rank} ${state.user.username}. Internal page visibility is currently filtered by unit and role.`;
-      } else {
-        el.sidebarAccessText.textContent = "You are currently viewing the public portion of the site. Internal forms and protected pages remain hidden until you authenticate.";
+    function renderLeaderPage(key){
+      const page = SITE_DATA.leaders[key];
+      if (!page) return renderPublicPage("who-we-are");
+      $("pageTitle").textContent = page.title;
+      $("pageKicker").textContent = page.kicker;
+
+      if (key === "battalion-leadership") {
+        $("mainContent").innerHTML = `
+          <div class="stack">
+            ${page.leaders.map(item => `
+              <article class="leader-card">
+                <img class="leader-photo" src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}">
+                <div>
+                  <div class="leader-role">${escapeHtml(item.role)}</div>
+                  <h3 class="leader-name">${escapeHtml(item.name)}</h3>
+                  <p class="leader-bio">${escapeHtml(item.bio)}</p>
+                </div>
+              </article>
+            `).join("")}
+          </div>
+        `;
+        return;
       }
-    }
 
-    function renderHero(config){
-      el.heroCard.style.backgroundImage = `url("${SITE_CONFIG.heroImage}")`;
-      el.heroEyebrow.textContent = config.tag || "Army Corrections Command";
-      el.heroTitle.textContent = config.heroTitle || config.title;
-      el.heroLead.textContent = config.heroLead || config.summary;
-    }
-
-    function renderPublicPage(page){
-      const config = SITE_CONFIG.pages[page];
-      el.contentTag.textContent = config.tag;
-      el.contentTitle.textContent = config.title;
-      el.contentSummary.textContent = config.summary;
-      el.contentBody.innerHTML = config.body;
-      renderHero(config);
-    }
-
-    function renderLeadershipPage(page){
-      const config = SITE_CONFIG.leadership[page];
-      el.contentTag.textContent = config.tag;
-      el.contentTitle.textContent = config.title;
-      el.contentSummary.textContent = config.summary;
-      const cards = config.people.map(person => `
-        <article class="bio-card">
-          <div class="bio-photo" style="background-image:url('${escapeHtml(person.image)}')"></div>
-          <div class="bio-info">
-            <div class="bio-name">${escapeHtml(person.name)}</div>
-            <div class="bio-role">${escapeHtml(person.role)}</div>
-            <div class="bio-text">${escapeHtml(person.bio)}</div>
+      $("mainContent").innerHTML = `
+        <article class="leader-card">
+          <img class="leader-photo" src="${escapeHtml(page.image)}" alt="${escapeHtml(page.name)}">
+          <div>
+            <div class="leader-role">${escapeHtml(page.role)}</div>
+            <h3 class="leader-name">${escapeHtml(page.name)}</h3>
+            <p class="leader-bio">${escapeHtml(page.bio)}</p>
           </div>
         </article>
-      `).join("");
-      el.contentBody.innerHTML = `<div class="bio-grid">${cards}</div>`;
-      renderHero(config);
+      `;
     }
 
-    function renderInternalHome(){
-      el.contentTag.textContent = "ACC Internal Panel";
-      el.contentTitle.textContent = "Internal Overview";
-      el.contentSummary.textContent = "Restricted tools made visible after successful authentication.";
+    function renderLogin(){
+      $("pageTitle").textContent = "Secure Access";
+      $("pageKicker").textContent = "Internal sign-in";
+      $("mainContent").innerHTML = `
+        <div class="login-panel">
+          <h3 class="login-title">Sign in</h3>
+          <p class="login-copy">
+            Authorized roleplay personnel may sign in to access protected command pages,
+            request forms, and High Command review functions.
+          </p>
 
-      const user = state.user;
-      const cards = [];
-
-      if(user && (user.unit === "CID" || user.admin)){
-        cards.push(`
-          <article class="info-card">
-            <h3>Ban Request Form</h3>
-            <p>Restricted to CID personnel and administrators. Submitted reports are routed through a protected Discord webhook and queued for High Command review.</p>
-            <div class="form-actions"><button class="btn btn-primary btn-small" onclick="navigate('ban-request')">Open form</button></div>
-          </article>
-        `);
-      }
-
-      if(user && (user.unit === "CID" || user.unit === "JAGC" || user.admin)){
-        cards.push(`
-          <article class="info-card">
-            <h3>Inquiry Order Request</h3>
-            <p>Available to CID and JAGC personnel. Requests are routed to the dedicated inquiry-order webhook and can later be approved or denied by administrators.</p>
-            <div class="form-actions"><button class="btn btn-primary btn-small" onclick="navigate('io-request')">Open form</button></div>
-          </article>
-        `);
-      }
-
-      if(user && user.admin){
-        cards.push(`
-          <article class="info-card">
-            <h3>High Command Panel</h3>
-            <p>Administrator-only queue with approval and denial actions for both form types.</p>
-            <div class="form-actions"><button class="btn btn-primary btn-small" onclick="navigate('high-command')">Open queue</button></div>
-          </article>
-        `);
-      }
-
-      el.contentBody.innerHTML = `<div class="page-grid">${cards.join("")}</div>`;
-      renderHero({
-        tag: "ACC Internal Panel",
-        heroTitle: "Restricted command workflows",
-        heroLead: "Your visible tools depend on your assigned unit, role, and administrative status."
-      });
+          <div class="stack form-shell">
+            <div class="field">
+              <label for="loginUsername">Username</label>
+              <input class="input" id="loginUsername" autocomplete="username" placeholder="Enter your username">
+            </div>
+            <div class="field">
+              <label for="loginPassword">Password</label>
+              <input class="input" id="loginPassword" type="password" autocomplete="current-password" placeholder="Enter your password">
+            </div>
+            <div class="btn-row">
+              <button class="btn btn-primary" onclick="login()">Sign In</button>
+              <button class="btn" onclick="renderPage('who-we-are')">Return</button>
+            </div>
+            <div class="small-note" id="loginMessage">Use an account configured in the worker secret JSON.</div>
+          </div>
+        </div>
+      `;
     }
 
-    function defaultValue(field, fallback = ""){
-      if(state.user && field === "userLine"){
-        return `${state.user.rank} ${state.user.username}`.trim();
-      }
-      if(state.user && field === "unit"){
-        return state.user.unit;
-      }
-      if(state.user && field === "position"){
-        return state.user.position || fallback;
-      }
-      return fallback;
+    function renderInternalPanel(){
+      if (!state.me) return renderPage("login");
+      $("pageTitle").textContent = "ACC Internal Panel";
+      $("pageKicker").textContent = "Restricted command tools";
+
+      $("mainContent").innerHTML = `
+        <div class="stack">
+          <div class="feature-block">
+            <h3>Operational Forms</h3>
+            <p>Select the appropriate protected workflow below. Availability is controlled by unit assignment and administrative role.</p>
+          </div>
+
+          <div class="grid-2">
+            ${state.me.unit === "CID" || state.me.admin ? `
+              <div class="feature-block">
+                <h3>Ban Request Form</h3>
+                <p>Protected request workflow for CID personnel. Requests enter the High Command queue and are assigned a 4-digit request ID.</p>
+                <div class="btn-row" style="margin-top:14px">
+                  <button class="btn btn-primary" onclick="renderBanForm()">Open Form</button>
+                </div>
+              </div>
+            ` : `
+              <div class="feature-block">
+                <h3>Ban Request Form</h3>
+                <p>This form is restricted to CID personnel only.</p>
+              </div>
+            `}
+            <div class="feature-block">
+              <h3>Inquiry Order Request</h3>
+              <p>Available to JAGC, CID, and administrators for protected inquiry workflow submission.</p>
+              <div class="btn-row" style="margin-top:14px">
+                <button class="btn btn-primary" onclick="renderIOForm()">Open Form</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
     }
 
     function renderBanForm(){
-      el.contentTag.textContent = "ACC Internal Panel";
-      el.contentTitle.textContent = "Ban Request Form";
-      el.contentSummary.textContent = "CID-only request workflow. Evidence links must use YouTube, Medal, Imgur, or Gyazo.";
-      el.contentBody.innerHTML = `
-        <div class="banner">Submitted requests are private and sent by the worker to your Discord webhook. Nothing in the webhook URL is exposed in the frontend.</div>
-        <form id="banForm">
-          <div class="form-grid">
-            <div>
+      if (!state.me) return renderPage("login");
+      if (!(state.me.unit === "CID" || state.me.admin)) {
+        alert("Ban Request access is limited to CID.");
+        return renderInternalPanel();
+      }
+      $("pageTitle").textContent = "Ban Request Form";
+      $("pageKicker").textContent = "CID restricted workflow";
+      $("mainContent").innerHTML = `
+        <div class="form-shell stack">
+          <div class="feature-block">
+            <h3>Submission Guidance</h3>
+            <p>Evidence links are limited to YouTube, Medal, Imgur, or Gyazo URLs. All requests are logged and routed to the protected command queue.</p>
+          </div>
+
+          <div class="form-grid-3">
+            <div class="field">
               <label>Your Username and Paygrade</label>
-              <input class="input" name="agentDisplay" value="${escapeHtml(defaultValue("userLine"))}" placeholder="Major General VendettaPyrex" />
+              <input class="input" id="ban_agent_user" placeholder="Major General VendettaPyrex">
             </div>
-            <div>
+            <div class="field">
               <label>Your Unit</label>
-              <input class="input" name="agentUnit" value="${escapeHtml(defaultValue("unit","Criminal Investigation Division"))}" placeholder="Criminal Investigation Division" />
+              <input class="input" id="ban_agent_unit" placeholder="Criminal Investigation Division">
             </div>
-            <div class="full">
+            <div class="field">
               <label>Your Position</label>
-              <input class="input" name="agentPosition" value="${escapeHtml(defaultValue("position"))}" placeholder="Office of Special Investigations" />
+              <input class="input" id="ban_agent_position" placeholder="Office of Special Investigations">
             </div>
-            <div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="form-grid">
+            <div class="field">
               <label>Subject's Username and Paygrade</label>
-              <input class="input" name="subjectDisplay" placeholder="General CrusherRTL" />
+              <input class="input" id="ban_subject_user" placeholder="General CrusherRTL">
             </div>
-            <div>
+            <div class="field">
               <label>Reason</label>
-              <input class="input" name="reason" placeholder="Hacking, bypassing, etc." />
-            </div>
-            <div class="full">
-              <label>Evidence Links</label>
-              <textarea class="textarea" name="evidence" placeholder="Paste YouTube, Medal, Imgur, or Gyazo links. One or more links may be separated by spaces or commas."></textarea>
+              <input class="input" id="ban_reason" placeholder="Hacking, bypassing, or related grounds">
             </div>
           </div>
-          <div class="form-actions">
-            <button class="btn btn-primary" type="submit">Submit Ban Request</button>
-            <button class="btn" type="button" onclick="navigate('internal-home')">Back</button>
+
+          <div class="field">
+            <label>Evidence Links</label>
+            <textarea class="textarea" id="ban_evidence" placeholder="Paste one or more evidence links"></textarea>
           </div>
-          <div class="form-note">Webhook message format is matched from your screenshots and the generated request receives a 4-digit ID.</div>
-          <div class="message" id="banMessage"></div>
-        </form>
+
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="submitBan()">Submit Request</button>
+            <button class="btn" onclick="renderInternalPanel()">Back</button>
+          </div>
+        </div>
       `;
-      renderHero({
-        tag: "ACC Internal Panel",
-        heroTitle: "Ban request submission",
-        heroLead: "Restricted to CID accounts and administrators. Submitted reports are queued for High Command review."
-      });
-      document.getElementById("banForm").addEventListener("submit", submitBanForm);
     }
 
     function renderIOForm(){
-      el.contentTag.textContent = "ACC Internal Panel";
-      el.contentTitle.textContent = "Inquiry Order Request";
-      el.contentSummary.textContent = "Available to CID and JAGC accounts. Evidence links may be omitted by entering N/A.";
-      el.contentBody.innerHTML = `
-        <div class="banner">Inquiry-order requests are sent privately through the worker to the dedicated webhook and queued for administrator action.</div>
-        <form id="ioForm">
-          <div class="form-grid">
-            <div>
-              <label>Your Username and Paygrade</label>
-              <input class="input" name="agentDisplay" value="${escapeHtml(defaultValue("userLine"))}" placeholder="Major General VendettaPyrex" />
-            </div>
-            <div>
-              <label>Your Unit</label>
-              <input class="input" name="agentUnit" value="${escapeHtml(defaultValue("unit"))}" placeholder="Criminal Investigation Division | Judge Advocate General Corps" />
-            </div>
-            <div class="full">
-              <label>Your Position</label>
-              <input class="input" name="agentPosition" value="${escapeHtml(defaultValue("position"))}" placeholder="Office of Special Investigations" />
-            </div>
-            <div>
-              <label>Subject's Username and Paygrade</label>
-              <input class="input" name="subjectDisplay" placeholder="General CrusherRTL" />
-            </div>
-            <div>
-              <label>Reason</label>
-              <input class="input" name="reason" placeholder="Needed for investigation, uncooperativeness with CID." />
-            </div>
-            <div>
-              <label>Evidence Links</label>
-              <input class="input" name="evidence" placeholder="YouTube / Medal / Imgur / Gyazo or N/A" />
-            </div>
-            <div>
-              <label>Link to IO Document</label>
-              <input class="input" name="documentLink" placeholder="Google Docs link" />
-            </div>
+      if (!state.me) return renderPage("login");
+      if (!(["CID","JAGC","ACC"].includes(state.me.unit) || state.me.admin)) {
+        return renderInternalPanel();
+      }
+      $("pageTitle").textContent = "Inquiry Order Request";
+      $("pageKicker").textContent = "Protected workflow";
+      $("mainContent").innerHTML = `
+        <div class="form-shell stack">
+          <div class="feature-block">
+            <h3>Submission Guidance</h3>
+            <p>Evidence may be marked N/A when not required. Inquiry Orders are routed to High Command for approval or denial.</p>
           </div>
-          <div class="form-actions">
-            <button class="btn btn-primary" type="submit">Submit Inquiry Order</button>
-            <button class="btn" type="button" onclick="navigate('internal-home')">Back</button>
-          </div>
-          <div class="form-note">Use N/A for evidence if no links are needed. The generated request receives a 4-digit ID for approval tracking.</div>
-          <div class="message" id="ioMessage"></div>
-        </form>
-      `;
-      renderHero({
-        tag: "ACC Internal Panel",
-        heroTitle: "Inquiry-order routing",
-        heroLead: "Available to CID and JAGC personnel. Requests are later approved or denied by authorized administrators."
-      });
-      document.getElementById("ioForm").addEventListener("submit", submitIOForm);
-    }
 
-    async function renderHighCommand(type = "ban"){
-      el.contentTag.textContent = "High Command Panel";
-      el.contentTitle.textContent = "Request queue";
-      el.contentSummary.textContent = "Administrator-only review queue for Ban Requests and Inquiry Orders.";
-      el.contentBody.innerHTML = `
-        <div class="split-header">
-          <div class="meta">Use the toggle below to switch between pending Ban Requests and Inquiry Order requests. Decisions are sent back through the matching webhook.</div>
-          <div class="form-actions" style="margin:0">
-            <button class="btn ${type === "ban" ? "btn-primary" : ""} btn-small" onclick="renderHighCommand('ban')">Ban Request Completion</button>
-            <button class="btn ${type === "io" ? "btn-primary" : ""} btn-small" onclick="renderHighCommand('io')">IO Approval</button>
+          <div class="form-grid-3">
+            <div class="field">
+              <label>Your Username and Paygrade</label>
+              <input class="input" id="io_agent_user" placeholder="Major General VendettaPyrex">
+            </div>
+            <div class="field">
+              <label>Your Unit</label>
+              <input class="input" id="io_agent_unit" placeholder="Criminal Investigation Division">
+            </div>
+            <div class="field">
+              <label>Your Position</label>
+              <input class="input" id="io_agent_position" placeholder="Office of Special Investigations">
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="form-grid">
+            <div class="field">
+              <label>Subject's Username and Paygrade</label>
+              <input class="input" id="io_subject_user" placeholder="General CrusherRTL">
+            </div>
+            <div class="field">
+              <label>Reason</label>
+              <input class="input" id="io_reason" placeholder="Needed for investigation, uncooperativeness with CID">
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Evidence Links</label>
+            <textarea class="textarea" id="io_evidence" placeholder="YouTube / Medal / Imgur / Gyazo only, or N/A"></textarea>
+          </div>
+
+          <div class="field">
+            <label>Link to IO Document</label>
+            <input class="input" id="io_document" placeholder="Paste the Inquiry Order document link">
+          </div>
+
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="submitIO()">Submit Request</button>
+            <button class="btn" onclick="renderInternalPanel()">Back</button>
           </div>
         </div>
-        <div id="queueWrap" class="empty-state">Loading queue…</div>
       `;
-      renderHero({
-        tag: "High Command Panel",
-        heroTitle: "Approval and denial workflow",
-        heroLead: "Pending requests are stored in KV and can be reviewed, approved, or denied by administrator accounts."
-      });
-
-      try{
-        const data = await api(`/admin/queue?type=${encodeURIComponent(type)}`);
-        const wrap = document.getElementById("queueWrap");
-        if(!data.items || !data.items.length){
-          wrap.className = "empty-state";
-          wrap.textContent = "No pending requests found in this queue.";
-          return;
-        }
-        wrap.className = "";
-        wrap.innerHTML = data.items.map(item => renderQueueItem(type, item)).join("");
-      }catch(error){
-        const wrap = document.getElementById("queueWrap");
-        wrap.className = "empty-state";
-        wrap.textContent = error.message || "Unable to load queue.";
-      }
     }
 
-    function renderQueueItem(type, item){
-      const submitted = item.createdAt ? new Date(item.createdAt).toLocaleString() : "Unknown time";
-      const evidence = item.form?.evidence || "N/A";
-      const doc = item.form?.documentLink ? `<div><strong>Link to IO Document:</strong> <a class="gold-link" href="${escapeHtml(item.form.documentLink)}" target="_blank" rel="noopener noreferrer">${escapeHtml(item.form.documentLink)}</a></div>` : "";
-      return `
-        <article class="queue-item">
-          <div class="id">${type === "ban" ? "Ban Request" : "Inquiry Order"} · ID ${escapeHtml(item.id)}</div>
-          <div class="queue-meta">
-            <span>Submitted: ${escapeHtml(submitted)}</span>
-            <span>By: ${escapeHtml(item.submittedBy || "Unknown")}</span>
-            <span>Unit: ${escapeHtml(item.unit || "Unknown")}</span>
+    async function renderHighCommand(){
+      if (!state.me || !state.me.admin) return renderPage("login");
+      $("pageTitle").textContent = "High Command Panel";
+      $("pageKicker").textContent = "Administrative review queue";
+      $("mainContent").innerHTML = `
+        <div class="stack">
+          <div class="btn-row">
+            <button class="btn ${state.queueType === "ban" ? "btn-primary" : ""}" onclick="loadQueue('ban')">Ban Request Completion</button>
+            <button class="btn ${state.queueType === "io" ? "btn-primary" : ""}" onclick="loadQueue('io')">IO Approval</button>
           </div>
-          <div class="queue-content">
-            <div><strong>Submitted by:</strong> ${escapeHtml(item.form.agentDisplay || "")}</div>
-            <div><strong>Unit:</strong> ${escapeHtml(item.form.agentUnit || "")}</div>
-            <div><strong>Position:</strong> ${escapeHtml(item.form.agentPosition || "")}</div>
-            <div><strong>Subject:</strong> ${escapeHtml(item.form.subjectDisplay || "")}</div>
-            <div><strong>Reason:</strong> ${escapeHtml(item.form.reason || "")}</div>
-            <div><strong>Evidence Links:</strong> ${escapeHtml(evidence)}</div>
-            ${doc}
-          </div>
-          <div class="form-actions">
-            <button class="btn btn-primary btn-small" onclick="decideRequest('${type}','${escapeHtml(item.id)}','approved')">Approve</button>
-            <button class="btn btn-danger btn-small" onclick="decideRequest('${type}','${escapeHtml(item.id)}','denied')">Deny</button>
-          </div>
-        </article>
+          <div id="queueWrap" class="stack"></div>
+        </div>
       `;
+      await loadQueue(state.queueType);
+    }
+
+    async function loadQueue(type){
+      state.queueType = type;
+      const wrap = $("queueWrap");
+      if (!wrap) return;
+      wrap.innerHTML = `<div class="alert">Loading ${type === "ban" ? "Ban Requests" : "Inquiry Orders"}...</div>`;
+      try{
+        const data = await api(`/requests?type=${encodeURIComponent(type)}`);
+        const items = data.items || [];
+        if (!items.length){
+          wrap.innerHTML = `<div class="feature-block"><h3>No pending requests</h3><p>There are currently no pending ${type === "ban" ? "Ban Requests" : "Inquiry Orders"}.</p></div>`;
+          return;
+        }
+        wrap.innerHTML = items.map(item => `
+          <article class="queue-item">
+            <div class="queue-top">
+              <div>
+                <div class="queue-id">Request ID ${escapeHtml(item.id)}</div>
+                <div class="queue-title">${type === "ban" ? "Ban Request" : "Inquiry Order Request"}</div>
+              </div>
+              <span class="status">Pending Review</span>
+            </div>
+
+            <div class="queue-meta">
+              <strong>Submitted by:</strong> ${escapeHtml(item.agent.user)}<br>
+              <strong>Unit:</strong> ${escapeHtml(item.agent.unit)}<br>
+              <strong>Position:</strong> ${escapeHtml(item.agent.position || "N/A")}
+            </div>
+
+            <div class="queue-meta">
+              <strong>Subject:</strong> ${escapeHtml(item.subject.user)}<br>
+              <strong>Reason:</strong> ${escapeHtml(item.subject.reason)}<br>
+              <strong>Evidence:</strong> ${escapeHtml(item.subject.evidence)}
+              ${item.subject.document ? `<br><strong>Document:</strong> ${escapeHtml(item.subject.document)}` : ""}
+            </div>
+
+            <div class="btn-row">
+              <button class="btn btn-primary" onclick="decideRequest('${type}','${escapeHtml(item.id)}','approve')">Approve</button>
+              <button class="btn btn-danger" onclick="decideRequest('${type}','${escapeHtml(item.id)}','deny')">Deny</button>
+            </div>
+          </article>
+        `).join("");
+      }catch(err){
+        wrap.innerHTML = `<div class="alert">${escapeHtml(err.message)}</div>`;
+      }
     }
 
     async function decideRequest(type, id, decision){
       try{
-        await api("/admin/decision", {
+        await api("/requests/decide", {
           method: "POST",
           body: JSON.stringify({ type, id, decision })
         });
-        await renderHighCommand(type);
-      }catch(error){
-        alert(error.message || "Unable to complete decision.");
+        await loadQueue(type);
+      }catch(err){
+        alert(err.message);
       }
     }
 
-    async function submitBanForm(event){
-      event.preventDefault();
-      const message = document.getElementById("banMessage");
-      message.className = "message";
-      message.textContent = "Submitting ban request…";
-
-      const form = new FormData(event.target);
-      const payload = Object.fromEntries(form.entries());
-
+    async function login(){
+      const username = $("loginUsername").value.trim();
+      const password = $("loginPassword").value;
+      const msg = $("loginMessage");
+      msg.textContent = "Signing in...";
       try{
-        const data = await api("/forms/ban", {
-          method: "POST",
-          body: JSON.stringify(payload)
-        });
-        message.className = "message success";
-        message.textContent = `Ban Request submitted successfully. Request ID: ${data.id}`;
-        event.target.reset();
-      }catch(error){
-        message.className = "message error";
-        message.textContent = error.message || "Unable to submit ban request.";
-      }
-    }
-
-    async function submitIOForm(event){
-      event.preventDefault();
-      const message = document.getElementById("ioMessage");
-      message.className = "message";
-      message.textContent = "Submitting inquiry order request…";
-
-      const form = new FormData(event.target);
-      const payload = Object.fromEntries(form.entries());
-
-      try{
-        const data = await api("/forms/io", {
-          method: "POST",
-          body: JSON.stringify(payload)
-        });
-        message.className = "message success";
-        message.textContent = `Inquiry Order request submitted successfully. Request ID: ${data.id}`;
-        event.target.reset();
-      }catch(error){
-        message.className = "message error";
-        message.textContent = error.message || "Unable to submit inquiry order request.";
-      }
-    }
-
-    function syncAccessUI(){
-      const user = state.user;
-      el.internalMenuCol.classList.toggle("hidden", !user);
-      el.highCommandRail.classList.toggle("hidden", !(user && user.admin));
-      el.loginToggle.classList.toggle("hidden", !!user);
-      el.logoutBtn.classList.toggle("hidden", !user);
-      document.getElementById("miniSignInCard").classList.toggle("hidden", !!user);
-
-      if(user){
-        el.statusChip.innerHTML = `<strong>${escapeHtml(user.rank)} ${escapeHtml(user.username)}</strong> <span>${escapeHtml(user.unit)}${user.admin ? " · High Command" : ""}</span>`;
-      } else {
-        el.statusChip.innerHTML = `<strong>Public Access</strong> <span>Restricted tools require sign in</span>`;
-      }
-
-      renderSidebar();
-    }
-
-    function navigate(page){
-      toggleMenu(false);
-
-      if(!pageExists(page)){
-        page = "public-home";
-      }
-
-      if(!isAllowed(page)){
-        openGate();
-        return;
-      }
-
-      state.currentPage = page;
-
-      if(SITE_CONFIG.pages[page]){
-        renderPublicPage(page);
-      } else if(SITE_CONFIG.leadership[page]){
-        renderLeadershipPage(page);
-      } else if(page === "internal-home"){
-        renderInternalHome();
-      } else if(page === "ban-request"){
-        renderBanForm();
-      } else if(page === "io-request"){
-        renderIOForm();
-      } else if(page === "high-command"){
-        renderHighCommand();
-      } else {
-        renderPublicPage("public-home");
-      }
-
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-
-    async function performLogin(){
-      setGateMessage("Authenticating…");
-      try{
-        const username = el.loginUser.value.trim();
-        const password = el.loginPass.value;
-        if(!username || !password){
-          throw new Error("Enter both username and password.");
-        }
-
         const data = await api("/auth/login", {
           method: "POST",
           body: JSON.stringify({ username, password })
         });
-
         state.token = data.token;
+        state.me = data.user;
         localStorage.setItem("acc_token", state.token);
-        state.user = data.user;
-        syncAccessUI();
-        setGateMessage("Sign-in complete.", "success");
-        closeGate();
-        navigate("internal-home");
-      }catch(error){
-        setGateMessage(error.message || "Authentication failed.", "error");
+        setAuthUi();
+        renderPage("internal-panel");
+      }catch(err){
+        msg.textContent = err.message || "Sign-in failed.";
       }
     }
 
-    async function bootstrapSession(){
-      if(!state.token){
-        syncAccessUI();
-        navigate("public-home");
-        if(state.firstVisitGateShown){
-          openGate();
+    function logout(){
+      state.token = "";
+      state.me = null;
+      localStorage.removeItem("acc_token");
+      setAuthUi();
+      renderPage("who-we-are");
+    }
+
+    function validateEvidenceLinks(raw, allowNA = false){
+      const value = String(raw || "").trim();
+      if (!value) return false;
+      if (allowNA && value.toUpperCase() === "N/A") return true;
+      const allowed = ["youtube.com","youtu.be","medal.tv","imgur.com","gyazo.com"];
+      const links = value.split(/\s+/).filter(Boolean);
+      if (!links.length) return false;
+      return links.every(link => {
+        try{
+          const url = new URL(link);
+          return allowed.some(domain => url.hostname === domain || url.hostname.endsWith("." + domain));
+        }catch{
+          return false;
         }
-        return;
+      });
+    }
+
+    async function submitBan(){
+      const payload = {
+        agent: {
+          user: $("ban_agent_user").value.trim(),
+          unit: $("ban_agent_unit").value.trim(),
+          position: $("ban_agent_position").value.trim()
+        },
+        subject: {
+          user: $("ban_subject_user").value.trim(),
+          reason: $("ban_reason").value.trim(),
+          evidence: $("ban_evidence").value.trim()
+        }
+      };
+
+      if (!payload.agent.user || !payload.agent.unit || !payload.agent.position || !payload.subject.user || !payload.subject.reason) {
+        return alert("Please complete all required fields.");
+      }
+      if (!validateEvidenceLinks(payload.subject.evidence)) {
+        return alert("Evidence links must be YouTube, Medal, Imgur, or Gyazo URLs.");
       }
 
       try{
-        const data = await api("/auth/me");
-        state.user = data.user;
-      }catch{
-        state.token = "";
-        state.user = null;
-        localStorage.removeItem("acc_token");
-      }
-
-      syncAccessUI();
-      navigate(state.user ? "internal-home" : "public-home");
-      if(!state.user && state.firstVisitGateShown){
-        openGate();
+        const data = await api("/requests/ban", {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+        alert(`Ban Request submitted. Assigned ID: ${data.id}`);
+        renderInternalPanel();
+      }catch(err){
+        alert(err.message);
       }
     }
 
-    el.menuBtn.addEventListener("click", () => toggleMenu());
-    el.searchBtn.addEventListener("click", () => openGate());
-    el.loginToggle.addEventListener("click", () => openGate());
-    el.heroSignInBtn.addEventListener("click", () => openGate());
-    el.miniSignInBtn.addEventListener("click", () => openGate());
-    el.gateRail.addEventListener("click", () => openGate());
-    el.logoutBtn.addEventListener("click", () => {
-      state.token = "";
-      state.user = null;
-      localStorage.removeItem("acc_token");
-      syncAccessUI();
-      navigate("public-home");
-    });
-    el.gateLoginBtn.addEventListener("click", performLogin);
-    el.gateContinueBtn.addEventListener("click", closeGate);
+    async function submitIO(){
+      const payload = {
+        agent: {
+          user: $("io_agent_user").value.trim(),
+          unit: $("io_agent_unit").value.trim(),
+          position: $("io_agent_position").value.trim()
+        },
+        subject: {
+          user: $("io_subject_user").value.trim(),
+          reason: $("io_reason").value.trim(),
+          evidence: $("io_evidence").value.trim(),
+          document: $("io_document").value.trim()
+        }
+      };
 
-    el.loginPass.addEventListener("keydown", event => {
-      if(event.key === "Enter") performLogin();
-    });
+      if (!payload.agent.user || !payload.agent.unit || !payload.agent.position || !payload.subject.user || !payload.subject.reason || !payload.subject.document) {
+        return alert("Please complete all required fields.");
+      }
+      if (!validateEvidenceLinks(payload.subject.evidence, true)) {
+        return alert("Evidence must be valid YouTube, Medal, Imgur, or Gyazo URLs, or N/A.");
+      }
 
-    document.querySelectorAll(".menu-link").forEach(button => {
-      button.addEventListener("click", () => navigate(button.dataset.page));
-    });
+      try{
+        const data = await api("/requests/io", {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+        alert(`Inquiry Order submitted. Assigned ID: ${data.id}`);
+        renderInternalPanel();
+      }catch(err){
+        alert(err.message);
+      }
+    }
 
-    document.querySelectorAll("[data-page-jump]").forEach(button => {
-      button.addEventListener("click", () => navigate(button.dataset.pageJump));
-    });
+    function renderPage(pageKey){
+      state.currentPage = pageKey;
+      closeMenu();
 
-    el.gate.addEventListener("click", event => {
-      if(event.target === el.gate) closeGate();
-    });
+      if (pageKey === "login") return renderLogin();
+      if (pageKey === "internal-panel") return renderInternalPanel();
+      if (pageKey === "high-command") return renderHighCommand();
 
-    document.addEventListener("keydown", event => {
-      if(event.key === "Escape"){
-        if(document.body.classList.contains("menu-open")) toggleMenu(false);
-        if(el.gate.classList.contains("show")) closeGate();
+      if (["provost-marshal-general","commanding-officer","command-sergeant-major","battalion-leadership"].includes(pageKey)) {
+        return renderLeaderPage(pageKey);
+      }
+
+      return renderPublicPage(pageKey);
+    }
+
+    async function bootstrapAuth(){
+      if (!state.token) return;
+      try{
+        const data = await api("/auth/me");
+        state.me = data.user;
+      }catch{
+        localStorage.removeItem("acc_token");
+        state.token = "";
+        state.me = null;
+      }
+    }
+
+    document.addEventListener("click", (event) => {
+      const navLink = event.target.closest("[data-page]");
+      if (navLink){
+        event.preventDefault();
+        renderPage(navLink.getAttribute("data-page"));
       }
     });
 
-    bootstrapSession();
+    $("menuOpenBtn").addEventListener("click", openMenu);
+    $("menuCloseBtn").addEventListener("click", closeMenu);
+    $("menuOverlay").addEventListener("click", (event) => {
+      if (event.target === $("menuOverlay")) closeMenu();
+    });
+    $("signinShortcutBtn").addEventListener("click", () => {
+      renderPage(state.me ? "internal-panel" : "login");
+    });
+
+    (async function init(){
+      await bootstrapAuth();
+      setAuthUi();
+      renderPage("who-we-are");
+    })();
   </script>
 </body>
 </html>
