@@ -1,780 +1,214 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Army Corrections Command Portal</title>
+<meta charset="UTF-8">
+<title>Army Corrections Command</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
-:root{
-  --bg0:#040b06; --bg1:#07140b;
-  --line:rgba(249,199,22,.35); --line2:rgba(249,199,22,.18);
-  --gold:#f9c716; --text:#eaf6ee; --muted:#bcd3c2;
-  --greenGlow: rgba(59,123,52,.35);
-}
-*{ box-sizing:border-box; }
 body{
-  margin:0; color:var(--text); font:14px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Arial;
-  background:
-    radial-gradient(900px 520px at 18% 10%, rgba(59,123,52,.22), transparent 60%),
-    radial-gradient(900px 520px at 82% 0%, rgba(249,199,22,.10), transparent 55%),
-    linear-gradient(180deg, var(--bg1), var(--bg0));
+  margin:0;
+  font-family:Arial;
+  background:#0b1a0f;
+  color:white;
 }
-a{ color:var(--gold); text-decoration:none; }
-.top{
-  position:sticky; top:0; z-index:50;
-  background: linear-gradient(180deg, rgba(10,28,16,.92), rgba(7,20,11,.92));
-  border-bottom:1px solid var(--line2);
+.topbar{
+  background:#111;
+  padding:15px;
+  display:flex;
+  justify-content:space-between;
+  border-bottom:2px solid gold;
 }
-.wrap{ max-width:1160px; margin:0 auto; padding:14px 16px; }
-.brand{ display:flex; gap:12px; align-items:center; }
-.brand img{ width:44px; height:44px; object-fit:contain; filter: drop-shadow(0 0 10px rgba(59,123,52,.25)); }
-.brand .t1{ font-weight:800; letter-spacing:.3px; font-size:15px; }
-.brand .t2{ color:var(--muted); font-size:12px; margin-top:2px; }
-.nav{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
-.btn{
-  display:inline-flex; align-items:center; gap:8px; padding:9px 12px;
-  border-radius:14px; border:1px solid var(--line2);
-  background: rgba(249,199,22,.06);
-  color:var(--text); cursor:pointer; user-select:none;
-  box-shadow: 0 10px 30px rgba(0,0,0,.2);
+.logo{ color:gold; font-weight:bold; }
+.nav button{
+  margin-right:10px;
+  background:none;
+  border:1px solid gold;
+  color:white;
+  padding:6px 10px;
+  cursor:pointer;
 }
-.btn:hover{ background: rgba(249,199,22,.10); }
-.btn.primary{ border-color:var(--line); background: rgba(249,199,22,.12); color:var(--gold); }
-.btn:disabled{ opacity:.55; cursor:not-allowed; }
-.grid{ display:grid; grid-template-columns: 1.15fr .85fr; gap:14px; }
-@media (max-width: 980px){ .grid{ grid-template-columns:1fr; } }
 .card{
-  background: linear-gradient(180deg, rgba(7,21,12,.92), rgba(4,11,6,.92));
-  border:1px solid var(--line2);
-  border-radius:18px;
-  box-shadow: 0 18px 60px rgba(0,0,0,.45);
-  overflow:hidden;
+  margin:20px;
+  padding:20px;
+  border:1px solid gold;
+  background:#122417;
 }
-.card .hd{ padding:14px 14px 8px; border-bottom:1px solid var(--line2); display:flex; justify-content:space-between; align-items:center; gap:10px; }
-.card .hd .h{ font-weight:800; letter-spacing:.2px; }
-.card .bd{ padding:14px; }
-.kicker{ color:var(--muted); font-size:12px; }
-.hr{ height:1px; background:var(--line2); margin:12px 0; }
-.in{
-  width:100%; padding:10px 10px; border-radius:12px;
-  border:1px solid var(--line2); background: rgba(255,255,255,.04);
-  color:var(--text); outline:none;
+input{
+  display:block;
+  margin:10px 0;
+  padding:8px;
+  width:100%;
 }
-.in:focus{ box-shadow:0 0 0 3px var(--greenGlow); border-color: var(--line); }
-.lbl{ display:block; margin:10px 0 6px; color:var(--muted); }
-.row{ display:flex; gap:10px; flex-wrap:wrap; }
-.row > *{ flex:1; }
-.small{ font-size:12px; color:var(--muted); }
-.badge{
-  display:inline-flex; align-items:center; padding:4px 10px;
-  border-radius:999px; border:1px solid var(--line2);
-  background: rgba(249,199,22,.06); color:var(--muted);
+button.primary{
+  background:gold;
+  color:black;
+  border:none;
+  padding:10px;
 }
-.newsItem{ padding:12px; border:1px solid var(--line2); border-radius:16px; background: rgba(4,11,6,.55); box-shadow: inset 0 0 0 1px rgba(59,123,52,.08); }
-.newsItem + .newsItem{ margin-top:10px; }
-.newsMeta{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; color:var(--muted); font-size:12px; margin-top:6px; }
-.logLine{ padding:10px 12px; border-radius:14px; border:1px solid var(--line2); background: rgba(4,11,6,.55); }
-.logLine + .logLine{ margin-top:8px; }
-.hide{ display:none !important; }
-.rte{
-  min-height:180px; padding:10px; border-radius:14px;
-  border:1px solid var(--line2); background: rgba(255,255,255,.03);
-  outline:none;
-}
-.rte:focus{ box-shadow:0 0 0 3px var(--greenGlow); border-color: var(--line); }
-.footer{ padding:20px 16px; color:var(--muted); text-align:center; }
 </style>
 </head>
+
 <body>
-<div class="top">
-  <div class="wrap">
-    <div class="brand">
-      <img src="USACIDC_SSI.PNG" alt="ACC"/>
-      <div>
-        <div class="t1">Army Corrections Command</div>
-        <div class="t2">Motto: <span style="color:var(--gold);font-weight:700">Duty. Honor. Justice.</span></div>
-      </div>
-      <div style="margin-left:auto; display:flex; gap:8px; align-items:center;">
-        <span id="who" class="badge">Not logged in</span>
-        <button id="logoutBtn" class="btn hide">Logout</button>
-      </div>
-    </div>
 
-    <div class="nav">
-      <button class="btn" data-view="about">About</button>
-      <button class="btn" data-view="news">Home / News</button>
-      <button class="btn" data-view="contact">Contact</button>
-      <button class="btn" data-view="unit" id="unitBtn">Unit Tools</button>
-      <button class="btn hide" id="qaBgBtn">Background Checks</button>
-      <button class="btn hide" id="qaPersonnelBtn">Personnel</button>
-      <button class="btn hide" id="qaDocsBtn">Documents</button>
-      <button class="btn primary" data-view="login" id="loginNav">Login</button>
-      <button class="btn hide" data-view="admin" id="adminNav">Admin</button>
-      <button class="btn hide" data-view="logs" id="logsNav">Logs</button>
-    </div>
-  </div>
+<div class="topbar">
+  <div class="logo">U.S. ARMY CORRECTIONS COMMAND</div>
+  <div id="userBox">Not logged in</div>
 </div>
 
-<div class="wrap" style="padding-top:16px;">
-  <div class="grid">
-    <div class="card">
-      <div class="hd"><div>
-        <div class="h" id="viewTitle">About</div>
-        <div class="kicker" id="viewKicker">Information for unit members.</div>
-      </div></div>
-      <div class="bd" id="viewBody"></div>
-    </div>
-
-    <div class="card">
-      <div class="hd"><div class="h">Quick Actions</div></div>
-      <div class="bd" id="sideBody"></div>
-    </div>
-  </div>
+<div class="nav">
+  <button onclick="view('about')">About</button>
+  <button onclick="view('org')">Organization</button>
+  <button onclick="view('leadership')">Leadership</button>
+  <button onclick="view('login')" id="loginBtn">Login</button>
+  <button onclick="view('internal')" id="internalBtn" style="display:none">ACC Panel</button>
+  <button onclick="view('high')" id="adminBtn" style="display:none">High Command</button>
 </div>
 
-<div class="footer">© Army Corrections Command Roleplay Unit</div>
+<div id="content" class="card"></div>
 
 <script>
-const API_BASE_RAW = "https://the.chastiefola.workers.dev/";
-const API_BASE = API_BASE_RAW.replace(/\/+$/,"");
+const API="YOUR_WORKER_URL";
 
-let TOKEN = localStorage.getItem("acc_token") || "";
-let ME = null;
-let SESSION_KEY = localStorage.getItem("acc_session_key") || "";
+let token="";
+let me=null;
 
-const $ = (id)=>document.getElementById(id);
-const viewBody = $("viewBody");
-const viewTitle = $("viewTitle");
-const viewKicker = $("viewKicker");
-const sideBody = $("sideBody");
-const who = $("who");
+function setUser(){
+  document.getElementById("userBox").innerText =
+    me ? `${me.rank} ${me.username} (${me.unit})` : "Not logged in";
 
-function openUnitTab(tab){
-  if (!ME) return setView("login");
-  CURRENT_UNIT_TAB = tab;
-  setView("unit");
+  document.getElementById("loginBtn").style.display = me ? "none":"inline";
+  document.getElementById("internalBtn").style.display = me ? "inline":"none";
+  document.getElementById("adminBtn").style.display = (me && me.admin) ? "inline":"none";
 }
 
-function setWho(){
-  if (!ME) { who.textContent = "Not logged in"; return; }
-  who.textContent = `${ME.rank || "Member"} ${ME.username} • ${ME.unit}${ME.admin ? " • Admin" : ""}`;
-}
-function navSync(){
-  $("logoutBtn").classList.toggle("hide", !TOKEN);
-  $("loginNav").classList.toggle("hide", !!TOKEN);
-  $("unitBtn").classList.toggle("hide", !TOKEN);
-  $("adminNav").classList.toggle("hide", !(ME && ME.admin));
-  $("logsNav").classList.toggle("hide", !(ME && ME.admin));
-  const showQuick = !!ME;
-  $("qaBgBtn").classList.toggle("hide", !showQuick);
-  $("qaPersonnelBtn").classList.toggle("hide", !showQuick);
-  $("qaDocsBtn").classList.toggle("hide", !showQuick);
-  setWho();
+async function api(path,method="GET",body=null){
+  const res = await fetch(API+path,{
+    method,
+    headers:{
+      "Content-Type":"application/json",
+      "Authorization": token ? "Bearer "+token : ""
+    },
+    body: body ? JSON.stringify(body):null
+  });
+  return await res.json();
 }
 
+function view(v){
 
-async function sha256Hex(str){
-  const enc = new TextEncoder();
-  const buf = await crypto.subtle.digest("SHA-256", enc.encode(str));
-  const b = new Uint8Array(buf);
-  return Array.from(b).map(x=>x.toString(16).padStart(2,"0")).join("");
-}
-async function hmacHex(key, msg){
-  const enc = new TextEncoder();
-  const k = await crypto.subtle.importKey("raw", enc.encode(key), { name:"HMAC", hash:"SHA-256" }, false, ["sign"]);
-  const sig = await crypto.subtle.sign("HMAC", k, enc.encode(msg));
-  const b = new Uint8Array(sig);
-  return Array.from(b).map(x=>x.toString(16).padStart(2,"0")).join("");
-}
-async function signIfNeeded(path, opts){
-  const method = (opts.method || "GET").toUpperCase();
-  const isMut = ["POST","PUT","PATCH","DELETE"].includes(method);
-  if (!isMut) return {};
-
-  const ts = String(Date.now());
-  const nonce = crypto.randomUUID();
-  const bodyStr = (opts.body || "").toString();
-  const bodySha = await sha256Hex(bodyStr);
-  const msg = `${method}\n${path}\n${ts}\n${nonce}\n${bodySha}`;
-
-  // If worker enforces signatures, SESSION_KEY must be present (comes from /auth/me).
-  // If not present, we still send TS/NONCE so the worker can return a clear error.
-  if (!SESSION_KEY) return { "X-ACC-TS": ts, "X-ACC-NONCE": nonce };
-
-  const sig = await hmacHex(SESSION_KEY, msg);
-  return { "X-ACC-TS": ts, "X-ACC-NONCE": nonce, "X-ACC-SIG": sig };
-}
-async function api(path, opts={}){
-  const headers = opts.headers || {};
-  headers["Content-Type"] = "application/json";
-  if (TOKEN) headers["Authorization"] = "Bearer " + TOKEN;
-  const sigHeaders = await signIfNeeded(path, opts);
-  Object.assign(headers, sigHeaders);
-  const res = await fetch(API_BASE + path, { ...opts, headers });
-  const data = await res.json().catch(()=>({}));
-  if (!res.ok) throw new Error(data.error || "Request failed");
-  return data;
+if(v==="about"){
+content.innerHTML=`<h2>Who We Are</h2><p>Army Corrections Command...</p>`;
 }
 
-function setView(name){
-  document.querySelectorAll("[data-view]").forEach(b => b.classList.remove("primary"));
-  document.querySelector(`[data-view="${name}"]`)?.classList.add("primary");
-  if (name === "about") return renderAbout();
-  if (name === "contact") return renderContact();
-  if (name === "news") return renderNews();
-  if (name === "login") return renderLogin();
-  if (name === "unit") return renderUnit();
-  if (name === "admin") return renderAdmin();
-  if (name === "logs") return renderLogs();
+if(v==="org"){
+content.innerHTML=`<h2>Organization</h2><p>Structure here...</p>`;
 }
 
-document.querySelectorAll("[data-view]").forEach(btn=>{
-  btn.addEventListener("click", ()=> setView(btn.getAttribute("data-view")));
+if(v==="leadership"){
+content.innerHTML=`<h2>Leadership</h2><p>Editable bios here...</p>`;
+}
+
+if(v==="login"){
+content.innerHTML=`
+<h2>Login</h2>
+<input id="u" placeholder="Username">
+<input id="p" type="password" placeholder="Password">
+<button class="primary" onclick="login()">Login</button>`;
+}
+
+if(v==="internal"){
+content.innerHTML=`
+<h2>ACC Internal Panel</h2>
+
+${me.unit==="CID" ? `<button onclick="ban()">Ban Request</button>`:""}
+
+<button onclick="io()">Inquiry Order</button>
+`;
+}
+
+if(v==="high"){
+content.innerHTML=`
+<h2>High Command Panel</h2>
+<button onclick="load('ban')">Ban Requests</button>
+<button onclick="load('io')">IO Requests</button>
+<div id="list"></div>
+`;
+}
+
+}
+
+async function login(){
+const u=document.getElementById("u").value;
+const p=document.getElementById("p").value;
+
+const r=await api("/auth/login","POST",{username:u,password:p});
+token=r.token;
+me=r.user;
+setUser();
+view("internal");
+}
+
+function ban(){
+content.innerHTML=`
+<h2>Ban Request</h2>
+<input id="a1" placeholder="Your Username + Rank">
+<input id="a2" placeholder="Unit">
+<input id="a3" placeholder="Position">
+<hr>
+<input id="s1" placeholder="Subject">
+<input id="r" placeholder="Reason">
+<input id="e" placeholder="Evidence">
+<button class="primary" onclick="submitBan()">Submit</button>
+`;
+}
+
+async function submitBan(){
+await api("/ban","POST",{
+agent:{u:a1.value,unit:a2.value,pos:a3.value},
+suspect:{u:s1.value,reason:r.value,evidence:e.value}
 });
-$("qaBgBtn").addEventListener("click", ()=> openUnitTab("bg"));
-$("qaPersonnelBtn").addEventListener("click", ()=> openUnitTab("personnel"));
-$("qaDocsBtn").addEventListener("click", ()=> openUnitTab("docs"));
-$("logoutBtn").addEventListener("click", ()=>{
-  TOKEN=""; ME=null; SESSION_KEY=""; localStorage.removeItem("acc_token"); localStorage.removeItem("acc_session_key");
-  navSync();
-  setView("about");
+alert("Sent");
+}
+
+function io(){
+content.innerHTML=`
+<h2>Inquiry Order</h2>
+<input id="a1" placeholder="Your Username + Rank">
+<input id="a2" placeholder="Unit">
+<input id="a3" placeholder="Position">
+<hr>
+<input id="s1" placeholder="Subject">
+<input id="r" placeholder="Reason">
+<input id="e" placeholder="Evidence">
+<input id="d" placeholder="Document Link">
+<button class="primary" onclick="submitIO()">Submit</button>
+`;
+}
+
+async function submitIO(){
+await api("/io","POST",{
+agent:{u:a1.value,unit:a2.value,pos:a3.value},
+suspect:{u:s1.value,reason:r.value,evidence:e.value,doc:d.value}
 });
-
-async function renderAbout(){
-  viewTitle.textContent = "About";
-  viewKicker.textContent = "Army Corrections Command overview.";
-  sideBody.innerHTML = `
-    <div class="small">If you are a member of CID or JAGC, please log in.</div>
-    <div class="hr"></div>
-    <button class="btn primary" onclick="setView('login')">Login</button>
-  `;
-  const data = await api("/pages/about", { method:"GET", headers:{} }).catch(()=>({ok:true, html:""}));
-  viewBody.innerHTML = data.html?.trim()
-    ? data.html
-    : `<div class="newsItem"><b>Welcome.</b><div class="small" style="margin-top:6px;">This portal provides internal tools for Army Corrections Command subunits.</div></div>`;
+alert("Sent");
 }
 
-async function renderContact(){
-  viewTitle.textContent = "Contact";
-  viewKicker.textContent = "Contact and links.";
-  sideBody.innerHTML = `<div class="small">Admins can edit this page in the Admin panel.</div>`;
-  const data = await api("/pages/contact", { method:"GET", headers:{} }).catch(()=>({ok:true, html:""}));
-  viewBody.innerHTML = data.html?.trim()
-    ? data.html
-    : `<div class="newsItem"><b>Contact</b><div class="small" style="margin-top:6px;">Add your Discord/server contact information here.</div></div>`;
-}
-
-async function renderNews(){
-  viewTitle.textContent = "Home / News";
-  viewKicker.textContent = "Announcements posted by administrators.";
-  sideBody.innerHTML = `
-    <div class="small">News is visible to everyone.</div>
-    ${ME && ME.admin ? `<div class="hr"></div><button class="btn primary" onclick="setView('admin')">Post News</button>` : ``}
-  `;
-  const data = await api("/news", { method:"GET", headers:{} });
-  const items = data.items || [];
-  viewBody.innerHTML = items.length ? items.map(renderNewsItem).join("") :
-    `<div class="newsItem"><b>No posts yet.</b><div class="small" style="margin-top:6px;">Admins can post announcements from the Admin page.</div></div>`;
-}
-
-function renderNewsItem(it){
-  const a = it.author || {};
-  const who = `${a.rank ? a.rank + " " : ""}${a.username || "Admin"}${a.position ? " • " + a.position : ""}`;
-  const dt = it.createdAt ? new Date(it.createdAt).toLocaleString() : "";
-  return `
-    <div class="newsItem">
-      <div style="display:flex; justify-content:space-between; gap:10px; align-items:flex-start;">
-        <div>
-          <div style="font-weight:800; font-size:15px; color:var(--gold)">${escapeHtml(it.title || "")}</div>
-          <div class="newsMeta"><span>${escapeHtml(who)}</span><span>•</span><span>${escapeHtml(dt)}</span></div>
-        </div>
-        ${ME && ME.admin ? `<button class="btn" onclick="deleteNews('${it.id}')">Delete</button>` : ``}
-      </div>
-      <div class="hr"></div>
-      <div>${it.html || ""}</div>
-    </div>
-  `;
-}
-
-async function deleteNews(id){
-  if (!confirm("Delete this post?")) return;
-  await api("/news/"+encodeURIComponent(id), { method:"DELETE" });
-  await renderNews();
-}
-
-function renderLogin(){
-  viewTitle.textContent = "Login";
-  viewKicker.textContent = "Sign in to access unit tools.";
-  sideBody.innerHTML = `<div class="small">Accounts are managed by administrators.</div>`;
-  viewBody.innerHTML = `
-    <label class="lbl">Username</label>
-    <input class="in" id="lu" autocomplete="username" placeholder="Roblox username"/>
-    <label class="lbl">Password</label>
-    <input class="in" id="lp" type="password" autocomplete="current-password" placeholder="Password"/>
-    <div class="row" style="margin-top:12px;">
-      <button class="btn primary" onclick="doLogin()">Login</button>
-      <button class="btn" onclick="setView('news')">View News</button>
-    </div>
-    <div class="small" id="loginMsg" style="margin-top:10px;"></div>
-  `;
-}
-
-async function doLogin(){
-  const u = $("lu").value.trim();
-  const p = $("lp").value;
-  $("loginMsg").textContent = "Signing in...";
-  try{
-    const data = await api("/auth/login", { method:"POST", body: JSON.stringify({ username:u, password:p }) });
-    TOKEN = data.token;
-    localStorage.setItem("acc_token", TOKEN);
-    await loadMe();
-    $("loginMsg").textContent = "Logged in.";
-    setView("unit");
-  }catch(e){
-    $("loginMsg").textContent = "Unauthorized.";
-  }
-}
-
-async function loadMe(){
-  if (!TOKEN) { ME=null; navSync(); return; }
-  try{
-    const data = await api("/auth/me", { method:"GET" });
-    ME = data.user;
-    SESSION_KEY = data.sessionKey || "";
-    localStorage.setItem("acc_session_key", SESSION_KEY);
-  }catch{
-    ME=null; TOKEN=""; localStorage.removeItem("acc_token");
-  }
-  navSync();
-}
-
-async function renderUnit(){
-  if (!ME) return setView("login");
-  viewTitle.textContent = "Unit Tools";
-  viewKicker.textContent = `Classified access: ${ME.unit}.`;
-  sideBody.innerHTML = `
-    <div class="small"><b>Quick Actions moved to the toolbar</b></div>
-    <div class="hr"></div>
-    <div class="small">Use the top bar to switch between Background Checks, Personnel, and Documents.</div>
-    <div class="hr"></div>
-    ${ME.admin ? `<button class="btn primary" onclick="setView('admin')">Admin Panel</button>` : `<div class="small">For access changes, contact an admin.</div>`}
-  `;
-
-  viewBody.innerHTML = `
-    <div class="newsItem">
-      <b>${ME.unit} Tools</b>
-      <div class="small" style="margin-top:6px;">Select a tool on the right. All actions are logged.</div>
-    </div>
-    <div id="unitBox" style="margin-top:10px;"></div>
-  `;
-  unitTab(CURRENT_UNIT_TAB || "bg");
-}
-
-function unitTab(tab){
-  CURRENT_UNIT_TAB = tab;
-  const box = $("unitBox");
-  if (tab === "bg") {
-    box.innerHTML = `
-      <div class="newsItem">
-        <b>Background Checks</b>
-        <div class="small" style="margin-top:6px;">Lookup and (if enabled) update statuses for your unit.</div>
-        <label class="lbl">Member Username</label>
-        <input class="in" id="qUser" placeholder="Enter username"/>
-        <button class="btn primary" style="margin-top:10px;" onclick="bgLookup()">Check</button>
-      </div>
-      <div id="bgBox" style="margin-top:10px;"></div>
-    `;
-    return;
-  }
-  if (tab === "personnel") {
-    box.innerHTML = `
-      <div class="newsItem">
-        <b>Personnel Lookup</b>
-        <div class="small" style="margin-top:6px;">Search your unit roster.</div>
-        <label class="lbl">Personnel Username</label>
-        <input class="in" id="pUser" placeholder="Enter username"/>
-        <button class="btn primary" style="margin-top:10px;" onclick="personnelLookupUI()">Lookup</button>
-      </div>
-      <div id="pBox" style="margin-top:10px;"></div>
-    `;
-    return;
-  }
-  if (tab === "docs") {
-    box.innerHTML = `
-      <div class="newsItem">
-        <b>Documents</b>
-        <div class="small" style="margin-top:6px;">Classified documents for ${ME.unit}. Admins can edit.</div>
-        <button class="btn primary" style="margin-top:10px;" onclick="docsRefresh()">Refresh</button>
-        ${ME.admin ? `<button class="btn" style="margin-top:10px;" onclick="docsEditor()">Admin: Edit Documents</button>` : ``}
-      </div>
-      <div id="dBox" style="margin-top:10px;"></div>
-    `;
-    docsRefresh();
-    return;
-  }
-}
-
-
-async function personnelLookupUI(){
-  const username = $("pUser").value.trim();
-  const box = $("pBox");
-  if (!username) return;
-  box.innerHTML = `<div class="newsItem">Loading…</div>`;
-  try{
-    const data = await api(`/unit/personnel/get?unit=${encodeURIComponent(ME.unit)}&username=${encodeURIComponent(username)}`, { method:"GET" });
-    const r = data.record;
-    if (!r) { box.innerHTML = `<div class="newsItem"><b>Not found.</b></div>`; return; }
-    box.innerHTML = `
-      <div class="newsItem">
-        <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;">
-          <div>
-            <div style="font-weight:900; font-size:16px; color:var(--gold)">${escapeHtml(r.username)}</div>
-            <div class="newsMeta">
-              <span>Unit: ${escapeHtml(r.unit)}</span>
-              <span>•</span><span>Paygrade: ${escapeHtml(r.paygrade||"")}</span>
-              ${r.status?`<span>•</span><span>Status: ${escapeHtml(r.status)}</span>`:""}
-            </div>
-          </div>
-          <span class="badge">${escapeHtml(r.position||"")}</span>
-        </div>
-        <div class="hr"></div>
-        <div class="row">
-          <div><div class="small">Timezone</div><div>${escapeHtml(r.timezone||"—")}</div></div>
-          <div><div class="small">Join Date</div><div>${escapeHtml(r.joinDate||"—")}</div></div>
-        </div>
-      </div>
-    `;
-  }catch(e){
-    box.innerHTML = `<div class="newsItem"><b>Error.</b><div class="small">${escapeHtml(e.message||"")}</div></div>`;
-  }
-}
-
-async function docsRefresh(){
-  const box = $("dBox");
-  box.innerHTML = `<div class="newsItem">Loading…</div>`;
-  try{
-    const data = await api(`/unit/docs/list?unit=${encodeURIComponent(ME.unit)}`, { method:"GET" });
-    const items = data.items || [];
-    box.innerHTML = items.length ? items.map(d=>`
-      <div class="newsItem">
-        <div style="display:flex; justify-content:space-between; gap:10px; align-items:flex-start;">
-          <div style="font-weight:900; color:var(--gold)">${escapeHtml(d.title||"")}</div>
-          ${ME.admin ? `<button class="btn" onclick="docsEditor('${d.id}')">Edit</button>` : ``}
-        </div>
-        <div class="hr"></div>
-        <div>${d.html||""}</div>
-        <div class="newsMeta"><span>Updated: ${escapeHtml(new Date(d.updatedAt).toLocaleString())}</span>${d.updatedBy?`<span>•</span><span>${escapeHtml(d.updatedBy)}</span>`:""}</div>
-      </div>
-    `).join("") : `<div class="newsItem"><b>No documents yet.</b></div>`;
-  }catch(e){
-    box.innerHTML = `<div class="newsItem"><b>Error.</b><div class="small">${escapeHtml(e.message||"")}</div></div>`;
-  }
-}
-
-async function docsEditor(editId=""){
-  if (!ME.admin) return;
-  const box = $("dBox");
-  let cur = null;
-  try{
-    const data = await api(`/unit/docs/list?unit=${encodeURIComponent(ME.unit)}`, { method:"GET" });
-    const items = data.items || [];
-    cur = items.find(x=>x.id===editId) || null;
-  }catch{}
-  box.innerHTML = `
-    <div class="newsItem">
-      <b>Document Editor (${ME.unit})</b>
-      <div class="small" style="margin-top:6px;">Create or edit documents. Saved to KV.</div>
-      <label class="lbl">Title</label>
-      <input class="in" id="doc_title" value="${escapeAttr(cur?.title||"")}" placeholder="Document title"/>
-      <label class="lbl">Content</label>
-      <div class="rte" id="doc_html" contenteditable="true">${cur?.html||""}</div>
-      <div class="row" style="margin-top:12px;">
-        <button class="btn primary" onclick="docsSave('${escapeAttr(cur?.id||"")}')">Save</button>
-        ${cur ? `<button class="btn" onclick="docsDelete('${escapeAttr(cur.id)}')">Delete</button>` : ``}
-        <button class="btn" onclick="docsRefresh()">Back</button>
-      </div>
-    </div>
-  `;
-}
-async function docsSave(id){
-  const title = $("doc_title").value.trim();
-  const html = $("doc_html").innerHTML;
-  await api("/unit/docs/upsert", { method:"POST", body: JSON.stringify({ unit: ME.unit, id, title, html }) });
-  await docsRefresh();
-}
-async function docsDelete(id){
-  if (!confirm("Delete this document?")) return;
-  await api("/unit/docs/delete", { method:"POST", body: JSON.stringify({ unit: ME.unit, id }) });
-  await docsRefresh();
-}
-
-async function bgLookup(){
-  const username = $("qUser").value.trim();
-  const box = $("bgBox");
-  if (!username) return;
-  box.innerHTML = `<div class="newsItem">Loading…</div>`;
-  try{
-    const data = await api(`/unit/background/get?unit=${encodeURIComponent(ME.unit)}&username=${encodeURIComponent(username)}`, { method:"GET" });
-    const r = data.result;
-    if (!r) { box.innerHTML = `<div class="newsItem"><b>Not found.</b></div>`; return; }
-    box.innerHTML = (ME.unit === "JAGC") ? renderJagcBg(r, username) : renderCidBg(r, username);
-  }catch(e){
-    box.innerHTML = `<div class="newsItem"><b>Error.</b><div class="small">${escapeHtml(e.message||"")}</div></div>`;
-  }
-}
-
-function renderJagcBg(r, username){
-  return `
-    <div class="newsItem">
-      <b>${escapeHtml(username)}</b>
-      <div class="newsMeta"><span>Discord: ${escapeHtml(r.discordUsername||"")}</span><span>•</span><span>ID: ${escapeHtml(r.discordId||"")}</span></div>
-      <div class="hr"></div>
-      <div class="row">
-        <div>
-          <div class="small">Stage 1</div>
-          <input class="in" id="j_s1" value="${escapeAttr(r.stage1||"")}" />
-        </div>
-        <div>
-          <div class="small">Stage 2</div>
-          <input class="in" id="j_s2" value="${escapeAttr(r.stage2||"")}" />
-        </div>
-      </div>
-      <label class="lbl">Result</label>
-      <input class="in" id="j_res" value="${escapeAttr(r.result||"")}" />
-      <div class="row" style="margin-top:12px;">
-        <button class="btn primary" onclick="bgUpdateJAGC('${escapeAttr(username)}')">Update</button>
-      </div>
-    </div>
-  `;
-}
-
-function renderCidBg(r, username){
-  return `
-    <div class="newsItem">
-      <b>${escapeHtml(username)}</b>
-      <div class="newsMeta"><span>Entrance: ${escapeHtml(r.entranceMethod||"")}</span><span>•</span><span>Performed: ${escapeHtml(r.performedBy||"")} ${escapeHtml(r.performedOn||"")}</span></div>
-      <div class="hr"></div>
-      <label class="lbl">Notes</label>
-      <textarea class="in" id="c_notes" rows="3">${escapeHtml(r.notes||"")}</textarea>
-      <div class="row" style="margin-top:10px;">
-        <div>
-          <div class="small">Overall Status</div>
-          <input class="in" id="c_overall" value="${escapeAttr(r.overall||"")}" placeholder="Failed / Passed / Pending / On Hold"/>
-        </div>
-        <div>
-          <div class="small">Enhanced Security</div>
-          <input class="in" id="c_enh" value="${escapeAttr(r.enhanced||"")}" placeholder="Failed / Passed / Pending / On Hold"/>
-        </div>
-      </div>
-      <label class="lbl">Background Check</label>
-      <input class="in" id="c_bg" value="${escapeAttr(r.background||"")}" placeholder="Failed / Passed / Pending / On Hold"/>
-      <div class="row" style="margin-top:12px;">
-        <button class="btn primary" onclick="bgUpdateCID('${escapeAttr(username)}')">Update</button>
-      </div>
-      <div class="small" style="margin-top:10px;">Approval can only be set by PurelyGeon (server-side enforced).</div>
-    </div>
-  `;
-}
-
-async function bgUpdateJAGC(username){
-  const stage1 = $("j_s1").value.trim();
-  const stage2 = $("j_s2").value.trim();
-  const result = $("j_res").value.trim();
-  await api("/unit/background/update", { method:"POST", body: JSON.stringify({ unit:"JAGC", username, stage1, stage2, result }) });
-  await bgLookup();
-}
-
-async function bgUpdateCID(username){
-  const notes = $("c_notes").value;
-  const overall = $("c_overall").value.trim();
-  const enhanced = $("c_enh").value.trim();
-  const background = $("c_bg").value.trim();
-  await api("/unit/background/update", { method:"POST", body: JSON.stringify({ unit:"CID", username, notes, overall, enhanced, background }) });
-  await bgLookup();
-}
-
-async function renderAdmin(){
-  if (!ME || !ME.admin) return setView("news");
-  viewTitle.textContent = "Admin Panel";
-  viewKicker.textContent = "Manage pages, news, and users (VendettaPyrex only).";
-  sideBody.innerHTML = `<div class="small"><b>Admin shortcuts</b></div>
-    <button class="btn" style="margin-top:10px;" onclick="setView('logs')">Open Logs</button>
-    <button class="btn" style="margin-top:10px;" onclick="setView('news')">View News</button>`;
-  viewBody.innerHTML = `
-    <div class="newsItem">
-      <b>Post News</b>
-      <label class="lbl">Title</label>
-      <input class="in" id="n_title" placeholder="Announcement title"/>
-      <label class="lbl">Content</label>
-      <div class="rte" id="n_html" contenteditable="true"></div>
-      <div class="row" style="margin-top:12px;">
-        <button class="btn primary" onclick="postNews()">Post</button>
-      </div>
-    </div>
-
-    <div class="hr"></div>
-
-    <div class="newsItem">
-      <b>Edit Pages</b>
-      <div class="row" style="margin-top:10px;">
-        <button class="btn" onclick="loadPageEditor('about')">Edit About</button>
-        <button class="btn" onclick="loadPageEditor('contact')">Edit Contact</button>
-      </div>
-      <div id="pageEditor" style="margin-top:10px;"></div>
-    </div>
-
-    <div class="hr"></div>
-
-    <div class="newsItem">
-      <b>Users</b>
-      <div class="small" style="margin-top:6px;">Add/remove users. Choose unit (CID/JAGC) and rank.</div>
-<div class="row" style="margin-top:10px;">
-  <button class="btn" onclick="adminOpenDocs(\'CID\')">Edit CID Documents</button>
-  <button class="btn" onclick="adminOpenDocs(\'JAGC\')">Edit JAGC Documents</button>
+async function load(type){
+const r=await api("/pending/"+type);
+list.innerHTML = r.items.map(i=>`
+<div>
+ID ${i.id} - ${i.suspect.u}
+<button onclick="decision('${type}',${i.id},'approve')">Approve</button>
+<button onclick="decision('${type}',${i.id},'deny')">Deny</button>
 </div>
-      <div class="row" style="margin-top:10px;">
-        <div>
-          <label class="lbl">Username</label>
-          <input class="in" id="u_name" placeholder="Roblox username"/>
-        </div>
-        <div>
-          <label class="lbl">Password</label>
-          <input class="in" id="u_pass" placeholder="Set password"/>
-        </div>
-      </div>
-      <div class="row" style="margin-top:10px;">
-        <div>
-          <label class="lbl">Unit</label>
-          <select class="in" id="u_unit">
-            <option value="CID">Army Corrections Command (CID)</option>
-            <option value="JAGC">JAGC</option>
-          </select>
-        </div>
-        <div>
-          <label class="lbl">Rank</label>
-          <select class="in" id="u_rank">${armyRanksOptions()}</select>
-        </div>
-      </div>
-      <label class="lbl">Position</label>
-      <input class="in" id="u_pos" placeholder="e.g., Investigator / Legal Officer"/>
-      <div class="row" style="margin-top:12px;">
-        <button class="btn primary" onclick="userAdd()">Add / Update</button>
-        <button class="btn" onclick="userRemove()">Remove</button>
-        <button class="btn" onclick="userRefresh()">Refresh List</button>
-      </div>
-      <div id="usersList" style="margin-top:12px;"></div>
-    </div>
-  `;
-  await userRefresh();
+`).join("");
 }
 
-async function postNews(){
-  const title = $("n_title").value.trim();
-  const html = $("n_html").innerHTML.trim();
-  await api("/news", { method:"POST", body: JSON.stringify({ title, html }) });
-  $("n_title").value=""; $("n_html").innerHTML="";
-  alert("Posted.");
+async function decision(type,id,dec){
+await api("/decide","POST",{type,id,decision:dec});
+load(type);
 }
-
-async function loadPageEditor(name){
-  const data = await api("/pages/"+name, { method:"GET" });
-  $("pageEditor").innerHTML = `
-    <div class="small"><b>Editing ${escapeHtml(name)}</b></div>
-    <div class="row" style="margin-top:10px;">
-      <button class="btn" onclick="savePage('${name}')">Save</button>
-      <button class="btn" onclick="previewPage()">Preview</button>
-    </div>
-    <label class="lbl">HTML Content</label>
-    <div class="rte" id="p_html" contenteditable="true"></div>
-    <div class="hr"></div>
-    <div class="small"><b>Preview</b></div>
-    <div class="newsItem" id="p_prev" style="margin-top:8px;"></div>
-  `;
-  $("p_html").innerHTML = data.html || "";
-  $("p_prev").innerHTML = data.html || "";
-}
-async function savePage(name){
-  const html = $("p_html").innerHTML;
-  await api("/pages/set", { method:"POST", body: JSON.stringify({ name, html }) });
-  alert("Saved.");
-}
-function previewPage(){
-  $("p_prev").innerHTML = $("p_html").innerHTML;
-}
-
-async function userAdd(){
-  const username = $("u_name").value.trim();
-  const password = $("u_pass").value;
-  const unit = $("u_unit").value;
-  const rank = $("u_rank").value;
-  const position = $("u_pos").value.trim();
-  await api("/users/add", { method:"POST", body: JSON.stringify({ username, password, unit, rank, position, admin: username==="VendettaPyrex" }) });
-  await userRefresh();
-}
-async function userRemove(){
-  const username = $("u_name").value.trim();
-  if (!username) return;
-  if (!confirm("Remove "+username+"?")) return;
-  await api("/users/remove", { method:"POST", body: JSON.stringify({ username }) });
-  await userRefresh();
-}
-async function userRefresh(){
-  const data = await api("/users/list", { method:"GET" });
-  const rows = data.users || [];
-  $("usersList").innerHTML = rows.length ? rows.map(u=>`
-    <div class="logLine">
-      <div><b>${escapeHtml(u.rank||"Member")} ${escapeHtml(u.username)}</b> • ${escapeHtml(u.unit||"")}${u.admin?" • Admin":""}</div>
-      <div class="small">${escapeHtml(u.position||"")}</div>
-    </div>
-  `).join("") : `<div class="small">No users.</div>`;
-}
-
-async function renderLogs(){
-  if (!ME || !ME.admin) return setView("news");
-  viewTitle.textContent = "Logs";
-  viewKicker.textContent = "Audit log of actions.";
-  sideBody.innerHTML = `<div class="small">Format: “Rank Username performed action”.</div>`;
-  const data = await api("/logs?limit=100", { method:"GET" });
-  const items = data.items || [];
-  viewBody.innerHTML = items.length ? items.map(x=>`
-    <div class="logLine">
-      <div style="color:var(--gold); font-weight:800">${escapeHtml(x.line || "")}</div>
-      <div class="small">${escapeHtml(new Date(x.ts).toLocaleString())}</div>
-    </div>
-  `).join("") : `<div class="newsItem"><b>No logs yet.</b></div>`;
-}
-
-function escapeHtml(str){
-  return (str ?? "").toString().replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-}
-function escapeAttr(str){ return escapeHtml(str).replace(/"/g,"&quot;"); }
-function armyRanksOptions(){
-  const ranks = [
-    "Private (E-1)","Private (E-2)","Private First Class (E-3)","Specialist (E-4)","Corporal (E-4)",
-    "Sergeant (E-5)","Staff Sergeant (E-6)","Sergeant First Class (E-7)","Master Sergeant (E-8)","First Sergeant (E-8)",
-    "Sergeant Major (E-9)","Command Sergeant Major (E-9)","Sergeant Major of the Army (E-9)",
-    "Warrant Officer 1 (W-1)","Chief Warrant Officer 2 (W-2)","Chief Warrant Officer 3 (W-3)","Chief Warrant Officer 4 (W-4)","Chief Warrant Officer 5 (W-5)",
-    "Second Lieutenant (O-1)","First Lieutenant (O-2)","Captain (O-3)","Major (O-4)","Lieutenant Colonel (O-5)","Colonel (O-6)",
-    "Brigadier General (O-7)","Major General (O-8)","Lieutenant General (O-9)","General (O-10)"
-  ];
-  return ranks.map(r=>`<option value="${escapeAttr(r)}">${escapeHtml(r)}</option>`).join("");
-}
-
-
-function adminOpenDocs(unit){
-  if (!ME?.admin) return;
-  // Open Unit Tools -> Documents for selected unit (view only uses ME.unit for calls)
-  const prev = ME.unit;
-  ME.unit = unit;
-  setView("unit");
-  unitTab("docs");
-  // keep ME.unit switched while viewing docs; admin can switch back via logout/login if needed
-}
-(async ()=>{
-  await loadMe();
-  navSync();
-  setView("about");
-})();
 </script>
+
 </body>
 </html>
