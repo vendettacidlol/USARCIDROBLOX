@@ -21,6 +21,7 @@
     --shadow:0 24px 70px rgba(0,0,0,.42);
     --radius:20px;
     --content:1240px;
+    --ease:cubic-bezier(.22,.61,.36,1);
   }
 
   *{box-sizing:border-box}
@@ -44,6 +45,7 @@
     backdrop-filter:blur(12px);
     background:linear-gradient(180deg, rgba(9,11,9,.95), rgba(9,11,9,.84));
     border-bottom:1px solid rgba(224,185,79,.2);
+    transition:background .28s var(--ease), border-color .28s var(--ease);
   }
   .header-inner{
     max-width:var(--content);
@@ -60,10 +62,14 @@
     display:flex;align-items:center;gap:12px;cursor:pointer;
     font-weight:800;letter-spacing:.04em;text-transform:uppercase;font-size:13px;
     padding:12px 0;
+    transition:opacity .18s var(--ease), transform .18s var(--ease), color .18s var(--ease);
   }
+  .menu-btn:hover,.account-btn:hover{opacity:.9}
+  .menu-btn:active,.account-btn:active{transform:scale(.98)}
   .account-btn{justify-self:end}
   .menu-btn .icon{
     width:28px;text-align:center;font-size:28px;line-height:1;color:var(--gold);
+    transition:transform .25s var(--ease);
   }
   .brand{
     justify-self:center;
@@ -80,12 +86,14 @@
   .menu-overlay{
     position:fixed; inset:0; z-index:120; display:none;
     background:rgba(5,7,6,.78); backdrop-filter:blur(8px);
+    animation:fadeOverlay .22s var(--ease);
   }
   .menu-overlay.open{display:block}
   .mega{
     position:absolute; left:0; right:0; top:0; min-height:100vh;
     background:linear-gradient(180deg,#111311 0%,#0d100e 100%);
     border-bottom:1px solid rgba(224,185,79,.16);
+    animation:slideDown .3s var(--ease);
   }
   .mega-top{
     max-width:var(--content); margin:0 auto; padding:0 22px;
@@ -101,16 +109,17 @@
   }
   .mega-col a{
     display:block; padding:10px 0; font-size:18px; color:#edf1ec; cursor:pointer;
+    transition:color .18s var(--ease), transform .18s var(--ease);
   }
-  .mega-col a:hover{color:var(--gold)}
+  .mega-col a:hover{color:var(--gold);transform:translateX(4px)}
   .mega-cta{display:flex; flex-direction:column; gap:12px}
   .mega-box{
     display:flex; align-items:center; justify-content:space-between;
     padding:22px 20px; background:#222523; border:1px solid rgba(224,185,79,.1);
     font-weight:900; text-transform:uppercase; letter-spacing:.06em; cursor:pointer;
-    transition:transform .18s ease, border-color .18s ease, background .18s ease;
+    transition:transform .22s var(--ease), border-color .22s var(--ease), background .22s var(--ease), box-shadow .22s var(--ease);
   }
-  .mega-box:hover{transform:translateY(-1px);border-color:rgba(224,185,79,.24);background:#262a27}
+  .mega-box:hover{transform:translateY(-2px);border-color:rgba(224,185,79,.24);background:#262a27;box-shadow:0 14px 28px rgba(0,0,0,.2)}
   .mega-box span:last-child{font-size:26px; color:var(--gold)}
   .hidden{display:none !important}
 
@@ -122,6 +131,7 @@
     background:
       linear-gradient(90deg, rgba(8,10,9,.8) 0%, rgba(8,10,9,.72) 38%, rgba(8,10,9,.34) 70%, rgba(8,10,9,.2) 100%),
       url("https://cdn.discordapp.com/attachments/1423152485069099048/1472030425068081305/image.png?ex=69bbef6a&is=69ba9dea&hm=bc5a7929348f45c562bf169fae98dab344ec76a8bd2071f9832c730c9d0c4425&") center/cover no-repeat;
+    animation:fadeUp .4s var(--ease);
   }
   .hero:after{
     content:""; position:absolute; inset:0;
@@ -141,11 +151,6 @@
     margin:0; font-size:clamp(36px,4vw,58px); line-height:1.02; letter-spacing:-.04em; font-weight:900;
   }
   .hero-copy{margin:0; color:#d8ddd7; font-size:18px; line-height:1.7}
-  .hero-meta{display:flex; flex-wrap:wrap; gap:12px}
-  .pill{
-    padding:10px 14px; border-radius:999px; background:rgba(15,19,16,.72);
-    border:1px solid rgba(224,185,79,.16); color:#d6ddd4; font-size:13px; font-weight:700;
-  }
   .notice{
     margin-top:6px; padding:14px 16px; border-radius:14px;
     background:rgba(17,22,18,.82); border:1px solid rgba(224,185,79,.16);
@@ -156,7 +161,7 @@
   .card{
     background:linear-gradient(180deg, rgba(17,22,18,.96), rgba(12,16,13,.96));
     border:1px solid rgba(224,185,79,.12); border-radius:22px; overflow:hidden; box-shadow:var(--shadow);
-    animation:fadeIn .28s ease;
+    animation:fadeUp .38s var(--ease);
   }
   .card-head{
     padding:20px 22px; border-bottom:1px solid rgba(224,185,79,.1);
@@ -170,7 +175,9 @@
   .grid-2{display:grid; grid-template-columns:1fr 1fr; gap:14px}
   .feature-block{
     padding:18px; border-radius:18px; background:rgba(20,26,21,.72); border:1px solid rgba(224,185,79,.08);
+    transition:transform .2s var(--ease), border-color .2s var(--ease), background .2s var(--ease);
   }
+  .feature-block:hover{transform:translateY(-1px);border-color:rgba(224,185,79,.14)}
   .feature-block h3{margin:0 0 8px; font-size:17px}
   .feature-block p{margin:0; color:var(--muted); line-height:1.7; font-size:15px}
 
@@ -188,21 +195,22 @@
     background:#121812;
     cursor:pointer;
     box-shadow:0 16px 38px rgba(0,0,0,.25);
-    transition:transform .22s ease, border-color .22s ease, box-shadow .22s ease;
+    transition:transform .28s var(--ease), border-color .28s var(--ease), box-shadow .28s var(--ease);
   }
   .leader-tile:hover{
-    transform:translateY(-3px);
+    transform:translateY(-4px);
     border-color:rgba(224,185,79,.24);
     box-shadow:0 24px 48px rgba(0,0,0,.34);
   }
   .leader-tile-bg{
     position:absolute; inset:0; background-size:cover; background-position:center;
     transform:scale(1.01);
+    transition:transform .45s var(--ease), filter .45s var(--ease);
   }
+  .leader-tile:hover .leader-tile-bg{transform:scale(1.06);filter:saturate(1.05)}
   .leader-tile-overlay{
     position:absolute; inset:0;
-    background:
-      linear-gradient(180deg, rgba(8,10,9,.05) 0%, rgba(8,10,9,.28) 42%, rgba(8,10,9,.88) 100%);
+    background:linear-gradient(180deg, rgba(8,10,9,.05) 0%, rgba(8,10,9,.28) 42%, rgba(8,10,9,.88) 100%);
   }
   .leader-tile-content{
     position:absolute; left:18px; right:18px; bottom:18px; z-index:1;
@@ -221,9 +229,11 @@
   .btn{
     appearance:none; cursor:pointer; border-radius:999px; padding:12px 18px;
     border:1px solid rgba(224,185,79,.16); background:#171d18; color:var(--text);
-    font-weight:800; letter-spacing:.02em; box-shadow:0 8px 24px rgba(0,0,0,.18); transition:.2s ease;
+    font-weight:800; letter-spacing:.02em; box-shadow:0 8px 24px rgba(0,0,0,.18);
+    transition:transform .2s var(--ease), background .2s var(--ease), border-color .2s var(--ease), box-shadow .2s var(--ease);
   }
-  .btn:hover{transform:translateY(-1px); background:#1a211b; border-color:rgba(224,185,79,.3)}
+  .btn:hover{transform:translateY(-2px); background:#1a211b; border-color:rgba(224,185,79,.3); box-shadow:0 12px 30px rgba(0,0,0,.22)}
+  .btn:active{transform:translateY(0)}
   .btn-primary{background:linear-gradient(180deg,#d6b04b,#b59137); color:#10130f; border-color:#d6b04b}
   .btn-danger{background:#251717; border-color:#5d3232; color:#f0d7d7}
   .btn-block{width:100%; justify-content:center}
@@ -232,6 +242,7 @@
   .alert{
     padding:14px 15px; border-radius:14px; border:1px solid rgba(224,185,79,.12);
     background:#161c17; color:#dbe2d9;
+    animation:fadeUp .28s var(--ease);
   }
 
   .form-shell{max-width:850px}
@@ -242,11 +253,12 @@
   .input,.textarea{
     width:100%; padding:14px 15px; border-radius:14px; outline:none;
     border:1px solid rgba(224,185,79,.14); background:#0f1411; color:var(--text);
-    transition:border-color .18s ease, box-shadow .18s ease, background .18s ease;
+    transition:border-color .18s var(--ease), box-shadow .18s var(--ease), background .18s var(--ease), transform .18s var(--ease);
   }
   .input::placeholder,.textarea::placeholder{color:#7e897f}
   .input:focus,.textarea:focus{
     border-color:rgba(224,185,79,.42); box-shadow:0 0 0 4px rgba(224,185,79,.1); background:#111712;
+    transform:translateY(-1px);
   }
   .textarea{min-height:130px; resize:vertical; line-height:1.6}
   .form-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px}
@@ -256,6 +268,7 @@
   .queue-item{
     padding:18px; border-radius:18px; background:rgba(20,26,21,.72);
     border:1px solid rgba(224,185,79,.08); display:flex; flex-direction:column; gap:12px;
+    animation:fadeUp .28s var(--ease);
   }
   .queue-top{display:flex; justify-content:space-between; gap:18px; align-items:flex-start; flex-wrap:wrap}
   .queue-id{font-size:13px; color:var(--gold); font-weight:900; text-transform:uppercase; letter-spacing:.14em}
@@ -270,7 +283,7 @@
   .leader-shell{
     border-radius:24px; overflow:hidden; box-shadow:var(--shadow);
     border:1px solid rgba(224,185,79,.12); background:linear-gradient(180deg,#0f1411,#0c110d);
-    animation:fadeIn .28s ease;
+    animation:fadeUp .4s var(--ease);
   }
   .leader-banner{
     min-height:420px; position:relative; display:flex; align-items:flex-end;
@@ -285,12 +298,12 @@
   }
   .leader-banner-content{position:relative; z-index:1; max-width:760px}
   .leader-insignia{
-    width:96px; height:96px; border-radius:6px; background:rgba(255,255,255,.96);
+    width:112px; height:112px; border-radius:8px; background:rgba(255,255,255,.96);
     display:grid; place-items:center; margin-bottom:18px;
     box-shadow:0 10px 30px rgba(0,0,0,.24);
   }
   .leader-insignia-inner{
-    display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; width:60px;
+    display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; width:72px;
   }
   .mini-star{
     width:18px; height:18px; border:2px solid var(--gold2);
@@ -320,7 +333,9 @@
   .portrait-card,.bio-card{
     background:linear-gradient(180deg,#161c17,#121813); border:1px solid rgba(224,185,79,.1);
     border-radius:20px; box-shadow:0 12px 34px rgba(0,0,0,.24);
+    transition:transform .24s var(--ease), border-color .24s var(--ease);
   }
+  .portrait-card:hover,.bio-card:hover{transform:translateY(-2px);border-color:rgba(224,185,79,.18)}
   .portrait-card{overflow:hidden}
   .portrait-image{width:100%; aspect-ratio:4/5; object-fit:cover}
   .portrait-meta{padding:18px}
@@ -328,14 +343,16 @@
     margin-bottom:8px; color:var(--gold); font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:.14em;
   }
   .portrait-name{margin:0; font-size:28px; font-weight:900; letter-spacing:-.03em}
-  .portrait-rank{margin-top:8px; color:var(--muted); font-size:14px; line-height:1.6}
+  .portrait-rank{margin-top:8px; color:var(--muted); font-size:14px; line-height:1.7}
+  .portrait-rank strong{color:#edf1ec;font-weight:800}
   .bio-card{padding:28px}
   .bio-card h3{
     margin:0 0 14px; font-size:30px; font-weight:900; letter-spacing:-.03em; color:#f3f5f1;
   }
   .bio-card p{
-    margin:0; color:#c8d0c7; font-size:17px; line-height:1.85;
+    margin:0 0 14px; color:#c8d0c7; font-size:17px; line-height:1.85;
   }
+  .bio-card p:last-child{margin-bottom:0}
 
   .leadership-list{display:grid; gap:18px}
   .leader-list-card{
@@ -343,9 +360,9 @@
     gap:20px; padding:18px; border-radius:20px;
     background:linear-gradient(180deg,#161c17,#121813);
     border:1px solid rgba(224,185,79,.1); box-shadow:0 12px 34px rgba(0,0,0,.24);
-    cursor:pointer; transition:transform .2s ease, border-color .2s ease;
+    cursor:pointer; transition:transform .24s var(--ease), border-color .24s var(--ease), box-shadow .24s var(--ease);
   }
-  .leader-list-card:hover{transform:translateY(-2px);border-color:rgba(224,185,79,.2)}
+  .leader-list-card:hover{transform:translateY(-3px);border-color:rgba(224,185,79,.2);box-shadow:0 18px 38px rgba(0,0,0,.28)}
   .leader-list-card img{
     width:100%; aspect-ratio:4/5; object-fit:cover; border-radius:14px;
   }
@@ -357,8 +374,16 @@
   }
   .leader-list-card p{margin:0; color:#c8d0c7; line-height:1.8; font-size:16px}
 
-  @keyframes fadeIn{
-    from{opacity:0; transform:translateY(6px)}
+  @keyframes fadeUp{
+    from{opacity:0; transform:translateY(10px)}
+    to{opacity:1; transform:none}
+  }
+  @keyframes fadeOverlay{
+    from{opacity:0}
+    to{opacity:1}
+  }
+  @keyframes slideDown{
+    from{opacity:0; transform:translateY(-10px)}
     to{opacity:1; transform:none}
   }
 
@@ -457,17 +482,11 @@
     <section class="hero" id="hero">
       <div class="hero-content">
         <div class="eyebrow">Army Corrections Command</div>
-        <h1></h1>
         <p class="hero-copy">
          This portal is for a roleplay environment and should remain clearly distinct from any real government service.
         </p>
-        <div class="hero-meta">
-          <span class="pill"></span>
-          <span class="pill"></span>
-          <span class="pill"></span>
-        </div>
         <div class="notice">
-  This portal is for a roleplay environment and should remain clearly distinct from any real government service.
+          This portal is for a roleplay environment and should remain clearly distinct from any real government service.
         </div>
       </div>
     </section>
@@ -499,6 +518,7 @@
 
 <script>
 const API_BASE = "YOUR_WORKER_URL_HERE";
+const COMMAND_BG = "https://cdn.discordapp.com/attachments/1423152485069099048/1472030425068081305/image.png?ex=69bbef6a&is=69ba9dea&hm=bc5a7929348f45c562bf169fae98dab344ec76a8bd2071f9832c730c9d0c4425&";
 
 const SITE_DATA = {
   whoWeAre: {
@@ -586,9 +606,9 @@ const SITE_DATA = {
     "commanding-general": {
       roleLabel: "Commanding General",
       name: "General CrusherRTL",
-      rankLine: "Military Police Corps",
+      rankLine: "Rank: General (O-10) · Military Police Corps",
       image: "https://cdn.discordapp.com/attachments/1449983915472195615/1483977783842705468/image.png?ex=69bc8d82&is=69bb3c02&hm=4cfe8106c5c885921f0f27604064d8a57780d645c868115e2f55a1773b699435&",
-      banner: "https://commons.wikimedia.org/wiki/File:Flag_of_the_United_States.svg",
+      banner: COMMAND_BG,
       insigniaCount: 4,
       bioTitle: "Biography",
       bio: `Hailing from the prestigious 503rd Battalion under the Military Police Corps, General CrusherRTL has always made himself known around the corps for his toughness and dedication to his unit. CrusherRTL was deployed multiple times during his career, most notably during the Iraq and Kosovo Campaigns.`
@@ -596,9 +616,9 @@ const SITE_DATA = {
     "commanding-officer": {
       roleLabel: "Commanding Officer",
       name: "Major General VendettaPyrex",
-      rankLine: "Army Corrections Command",
+      rankLine: "Rank: Major General (O-8) · Army Corrections Command",
       image: "https://cdn.discordapp.com/attachments/1449983915472195615/1483977511040848013/image.png?ex=69bc8d41&is=69bb3bc1&hm=3761eac8f6a07a53089a8ac6b5a4579d3fd2644acadf65732914bbb219717815&",
-      banner: "https://cdn.discordapp.com/attachments/1423152485069099048/1472030425068081305/image.png?ex=69bbef6a&is=69ba9dea&hm=bc5a7929348f45c562bf169fae98dab344ec76a8bd2071f9832c730c9d0c4425&Dbc5a7929348f45c562bf169fae98dab344ec76a8bd2071f9832c730c9d0c4425%26&sourceid=opera&ie=UTF-8&oe=UTF-8",
+      banner: COMMAND_BG,
       insigniaCount: 2,
       bioTitle: "Biography",
       bio: `Having roots from the Criminal Investigation Division, Major General VendettaPyrex served within multiple investigative units during his 5 year long career. Units that he has served in during his career are the Military Intelligence Command, Judge Advocate General Corps, and the 75th Rangers Regiment.
@@ -608,7 +628,7 @@ During his time served, Major General VendettaPyrex has distinguished himself by
     "battalion-leadership": {
       roleLabel: "Battalion Leadership",
       name: "Army Corrections Command",
-      banner: "https://images.unsplash.com/photo-1516321497487-e288fb19713f?auto=format&fit=crop&w=1800&q=80",
+      banner: COMMAND_BG,
       leaders: [
         {
           page: "commanding-general",
@@ -678,17 +698,9 @@ function setAuthUi(){
         ${state.me.admin ? `<button class="btn" onclick="renderPage('high-command')">High Command</button>` : ""}
         <button class="btn" onclick="logout()">Sign Out</button>
       </div>
-      <div class="feature-block">
-        <h3></h3>
-        <p></p>
-      </div>
     </div>
   ` : `
     <div class="stack">
-      <div class="feature-block">
-        <h3></h3>
-        <p></p>
-      </div>
       <div class="btn-row">
         <button class="btn btn-primary btn-block" onclick="renderPage('login')">Sign In</button>
       </div>
@@ -771,7 +783,7 @@ function renderLeaderPage(key){
             <div class="portrait-meta">
               <div class="portrait-role">${escapeHtml(page.roleLabel)}</div>
               <h2 class="portrait-name">${escapeHtml(page.name)}</h2>
-              <div class="portrait-rank">${escapeHtml(page.rankLine || "")}</div>
+              <div class="portrait-rank"><strong>${escapeHtml(page.rankLine || "")}</strong></div>
             </div>
           </aside>
           <article class="bio-card">
@@ -791,9 +803,6 @@ function renderLogin(){
     <div class="stack form-shell">
       <div>
         <h3 style="margin:0 0 8px; font-size:34px; font-weight:900; letter-spacing:-.03em">Sign in</h3>
-        <p style="margin:0 0 22px; color:var(--muted); line-height:1.75">
-          
-        </p>
       </div>
       <div class="field">
         <label for="loginUsername">Username</label>
@@ -820,13 +829,11 @@ function renderInternalPanel(){
     <div class="stack">
       <div class="feature-block">
         <h3>Operational Forms</h3>
-        <p></p>
       </div>
       <div class="grid-2">
         ${state.me.unit === "CID" || state.me.admin ? `
           <div class="feature-block">
             <h3>Ban Request</h3>
-            <p></p>
             <div class="btn-row" style="margin-top:14px"><button class="btn btn-primary" onclick="renderBanForm()">Open Form</button></div>
           </div>
         ` : `
@@ -837,7 +844,6 @@ function renderInternalPanel(){
         `}
         <div class="feature-block">
           <h3>Inquiry Order</h3>
-          <p></p>
           <div class="btn-row" style="margin-top:14px"><button class="btn btn-primary" onclick="renderIOForm()">Open Form</button></div>
         </div>
       </div>
