@@ -59,10 +59,7 @@
     background:linear-gradient(180deg, rgba(9,11,9,.98), rgba(9,11,9,.9));
     box-shadow:0 10px 26px rgba(0,0,0,.24);
   }
-  .site-header.scrolled::after{
-    height:1px;
-    opacity:.92;
-  }
+  .site-header.scrolled::after{height:1px;opacity:.92}
 
   .header-inner{
     max-width:var(--content);
@@ -75,9 +72,7 @@
     gap:18px;
     transition:min-height .28s var(--ease), padding .28s var(--ease), transform .28s var(--ease);
   }
-  .site-header.scrolled .header-inner{
-    min-height:64px;
-  }
+  .site-header.scrolled .header-inner{min-height:64px}
 
   .menu-btn,.account-btn{
     appearance:none;border:0;background:none;color:var(--text);
@@ -103,28 +98,14 @@
   }
   .site-header.scrolled .brand{gap:10px}
   .brand-logo{
-    width:34px;
-    height:34px;
-    object-fit:contain;
+    width:34px;height:34px;object-fit:contain;
     filter:drop-shadow(0 0 6px rgba(224,185,79,.28));
     transition:transform .28s var(--ease), filter .28s var(--ease), width .28s var(--ease), height .28s var(--ease);
   }
-  .brand:hover .brand-logo{
-    transform:scale(1.06);
-    filter:drop-shadow(0 0 10px rgba(224,185,79,.42));
-  }
-  .site-header.scrolled .brand-logo{
-    width:28px;
-    height:28px;
-  }
-  .brand-text{
-    font-size:17px;
-    transition:font-size .28s var(--ease), letter-spacing .28s var(--ease);
-  }
-  .brand-sub{
-    display:block;margin-top:2px;font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--muted);
-    transition:font-size .28s var(--ease), margin-top .28s var(--ease), opacity .28s var(--ease);
-  }
+  .brand:hover .brand-logo{transform:scale(1.06);filter:drop-shadow(0 0 10px rgba(224,185,79,.42))}
+  .site-header.scrolled .brand-logo{width:28px;height:28px}
+  .brand-text{font-size:17px;transition:font-size .28s var(--ease), letter-spacing .28s var(--ease)}
+  .brand-sub{display:block;margin-top:2px;font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--muted);transition:font-size .28s var(--ease), margin-top .28s var(--ease), opacity .28s var(--ease)}
   .site-header.scrolled .brand-text{font-size:15px}
   .site-header.scrolled .brand-sub{font-size:10px;margin-top:1px}
 
@@ -192,9 +173,7 @@
     color:var(--gold); font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:.16em;
   }
   .eyebrow:before{content:""; width:32px; height:1px; background:var(--gold)}
-  h1{
-    margin:0; font-size:clamp(36px,4vw,58px); line-height:1.02; letter-spacing:-.04em; font-weight:900;
-  }
+  h1{margin:0; font-size:clamp(36px,4vw,58px); line-height:1.02; letter-spacing:-.04em; font-weight:900}
   .hero-copy{margin:0; color:#d8ddd7; font-size:18px; line-height:1.7}
   .notice{
     margin-top:6px; padding:14px 16px; border-radius:14px;
@@ -232,19 +211,13 @@
     gap:16px;
   }
   .leader-tile{
-    position:relative;
-    overflow:hidden;
-    min-height:260px;
-    border-radius:20px;
-    border:1px solid rgba(224,185,79,.12);
-    background:#121812;
-    cursor:pointer;
+    position:relative; overflow:hidden; min-height:260px; border-radius:20px;
+    border:1px solid rgba(224,185,79,.12); background:#121812; cursor:pointer;
     box-shadow:0 16px 38px rgba(0,0,0,.25);
     transition:transform .28s var(--ease), border-color .28s var(--ease), box-shadow .28s var(--ease);
   }
   .leader-tile:hover{
-    transform:translateY(-4px);
-    border-color:rgba(224,185,79,.24);
+    transform:translateY(-4px); border-color:rgba(224,185,79,.24);
     box-shadow:0 24px 48px rgba(0,0,0,.34);
   }
   .leader-tile-bg{
@@ -257,30 +230,29 @@
     position:absolute; inset:0;
     background:linear-gradient(180deg, rgba(8,10,9,.05) 0%, rgba(8,10,9,.28) 42%, rgba(8,10,9,.88) 100%);
   }
-  .leader-tile-content{
-    position:absolute; left:18px; right:18px; bottom:18px; z-index:1;
-  }
-  .leader-tile-role{
-    color:var(--gold); font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:.14em; margin-bottom:8px;
-  }
-  .leader-tile-name{
-    margin:0 0 6px; font-size:28px; font-weight:900; letter-spacing:-.03em;
-  }
-  .leader-tile-copy{
-    margin:0; color:#d0d8cf; line-height:1.6; font-size:14px;
-  }
+  .leader-tile-content{position:absolute; left:18px; right:18px; bottom:18px; z-index:1}
+  .leader-tile-role{color:var(--gold); font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:.14em; margin-bottom:8px}
+  .leader-tile-name{margin:0 0 6px; font-size:28px; font-weight:900; letter-spacing:-.03em}
+  .leader-tile-copy{margin:0; color:#d0d8cf; line-height:1.6; font-size:14px}
 
   .btn-row{display:flex; flex-wrap:wrap; gap:12px}
   .btn{
     appearance:none; cursor:pointer; border-radius:999px; padding:12px 18px;
-    border:1px solid rgba(224,185,79,.16); background:#171d18; color:var(--text);
-    font-weight:800; letter-spacing:.02em; box-shadow:0 8px 24px rgba(0,0,0,.18);
-    transition:transform .2s var(--ease), background .2s var(--ease), border-color .2s var(--ease), box-shadow .2s var(--ease);
+    border:1px solid rgba(224,185,79,.16); background:linear-gradient(180deg,#151b16,#121713);
+    color:#f4f5f1; font-weight:800; letter-spacing:.02em; box-shadow:0 8px 24px rgba(0,0,0,.18);
+    transition:transform .2s var(--ease), background .2s var(--ease), border-color .2s var(--ease), box-shadow .2s var(--ease), color .2s var(--ease);
   }
-  .btn:hover{transform:translateY(-2px); background:#1a211b; border-color:rgba(224,185,79,.3); box-shadow:0 12px 30px rgba(0,0,0,.22)}
+  .btn:hover{transform:translateY(-2px); background:linear-gradient(180deg,#1a211b,#151c16); border-color:rgba(224,185,79,.3); box-shadow:0 12px 30px rgba(0,0,0,.22); color:#fff}
   .btn:active{transform:translateY(0)}
-  .btn-primary{background:linear-gradient(180deg,#d6b04b,#b59137); color:#10130f; border-color:#d6b04b}
-  .btn-danger{background:#251717; border-color:#5d3232; color:#f0d7d7}
+  .btn-primary{
+    background:linear-gradient(180deg,#1a211b,#141914);
+    border-color:rgba(224,185,79,.32);
+    color:#ffffff;
+  }
+  .btn-danger{
+    background:linear-gradient(180deg,#241414,#1a1010);
+    border-color:#7b4040; color:#fff;
+  }
   .btn-block{width:100%; justify-content:center}
 
   .small-note{font-size:12px; color:var(--muted); line-height:1.6}
@@ -292,9 +264,7 @@
 
   .form-shell{max-width:850px}
   .field{display:flex; flex-direction:column; gap:8px}
-  .field label{
-    font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:.12em; color:#c7cfc5;
-  }
+  .field label{font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:.12em; color:#c7cfc5}
   .input,.textarea{
     width:100%; padding:14px 15px; border-radius:14px; outline:none;
     border:1px solid rgba(224,185,79,.14); background:#0f1411; color:var(--text);
@@ -310,15 +280,15 @@
   .form-grid-3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px}
   .divider{height:1px; background:rgba(224,185,79,.1); margin:8px 0}
 
-  .queue-item{
+  .queue-item,.blacklist-item{
     padding:18px; border-radius:18px; background:rgba(20,26,21,.72);
     border:1px solid rgba(224,185,79,.08); display:flex; flex-direction:column; gap:12px;
     animation:fadeUp .28s var(--ease);
   }
-  .queue-top{display:flex; justify-content:space-between; gap:18px; align-items:flex-start; flex-wrap:wrap}
+  .queue-top,.blacklist-top{display:flex; justify-content:space-between; gap:18px; align-items:flex-start; flex-wrap:wrap}
   .queue-id{font-size:13px; color:var(--gold); font-weight:900; text-transform:uppercase; letter-spacing:.14em}
-  .queue-title{font-size:18px; font-weight:850}
-  .queue-meta{color:var(--muted); font-size:14px; line-height:1.7}
+  .queue-title,.blacklist-name{font-size:18px; font-weight:850}
+  .queue-meta,.blacklist-meta{color:var(--muted); font-size:14px; line-height:1.7}
   .status{
     display:inline-flex; align-items:center; padding:7px 10px; border-radius:999px;
     border:1px solid rgba(224,185,79,.16); background:#151a16; color:#d7ddd5;
@@ -342,24 +312,14 @@
       linear-gradient(180deg, rgba(8,10,9,.12) 0%, rgba(8,10,9,.44) 100%);
   }
   .leader-banner-content{position:relative; z-index:1; max-width:760px}
-  .leader-insignia{
-    width:auto;
-    height:auto;
-    background:none !important;
-    box-shadow:none !important;
-    margin-bottom:18px;
-  }
-  .leader-insignia-inner{
-    display:flex; align-items:center; justify-content:flex-start; gap:8px; flex-wrap:wrap; width:auto;
-  }
+  .leader-insignia{width:auto;height:auto;background:none !important;box-shadow:none !important;margin-bottom:18px}
+  .leader-insignia-inner{display:flex; align-items:center; justify-content:flex-start; gap:8px; flex-wrap:wrap; width:auto}
   .mini-star{
     width:18px; height:18px; border:2px solid var(--gold2);
     clip-path:polygon(50% 0%,61% 36%,98% 36%,68% 57%,79% 92%,50% 70%,21% 92%,32% 57%,2% 36%,39% 36%);
     filter:drop-shadow(0 0 8px rgba(224,185,79,.28));
   }
-  .leader-super{
-    color:var(--gold); font-size:16px; font-weight:900; text-transform:uppercase; letter-spacing:.08em; margin-bottom:10px;
-  }
+  .leader-super{color:var(--gold); font-size:16px; font-weight:900; text-transform:uppercase; letter-spacing:.08em; margin-bottom:10px}
   .leader-name{
     margin:0; font-size:clamp(44px,5vw,64px); line-height:1.02; font-weight:900; letter-spacing:-.05em; color:#fff;
     text-shadow:0 6px 18px rgba(0,0,0,.28);
@@ -388,37 +348,20 @@
   .portrait-card{overflow:hidden}
   .portrait-image{width:100%; aspect-ratio:4/5; object-fit:cover}
   .portrait-meta{padding:18px}
-  .portrait-role{
-    margin-bottom:8px; color:var(--gold); font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:.14em;
-  }
+  .portrait-role{margin-bottom:8px; color:var(--gold); font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:.14em}
   .portrait-name{margin:0; font-size:28px; font-weight:900; letter-spacing:-.03em}
   .portrait-rank{margin-top:8px; color:var(--muted); font-size:14px; line-height:1.7}
   .portrait-rank strong{color:#edf1ec;font-weight:800}
   .bio-card{padding:28px}
-  .bio-card h3{
-    margin:0 0 14px; font-size:30px; font-weight:900; letter-spacing:-.03em; color:#f3f5f1;
-  }
-  .bio-card p{
-    margin:0 0 14px; color:#c8d0c7; font-size:17px; line-height:1.85;
-  }
+  .bio-card h3{margin:0 0 14px; font-size:30px; font-weight:900; letter-spacing:-.03em; color:#f3f5f1}
+  .bio-card p{margin:0 0 14px; color:#c8d0c7; font-size:17px; line-height:1.85}
   .bio-card p:last-child{margin-bottom:0}
 
-  @keyframes fadeUp{
-    from{opacity:0; transform:translateY(10px)}
-    to{opacity:1; transform:none}
-  }
-  @keyframes fadeOverlay{
-    from{opacity:0}
-    to{opacity:1}
-  }
-  @keyframes slideDown{
-    from{opacity:0; transform:translateY(-10px)}
-    to{opacity:1; transform:none}
-  }
+  @keyframes fadeUp{from{opacity:0; transform:translateY(10px)}to{opacity:1; transform:none}}
+  @keyframes fadeOverlay{from{opacity:0}to{opacity:1}}
+  @keyframes slideDown{from{opacity:0; transform:translateY(-10px)}to{opacity:1; transform:none}}
 
-  @media (max-width:1080px){
-    .mega-grid{grid-template-columns:1fr 1fr}
-  }
+  @media (max-width:1080px){.mega-grid{grid-template-columns:1fr 1fr}}
   @media (max-width:980px){
     .content-grid{grid-template-columns:1fr}
     .leader-grid{grid-template-columns:1fr}
@@ -497,6 +440,7 @@
         <div class="mega-col hidden" id="internalMenuCol">
           <h4>Internal</h4>
           <a href="#" data-page="internal-panel">ACC Internal Panel</a>
+          <a href="#" data-page="blacklist">ACC Blacklist</a>
           <a href="#" data-page="high-command" id="highCommandLink">High Command Panel</a>
         </div>
 
@@ -504,7 +448,7 @@
           <div class="mega-box" data-page="who-we-are"><span>Roleplay Notice</span><span>→</span></div>
           <div class="mega-box" data-page="organization"><span>Our Structure</span><span>→</span></div>
           <div class="mega-box" data-page="leadership-overview"><span>Leadership</span><span>→</span></div>
-          <div class="mega-box" data-page="login"><span>Account</span><span>→</span></div>
+          <div class="mega-box" data-page="blacklist"><span>Blacklist</span><span>→</span></div>
         </div>
       </div>
     </div>
@@ -515,6 +459,7 @@
       <div class="hero-content">
         <div class="eyebrow">Army Corrections Command</div>
         <p class="hero-copy">
+         This portal is for a roleplay environment and should remain clearly distinct from any real government service.
         </p>
         <div class="notice">
           This portal is for a roleplay environment and should remain clearly distinct from any real government service.
@@ -548,7 +493,7 @@
   </main>
 
 <script>
-const API_BASE = "https://the.chastiefola.workers.dev";
+const API_BASE = "YOUR_WORKER_URL_HERE";
 const COMMAND_BG = "https://cdn.discordapp.com/attachments/1423152485069099048/1472030425068081305/image.png?ex=69bbef6a&is=69ba9dea&hm=bc5a7929348f45c562bf169fae98dab344ec76a8bd2071f9832c730c9d0c4425&";
 
 const SITE_DATA = {
@@ -705,7 +650,8 @@ function setAuthUi(){
       </div>
       <div class="btn-row">
         <button class="btn btn-primary" onclick="renderPage('internal-panel')">ACC Internal Panel</button>
-        ${state.me.admin ? `<button class="btn" onclick="renderPage('high-command')">High Command</button>` : ""}
+        <button class="btn btn-primary" onclick="renderPage('blacklist')">ACC Blacklist</button>
+        ${state.me.admin ? `<button class="btn btn-primary" onclick="renderPage('high-command')">High Command</button>` : ""}
         <button class="btn" onclick="logout()">Sign Out</button>
       </div>
     </div>
@@ -723,8 +669,9 @@ function setAuthUi(){
 
 function syncLayouts(pageKey){
   $("hero").classList.toggle("hidden", !HERO_PAGES.has(pageKey));
-  $("standardLayout").classList.toggle("hidden", LEADER_PAGES.has(pageKey));
+  $("standardLayout").classList.remove("hidden");
   $("leaderLayout").classList.toggle("hidden", !LEADER_PAGES.has(pageKey));
+  $("standardLayout").classList.toggle("hidden", LEADER_PAGES.has(pageKey));
 }
 
 function renderPublicPage(key){
@@ -743,7 +690,6 @@ function renderInsignia(count){
 function renderLeaderPage(key){
   const page = SITE_DATA.leaders[key];
   if (!page) return renderPublicPage("who-we-are");
-
   const paragraphs = String(page.bio || "").split(/\n\s*\n/).filter(Boolean).map(p => `<p>${escapeHtml(p)}</p>`).join("");
 
   $("leaderLayout").innerHTML = `
@@ -827,8 +773,87 @@ function renderInternalPanel(){
           <div class="btn-row" style="margin-top:14px"><button class="btn btn-primary" onclick="renderIOForm()">Open Form</button></div>
         </div>
       </div>
+      <div class="feature-block">
+        <h3>ACC Blacklist</h3>
+        <p>View the command blacklist. Administrative accounts may add or remove entries.</p>
+        <div class="btn-row" style="margin-top:14px"><button class="btn btn-primary" onclick="renderBlacklist()">Open Blacklist</button></div>
+      </div>
     </div>
   `;
+}
+
+async function renderBlacklist(){
+  if (!state.me) return renderPage("login");
+  $("pageTitle").textContent = "ACC Blacklist";
+  $("pageKicker").textContent = "Protected command record";
+  $("mainContent").innerHTML = `<div class="alert">Loading blacklist...</div>`;
+  try{
+    const data = await api("/blacklist");
+    const items = data.items || [];
+    const listHtml = items.length ? items.map(item => `
+      <article class="blacklist-item">
+        <div class="blacklist-top">
+          <div>
+            <div class="blacklist-name">${escapeHtml(item.name)}</div>
+            <div class="blacklist-meta">Added by: ${escapeHtml(item.addedBy || "Unknown")} · ${item.createdAt ? new Date(item.createdAt).toLocaleString() : ""}</div>
+          </div>
+          <span class="status">Blacklisted</span>
+        </div>
+        <div class="blacklist-meta"><strong>Reason:</strong> ${escapeHtml(item.reason)}</div>
+        ${state.me.admin ? `<div class="btn-row"><button class="btn btn-danger" onclick="removeBlacklist('${escapeHtml(item.id)}')">Remove Entry</button></div>` : ``}
+      </article>
+    `).join("") : `<div class="feature-block"><h3>No blacklisted individuals</h3><p>There are currently no blacklist records.</p></div>`;
+
+    const adminForm = state.me.admin ? `
+      <div class="feature-block">
+        <h3>Add Blacklist Entry</h3>
+        <div class="form-grid">
+          <div class="field">
+            <label>Individual Name</label>
+            <input class="input" id="bl_name" placeholder="Username or full name">
+          </div>
+          <div class="field">
+            <label>Reason</label>
+            <input class="input" id="bl_reason" placeholder="Reason for blacklist">
+          </div>
+        </div>
+        <div class="btn-row" style="margin-top:14px">
+          <button class="btn btn-primary" onclick="addBlacklist()">Add Entry</button>
+        </div>
+      </div>
+    ` : `
+      <div class="feature-block">
+        <h3>Read-Only Access</h3>
+        <p>CID and JAGC members may view blacklist records but cannot add or remove entries.</p>
+      </div>
+    `;
+
+    $("mainContent").innerHTML = `<div class="stack">${adminForm}${listHtml}</div>`;
+  }catch(err){
+    $("mainContent").innerHTML = `<div class="alert">${escapeHtml(err.message)}</div>`;
+  }
+}
+
+async function addBlacklist(){
+  const name = $("bl_name").value.trim();
+  const reason = $("bl_reason").value.trim();
+  if (!name || !reason) return alert("Please complete all blacklist fields.");
+  try{
+    await api("/blacklist", { method:"POST", body: JSON.stringify({ name, reason }) });
+    await renderBlacklist();
+  }catch(err){
+    alert(err.message);
+  }
+}
+
+async function removeBlacklist(id){
+  if (!confirm("Remove this blacklist entry?")) return;
+  try{
+    await api("/blacklist/remove", { method:"POST", body: JSON.stringify({ id }) });
+    await renderBlacklist();
+  }catch(err){
+    alert(err.message);
+  }
 }
 
 function renderBanForm(){
@@ -901,8 +926,8 @@ async function renderHighCommand(){
   $("mainContent").innerHTML = `
     <div class="stack">
       <div class="btn-row">
-        <button class="btn ${state.queueType === "ban" ? "btn-primary" : ""}" onclick="loadQueue('ban')">Ban Request Completion</button>
-        <button class="btn ${state.queueType === "io" ? "btn-primary" : ""}" onclick="loadQueue('io')">IO Approval</button>
+        <button class="btn btn-primary" onclick="loadQueue('ban')">Ban Request Completion</button>
+        <button class="btn btn-primary" onclick="loadQueue('io')">IO Approval</button>
       </div>
       <div id="queueWrap" class="stack"></div>
     </div>
@@ -1068,6 +1093,7 @@ function renderPage(pageKey){
 
   if (pageKey === "login") return renderLogin();
   if (pageKey === "internal-panel") return renderInternalPanel();
+  if (pageKey === "blacklist") return renderBlacklist();
   if (pageKey === "high-command") return renderHighCommand();
   if (LEADER_PAGES.has(pageKey)) return renderLeaderPage(pageKey);
   return renderPublicPage(pageKey);
@@ -1090,7 +1116,7 @@ document.addEventListener("click", (event) => {
   if (navLink){
     event.preventDefault();
     const target = navLink.getAttribute("data-page");
-    if ((target === "internal-panel" || target === "high-command") && !state.me) return renderPage("login");
+    if ((target === "internal-panel" || target === "high-command" || target === "blacklist") && !state.me) return renderPage("login");
     if (target === "high-command" && !(state.me && state.me.admin)) return renderPage("login");
     renderPage(target);
   }
