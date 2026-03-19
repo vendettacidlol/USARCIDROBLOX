@@ -1,346 +1,389 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Army Corrections Command Roleplay Portal</title>
-  <style>
-    :root{
-      --bg:#090b09;
-      --bg2:#0d110d;
-      --panel:#101510;
-      --panel2:#161c17;
-      --panel3:#1c241e;
-      --line:#2d362f;
-      --line2:rgba(224,185,79,.16);
-      --gold:#e0b94f;
-      --gold2:#cda743;
-      --text:#f4f5f1;
-      --muted:#bcc5ba;
-      --soft:#dfe4de;
-      --shadow:0 24px 70px rgba(0,0,0,.42);
-      --radius:20px;
-      --content:1240px;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Army Corrections Command Roleplay Portal</title>
+<style>
+  :root{
+    --bg:#090b09;
+    --bg2:#0d110d;
+    --panel:#101510;
+    --panel2:#161c17;
+    --panel3:#1c241e;
+    --line:#2d362f;
+    --line2:rgba(224,185,79,.16);
+    --gold:#e0b94f;
+    --gold2:#cda743;
+    --text:#f4f5f1;
+    --muted:#bcc5ba;
+    --soft:#dfe4de;
+    --shadow:0 24px 70px rgba(0,0,0,.42);
+    --radius:20px;
+    --content:1240px;
+  }
 
-    *{box-sizing:border-box}
-    html,body{margin:0;padding:0}
-    body{
-      min-height:100vh;
-      font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;
-      color:var(--text);
-      background:
-        radial-gradient(900px 420px at 20% -10%, rgba(224,185,79,.07), transparent 58%),
-        radial-gradient(800px 380px at 82% 0%, rgba(58,93,63,.12), transparent 54%),
-        linear-gradient(180deg,var(--bg) 0%,var(--bg2) 100%);
-    }
-    a{color:inherit;text-decoration:none}
-    button,input,textarea{font:inherit}
-    img{display:block;max-width:100%}
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    min-height:100vh;
+    font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;
+    color:var(--text);
+    background:
+      radial-gradient(900px 420px at 20% -10%, rgba(224,185,79,.07), transparent 58%),
+      radial-gradient(800px 380px at 82% 0%, rgba(58,93,63,.12), transparent 54%),
+      linear-gradient(180deg,var(--bg) 0%,var(--bg2) 100%);
+  }
+  a{color:inherit;text-decoration:none}
+  button,input,textarea{font:inherit}
+  img{display:block;max-width:100%}
 
-    .site-header{
-      position:sticky; top:0; z-index:80;
-      backdrop-filter:blur(12px);
-      background:linear-gradient(180deg, rgba(9,11,9,.95), rgba(9,11,9,.84));
-      border-bottom:1px solid rgba(224,185,79,.2);
-    }
-    .header-inner{
-      max-width:var(--content);
-      margin:0 auto;
-      padding:0 22px;
-      min-height:76px;
-      display:grid;
-      grid-template-columns:160px 1fr 160px;
-      align-items:center;
-      gap:18px;
-    }
-    .menu-btn,.account-btn{
-      appearance:none;border:0;background:none;color:var(--text);
-      display:flex;align-items:center;gap:12px;cursor:pointer;
-      font-weight:800;letter-spacing:.04em;text-transform:uppercase;font-size:13px;
-      padding:12px 0;
-    }
-    .account-btn{justify-self:end}
-    .menu-btn .icon{
-      width:28px;text-align:center;font-size:28px;line-height:1;color:var(--gold);
-    }
-    .brand{
-      justify-self:center;
-      display:flex;align-items:center;gap:12px;
-      text-transform:uppercase;font-weight:900;letter-spacing:.06em;
-    }
-    .brand-star{
-      width:22px;height:22px;border:2px solid var(--gold);
-      clip-path:polygon(50% 0%,61% 36%,98% 36%,68% 57%,79% 92%,50% 70%,21% 92%,32% 57%,2% 36%,39% 36%);
-    }
-    .brand-text{font-size:17px}
-    .brand-sub{display:block;margin-top:2px;font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--muted)}
+  .site-header{
+    position:sticky; top:0; z-index:80;
+    backdrop-filter:blur(12px);
+    background:linear-gradient(180deg, rgba(9,11,9,.95), rgba(9,11,9,.84));
+    border-bottom:1px solid rgba(224,185,79,.2);
+  }
+  .header-inner{
+    max-width:var(--content);
+    margin:0 auto;
+    padding:0 22px;
+    min-height:76px;
+    display:grid;
+    grid-template-columns:160px 1fr 160px;
+    align-items:center;
+    gap:18px;
+  }
+  .menu-btn,.account-btn{
+    appearance:none;border:0;background:none;color:var(--text);
+    display:flex;align-items:center;gap:12px;cursor:pointer;
+    font-weight:800;letter-spacing:.04em;text-transform:uppercase;font-size:13px;
+    padding:12px 0;
+  }
+  .account-btn{justify-self:end}
+  .menu-btn .icon{
+    width:28px;text-align:center;font-size:28px;line-height:1;color:var(--gold);
+  }
+  .brand{
+    justify-self:center;
+    display:flex;align-items:center;gap:12px;
+    text-transform:uppercase;font-weight:900;letter-spacing:.06em;
+  }
+  .brand-star{
+    width:22px;height:22px;border:2px solid var(--gold);
+    clip-path:polygon(50% 0%,61% 36%,98% 36%,68% 57%,79% 92%,50% 70%,21% 92%,32% 57%,2% 36%,39% 36%);
+  }
+  .brand-text{font-size:17px}
+  .brand-sub{display:block;margin-top:2px;font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--muted)}
 
-    .menu-overlay{
-      position:fixed; inset:0; z-index:120; display:none;
-      background:rgba(5,7,6,.78); backdrop-filter:blur(8px);
-    }
-    .menu-overlay.open{display:block}
-    .mega{
-      position:absolute; left:0; right:0; top:0; min-height:100vh;
-      background:linear-gradient(180deg,#111311 0%,#0d100e 100%);
-      border-bottom:1px solid rgba(224,185,79,.16);
-    }
-    .mega-top{
-      max-width:var(--content); margin:0 auto; padding:0 22px;
-      min-height:76px; display:flex; align-items:center; justify-content:space-between;
-    }
-    .mega-grid{
-      max-width:var(--content); margin:0 auto; padding:28px 22px 40px;
-      display:grid; grid-template-columns:1fr 1fr 1fr 280px; gap:36px;
-    }
-    .mega-col h4{
-      margin:0 0 18px; color:var(--gold); font-size:15px; font-weight:900;
-      text-transform:uppercase; letter-spacing:.12em;
-    }
-    .mega-col a{
-      display:block; padding:10px 0; font-size:18px; color:#edf1ec; cursor:pointer;
-    }
-    .mega-col a:hover{color:var(--gold)}
-    .mega-cta{display:flex; flex-direction:column; gap:12px}
-    .mega-box{
-      display:flex; align-items:center; justify-content:space-between;
-      padding:22px 20px; background:#222523; border:1px solid rgba(224,185,79,.1);
-      font-weight:900; text-transform:uppercase; letter-spacing:.06em; cursor:pointer;
-    }
-    .mega-box span:last-child{font-size:26px; color:var(--gold)}
-    .hidden{display:none !important}
+  .menu-overlay{
+    position:fixed; inset:0; z-index:120; display:none;
+    background:rgba(5,7,6,.78); backdrop-filter:blur(8px);
+  }
+  .menu-overlay.open{display:block}
+  .mega{
+    position:absolute; left:0; right:0; top:0; min-height:100vh;
+    background:linear-gradient(180deg,#111311 0%,#0d100e 100%);
+    border-bottom:1px solid rgba(224,185,79,.16);
+  }
+  .mega-top{
+    max-width:var(--content); margin:0 auto; padding:0 22px;
+    min-height:76px; display:flex; align-items:center; justify-content:space-between;
+  }
+  .mega-grid{
+    max-width:var(--content); margin:0 auto; padding:28px 22px 40px;
+    display:grid; grid-template-columns:1fr 1fr 1fr 280px; gap:36px;
+  }
+  .mega-col h4{
+    margin:0 0 18px; color:var(--gold); font-size:15px; font-weight:900;
+    text-transform:uppercase; letter-spacing:.12em;
+  }
+  .mega-col a{
+    display:block; padding:10px 0; font-size:18px; color:#edf1ec; cursor:pointer;
+  }
+  .mega-col a:hover{color:var(--gold)}
+  .mega-cta{display:flex; flex-direction:column; gap:12px}
+  .mega-box{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:22px 20px; background:#222523; border:1px solid rgba(224,185,79,.1);
+    font-weight:900; text-transform:uppercase; letter-spacing:.06em; cursor:pointer;
+    transition:transform .18s ease, border-color .18s ease, background .18s ease;
+  }
+  .mega-box:hover{transform:translateY(-1px);border-color:rgba(224,185,79,.24);background:#262a27}
+  .mega-box span:last-child{font-size:26px; color:var(--gold)}
+  .hidden{display:none !important}
 
-    .page-shell{max-width:var(--content); margin:0 auto; padding:28px 22px 64px}
+  .page-shell{max-width:var(--content); margin:0 auto; padding:28px 22px 64px}
 
-    .hero{
-      position:relative; overflow:hidden; min-height:420px; border-radius:26px;
-      border:1px solid rgba(224,185,79,.16); box-shadow:var(--shadow);
-      background:
-        linear-gradient(90deg, rgba(8,10,9,.8) 0%, rgba(8,10,9,.72) 38%, rgba(8,10,9,.34) 70%, rgba(8,10,9,.2) 100%),
-        url("https://images.unsplash.com/photo-1521295121783-8a321d551ad2?auto=format&fit=crop&w=1800&q=80") center/cover no-repeat;
-    }
-    .hero:after{
-      content:""; position:absolute; inset:0;
-      background:linear-gradient(180deg, transparent 0%, rgba(8,10,9,.16) 48%, rgba(8,10,9,.46) 100%);
-      pointer-events:none;
-    }
-    .hero-content{
-      position:relative; z-index:1; width:min(700px,100%);
-      padding:42px 40px 38px; display:flex; flex-direction:column; gap:18px;
-    }
-    .eyebrow{
-      display:inline-flex; align-items:center; gap:10px;
-      color:var(--gold); font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:.16em;
-    }
-    .eyebrow:before{content:""; width:32px; height:1px; background:var(--gold)}
-    h1{
-      margin:0; font-size:clamp(36px,4vw,58px); line-height:1.02; letter-spacing:-.04em; font-weight:900;
-    }
-    .hero-copy{margin:0; color:#d8ddd7; font-size:18px; line-height:1.7}
-    .hero-meta{display:flex; flex-wrap:wrap; gap:12px}
-    .pill{
-      padding:10px 14px; border-radius:999px; background:rgba(15,19,16,.72);
-      border:1px solid rgba(224,185,79,.16); color:#d6ddd4; font-size:13px; font-weight:700;
-    }
-    .notice{
-      margin-top:6px; padding:14px 16px; border-radius:14px;
-      background:rgba(17,22,18,.82); border:1px solid rgba(224,185,79,.16);
-      color:var(--muted); font-size:13px; line-height:1.6;
-    }
+  .hero{
+    position:relative; overflow:hidden; min-height:420px; border-radius:26px;
+    border:1px solid rgba(224,185,79,.16); box-shadow:var(--shadow);
+    background:
+      linear-gradient(90deg, rgba(8,10,9,.8) 0%, rgba(8,10,9,.72) 38%, rgba(8,10,9,.34) 70%, rgba(8,10,9,.2) 100%),
+      url("https://images.unsplash.com/photo-1521295121783-8a321d551ad2?auto=format&fit=crop&w=1800&q=80") center/cover no-repeat;
+  }
+  .hero:after{
+    content:""; position:absolute; inset:0;
+    background:linear-gradient(180deg, transparent 0%, rgba(8,10,9,.16) 48%, rgba(8,10,9,.46) 100%);
+    pointer-events:none;
+  }
+  .hero-content{
+    position:relative; z-index:1; width:min(700px,100%);
+    padding:42px 40px 38px; display:flex; flex-direction:column; gap:18px;
+  }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:10px;
+    color:var(--gold); font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:.16em;
+  }
+  .eyebrow:before{content:""; width:32px; height:1px; background:var(--gold)}
+  h1{
+    margin:0; font-size:clamp(36px,4vw,58px); line-height:1.02; letter-spacing:-.04em; font-weight:900;
+  }
+  .hero-copy{margin:0; color:#d8ddd7; font-size:18px; line-height:1.7}
+  .hero-meta{display:flex; flex-wrap:wrap; gap:12px}
+  .pill{
+    padding:10px 14px; border-radius:999px; background:rgba(15,19,16,.72);
+    border:1px solid rgba(224,185,79,.16); color:#d6ddd4; font-size:13px; font-weight:700;
+  }
+  .notice{
+    margin-top:6px; padding:14px 16px; border-radius:14px;
+    background:rgba(17,22,18,.82); border:1px solid rgba(224,185,79,.16);
+    color:var(--muted); font-size:13px; line-height:1.6;
+  }
 
-    .content-grid{margin-top:26px; display:grid; grid-template-columns:1.25fr .75fr; gap:22px}
-    .card{
-      background:linear-gradient(180deg, rgba(17,22,18,.96), rgba(12,16,13,.96));
-      border:1px solid rgba(224,185,79,.12); border-radius:22px; overflow:hidden; box-shadow:var(--shadow);
-    }
-    .card-head{
-      padding:20px 22px; border-bottom:1px solid rgba(224,185,79,.1);
-      display:flex; align-items:center; justify-content:space-between; gap:16px;
-    }
-    .card-title{margin:0; font-size:20px; font-weight:850; letter-spacing:-.02em}
-    .card-kicker{margin-top:4px; font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:.12em; color:var(--muted)}
-    .card-body{padding:22px}
+  .content-grid{margin-top:26px; display:grid; grid-template-columns:1.25fr .75fr; gap:22px}
+  .card{
+    background:linear-gradient(180deg, rgba(17,22,18,.96), rgba(12,16,13,.96));
+    border:1px solid rgba(224,185,79,.12); border-radius:22px; overflow:hidden; box-shadow:var(--shadow);
+    animation:fadeIn .28s ease;
+  }
+  .card-head{
+    padding:20px 22px; border-bottom:1px solid rgba(224,185,79,.1);
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+  }
+  .card-title{margin:0; font-size:20px; font-weight:850; letter-spacing:-.02em}
+  .card-kicker{margin-top:4px; font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:.12em; color:var(--muted)}
+  .card-body{padding:22px}
 
-    .stack{display:flex; flex-direction:column; gap:16px}
-    .grid-2{display:grid; grid-template-columns:1fr 1fr; gap:14px}
-    .feature-block{
-      padding:18px; border-radius:18px; background:rgba(20,26,21,.72); border:1px solid rgba(224,185,79,.08);
-    }
-    .feature-block h3{margin:0 0 8px; font-size:17px}
-    .feature-block p{margin:0; color:var(--muted); line-height:1.7; font-size:15px}
+  .stack{display:flex; flex-direction:column; gap:16px}
+  .grid-2{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+  .feature-block{
+    padding:18px; border-radius:18px; background:rgba(20,26,21,.72); border:1px solid rgba(224,185,79,.08);
+  }
+  .feature-block h3{margin:0 0 8px; font-size:17px}
+  .feature-block p{margin:0; color:var(--muted); line-height:1.7; font-size:15px}
 
-    .btn-row{display:flex; flex-wrap:wrap; gap:12px}
-    .btn{
-      appearance:none; cursor:pointer; border-radius:999px; padding:12px 18px;
-      border:1px solid rgba(224,185,79,.16); background:#171d18; color:var(--text);
-      font-weight:800; letter-spacing:.02em; box-shadow:0 8px 24px rgba(0,0,0,.18); transition:.2s ease;
-    }
-    .btn:hover{transform:translateY(-1px); background:#1a211b; border-color:rgba(224,185,79,.3)}
-    .btn-primary{
-      background:linear-gradient(180deg,#d6b04b,#b59137); color:#10130f; border-color:#d6b04b;
-    }
-    .btn-danger{background:#251717; border-color:#5d3232; color:#f0d7d7}
-    .btn-block{width:100%; justify-content:center}
+  .leader-card-grid{
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    gap:16px;
+  }
+  .leader-tile{
+    position:relative;
+    overflow:hidden;
+    min-height:260px;
+    border-radius:20px;
+    border:1px solid rgba(224,185,79,.12);
+    background:#121812;
+    cursor:pointer;
+    box-shadow:0 16px 38px rgba(0,0,0,.25);
+    transition:transform .22s ease, border-color .22s ease, box-shadow .22s ease;
+  }
+  .leader-tile:hover{
+    transform:translateY(-3px);
+    border-color:rgba(224,185,79,.24);
+    box-shadow:0 24px 48px rgba(0,0,0,.34);
+  }
+  .leader-tile-bg{
+    position:absolute; inset:0; background-size:cover; background-position:center;
+    transform:scale(1.01);
+  }
+  .leader-tile-overlay{
+    position:absolute; inset:0;
+    background:
+      linear-gradient(180deg, rgba(8,10,9,.05) 0%, rgba(8,10,9,.28) 42%, rgba(8,10,9,.88) 100%);
+  }
+  .leader-tile-content{
+    position:absolute; left:18px; right:18px; bottom:18px; z-index:1;
+  }
+  .leader-tile-role{
+    color:var(--gold); font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:.14em; margin-bottom:8px;
+  }
+  .leader-tile-name{
+    margin:0 0 6px; font-size:28px; font-weight:900; letter-spacing:-.03em;
+  }
+  .leader-tile-copy{
+    margin:0; color:#d0d8cf; line-height:1.6; font-size:14px;
+  }
 
-    .small-note{font-size:12px; color:var(--muted); line-height:1.6}
-    .alert{
-      padding:14px 15px; border-radius:14px; border:1px solid rgba(224,185,79,.12);
-      background:#161c17; color:#dbe2d9;
-    }
+  .btn-row{display:flex; flex-wrap:wrap; gap:12px}
+  .btn{
+    appearance:none; cursor:pointer; border-radius:999px; padding:12px 18px;
+    border:1px solid rgba(224,185,79,.16); background:#171d18; color:var(--text);
+    font-weight:800; letter-spacing:.02em; box-shadow:0 8px 24px rgba(0,0,0,.18); transition:.2s ease;
+  }
+  .btn:hover{transform:translateY(-1px); background:#1a211b; border-color:rgba(224,185,79,.3)}
+  .btn-primary{background:linear-gradient(180deg,#d6b04b,#b59137); color:#10130f; border-color:#d6b04b}
+  .btn-danger{background:#251717; border-color:#5d3232; color:#f0d7d7}
+  .btn-block{width:100%; justify-content:center}
 
-    .form-shell{max-width:850px}
-    .field{display:flex; flex-direction:column; gap:8px}
-    .field label{
-      font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:.12em; color:#c7cfc5;
-    }
-    .input,.textarea{
-      width:100%; padding:14px 15px; border-radius:14px; outline:none;
-      border:1px solid rgba(224,185,79,.14); background:#0f1411; color:var(--text);
-      transition:border-color .18s ease, box-shadow .18s ease, background .18s ease;
-    }
-    .input::placeholder,.textarea::placeholder{color:#7e897f}
-    .input:focus,.textarea:focus{
-      border-color:rgba(224,185,79,.42); box-shadow:0 0 0 4px rgba(224,185,79,.1); background:#111712;
-    }
-    .textarea{min-height:130px; resize:vertical; line-height:1.6}
-    .form-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px}
-    .form-grid-3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px}
-    .divider{height:1px; background:rgba(224,185,79,.1); margin:8px 0}
+  .small-note{font-size:12px; color:var(--muted); line-height:1.6}
+  .alert{
+    padding:14px 15px; border-radius:14px; border:1px solid rgba(224,185,79,.12);
+    background:#161c17; color:#dbe2d9;
+  }
 
-    .queue-item{
-      padding:18px; border-radius:18px; background:rgba(20,26,21,.72);
-      border:1px solid rgba(224,185,79,.08); display:flex; flex-direction:column; gap:12px;
-    }
-    .queue-top{display:flex; justify-content:space-between; gap:18px; align-items:flex-start; flex-wrap:wrap}
-    .queue-id{font-size:13px; color:var(--gold); font-weight:900; text-transform:uppercase; letter-spacing:.14em}
-    .queue-title{font-size:18px; font-weight:850}
-    .queue-meta{color:var(--muted); font-size:14px; line-height:1.7}
-    .status{
-      display:inline-flex; align-items:center; padding:7px 10px; border-radius:999px;
-      border:1px solid rgba(224,185,79,.16); background:#151a16; color:#d7ddd5;
-      font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:.12em;
-    }
+  .form-shell{max-width:850px}
+  .field{display:flex; flex-direction:column; gap:8px}
+  .field label{
+    font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:.12em; color:#c7cfc5;
+  }
+  .input,.textarea{
+    width:100%; padding:14px 15px; border-radius:14px; outline:none;
+    border:1px solid rgba(224,185,79,.14); background:#0f1411; color:var(--text);
+    transition:border-color .18s ease, box-shadow .18s ease, background .18s ease;
+  }
+  .input::placeholder,.textarea::placeholder{color:#7e897f}
+  .input:focus,.textarea:focus{
+    border-color:rgba(224,185,79,.42); box-shadow:0 0 0 4px rgba(224,185,79,.1); background:#111712;
+  }
+  .textarea{min-height:130px; resize:vertical; line-height:1.6}
+  .form-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+  .form-grid-3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px}
+  .divider{height:1px; background:rgba(224,185,79,.1); margin:8px 0}
 
-    /* Fictional leadership pages */
-    .leader-shell{
-      border-radius:24px; overflow:hidden; box-shadow:var(--shadow);
-      border:1px solid rgba(224,185,79,.12); background:linear-gradient(180deg,#0f1411,#0c110d);
-    }
-    .leader-banner{
-      min-height:420px; position:relative; display:flex; align-items:flex-end;
-      padding:42px 48px;
-      background-size:cover; background-position:center;
-    }
-    .leader-banner::before{
-      content:""; position:absolute; inset:0;
-      background:
-        linear-gradient(90deg, rgba(8,10,9,.7) 0%, rgba(8,10,9,.52) 45%, rgba(8,10,9,.18) 100%),
-        linear-gradient(180deg, rgba(8,10,9,.12) 0%, rgba(8,10,9,.42) 100%);
-    }
-    .leader-banner-content{position:relative; z-index:1; max-width:760px}
-    .leader-insignia{
-      width:96px; height:96px; border-radius:6px; background:rgba(255,255,255,.96);
-      display:grid; place-items:center; margin-bottom:18px;
-      box-shadow:0 10px 30px rgba(0,0,0,.24);
-    }
-    .leader-insignia-star{
-      width:52px; height:52px; border:4px solid var(--gold2);
-      clip-path:polygon(50% 0%,61% 36%,98% 36%,68% 57%,79% 92%,50% 70%,21% 92%,32% 57%,2% 36%,39% 36%);
-    }
-    .leader-super{
-      color:var(--gold); font-size:16px; font-weight:900; text-transform:uppercase; letter-spacing:.08em; margin-bottom:10px;
-    }
-    .leader-name{
-      margin:0; font-size:clamp(44px,5vw,64px); line-height:1.02; font-weight:900; letter-spacing:-.05em; color:#fff;
-    }
-    .leader-tabs{
-      display:flex; justify-content:center; gap:46px;
-      background:linear-gradient(180deg,#171d18,#141914);
-      border-top:1px solid rgba(224,185,79,.08);
-      border-bottom:1px solid rgba(224,185,79,.16);
-    }
-    .leader-tab{
-      position:relative; padding:18px 0; font-size:19px; font-weight:900; text-transform:uppercase; letter-spacing:.02em;
-      color:#f0f2ef;
-    }
-    .leader-tab.active::after{
-      content:""; position:absolute; left:0; right:0; bottom:-1px; height:4px; background:var(--gold);
-    }
-    .leader-body{padding:30px; background:linear-gradient(180deg,#101510,#0b0f0c)}
-    .leader-grid{display:grid; grid-template-columns:320px 1fr; gap:28px; align-items:start}
-    .portrait-card,.bio-card,.news-card{
-      background:linear-gradient(180deg,#161c17,#121813); border:1px solid rgba(224,185,79,.1);
-      border-radius:20px; box-shadow:0 12px 34px rgba(0,0,0,.24);
-    }
-    .portrait-card{overflow:hidden}
-    .portrait-image{width:100%; aspect-ratio:4/5; object-fit:cover}
-    .portrait-meta{padding:18px}
-    .portrait-role{
-      margin-bottom:8px; color:var(--gold); font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:.14em;
-    }
-    .portrait-name{margin:0; font-size:28px; font-weight:900; letter-spacing:-.03em}
-    .portrait-rank{margin-top:8px; color:var(--muted); font-size:14px; line-height:1.6}
-    .bio-card,.news-card{padding:28px}
-    .bio-card h3,.news-card h3{
-      margin:0 0 14px; font-size:30px; font-weight:900; letter-spacing:-.03em; color:#f3f5f1;
-    }
-    .bio-card p,.news-card p{
-      margin:0; color:#c8d0c7; font-size:17px; line-height:1.85;
-    }
-    .news-item{
-      padding:16px 0; border-top:1px solid rgba(224,185,79,.08);
-    }
-    .news-item:first-child{border-top:0; padding-top:0}
-    .news-label{
-      color:var(--gold); font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:.14em; margin-bottom:6px;
-    }
-    .news-title{
-      font-size:19px; font-weight:850; margin-bottom:6px; color:#f2f4f0;
-    }
-    .news-meta{
-      font-size:13px; color:var(--muted);
-    }
+  .queue-item{
+    padding:18px; border-radius:18px; background:rgba(20,26,21,.72);
+    border:1px solid rgba(224,185,79,.08); display:flex; flex-direction:column; gap:12px;
+  }
+  .queue-top{display:flex; justify-content:space-between; gap:18px; align-items:flex-start; flex-wrap:wrap}
+  .queue-id{font-size:13px; color:var(--gold); font-weight:900; text-transform:uppercase; letter-spacing:.14em}
+  .queue-title{font-size:18px; font-weight:850}
+  .queue-meta{color:var(--muted); font-size:14px; line-height:1.7}
+  .status{
+    display:inline-flex; align-items:center; padding:7px 10px; border-radius:999px;
+    border:1px solid rgba(224,185,79,.16); background:#151a16; color:#d7ddd5;
+    font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:.12em;
+  }
 
-    .leadership-list{display:grid; gap:18px}
-    .leader-list-card{
-      display:grid; grid-template-columns:180px 1fr;
-      gap:20px; padding:18px; border-radius:20px;
-      background:linear-gradient(180deg,#161c17,#121813);
-      border:1px solid rgba(224,185,79,.1); box-shadow:0 12px 34px rgba(0,0,0,.24);
-    }
-    .leader-list-card img{
-      width:100%; aspect-ratio:4/5; object-fit:cover; border-radius:14px;
-    }
-    .leader-list-role{
-      margin-bottom:8px; color:var(--gold); font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:.14em;
-    }
-    .leader-list-name{
-      margin:0 0 8px; font-size:30px; font-weight:900; letter-spacing:-.03em;
-    }
-    .leader-list-card p{margin:0; color:#c8d0c7; line-height:1.8; font-size:16px}
+  .leader-shell{
+    border-radius:24px; overflow:hidden; box-shadow:var(--shadow);
+    border:1px solid rgba(224,185,79,.12); background:linear-gradient(180deg,#0f1411,#0c110d);
+    animation:fadeIn .28s ease;
+  }
+  .leader-banner{
+    min-height:420px; position:relative; display:flex; align-items:flex-end;
+    padding:42px 48px;
+    background-size:cover; background-position:center;
+  }
+  .leader-banner::before{
+    content:""; position:absolute; inset:0;
+    background:
+      linear-gradient(90deg, rgba(8,10,9,.72) 0%, rgba(8,10,9,.54) 45%, rgba(8,10,9,.18) 100%),
+      linear-gradient(180deg, rgba(8,10,9,.12) 0%, rgba(8,10,9,.44) 100%);
+  }
+  .leader-banner-content{position:relative; z-index:1; max-width:760px}
+  .leader-insignia{
+    width:96px; height:96px; border-radius:6px; background:rgba(255,255,255,.96);
+    display:grid; place-items:center; margin-bottom:18px;
+    box-shadow:0 10px 30px rgba(0,0,0,.24);
+  }
+  .leader-insignia-inner{
+    display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; width:60px;
+  }
+  .mini-star{
+    width:18px; height:18px; border:2px solid var(--gold2);
+    clip-path:polygon(50% 0%,61% 36%,98% 36%,68% 57%,79% 92%,50% 70%,21% 92%,32% 57%,2% 36%,39% 36%);
+  }
+  .leader-super{
+    color:var(--gold); font-size:16px; font-weight:900; text-transform:uppercase; letter-spacing:.08em; margin-bottom:10px;
+  }
+  .leader-name{
+    margin:0; font-size:clamp(44px,5vw,64px); line-height:1.02; font-weight:900; letter-spacing:-.05em; color:#fff;
+  }
+  .leader-tabs{
+    display:flex; justify-content:center; gap:46px;
+    background:linear-gradient(180deg,#171d18,#141914);
+    border-top:1px solid rgba(224,185,79,.08);
+    border-bottom:1px solid rgba(224,185,79,.16);
+  }
+  .leader-tab{
+    position:relative; padding:18px 0; font-size:19px; font-weight:900; text-transform:uppercase; letter-spacing:.02em;
+    color:#f0f2ef;
+  }
+  .leader-tab.active::after{
+    content:""; position:absolute; left:0; right:0; bottom:-1px; height:4px; background:var(--gold);
+  }
+  .leader-body{padding:30px; background:linear-gradient(180deg,#101510,#0b0f0c)}
+  .leader-grid{display:grid; grid-template-columns:320px 1fr; gap:28px; align-items:start}
+  .portrait-card,.bio-card{
+    background:linear-gradient(180deg,#161c17,#121813); border:1px solid rgba(224,185,79,.1);
+    border-radius:20px; box-shadow:0 12px 34px rgba(0,0,0,.24);
+  }
+  .portrait-card{overflow:hidden}
+  .portrait-image{width:100%; aspect-ratio:4/5; object-fit:cover}
+  .portrait-meta{padding:18px}
+  .portrait-role{
+    margin-bottom:8px; color:var(--gold); font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:.14em;
+  }
+  .portrait-name{margin:0; font-size:28px; font-weight:900; letter-spacing:-.03em}
+  .portrait-rank{margin-top:8px; color:var(--muted); font-size:14px; line-height:1.6}
+  .bio-card{padding:28px}
+  .bio-card h3{
+    margin:0 0 14px; font-size:30px; font-weight:900; letter-spacing:-.03em; color:#f3f5f1;
+  }
+  .bio-card p{
+    margin:0; color:#c8d0c7; font-size:17px; line-height:1.85;
+  }
 
-    @media (max-width:1080px){
-      .mega-grid{grid-template-columns:1fr 1fr}
-    }
-    @media (max-width:980px){
-      .content-grid{grid-template-columns:1fr}
-      .leader-grid{grid-template-columns:1fr}
-    }
-    @media (max-width:760px){
-      .header-inner{padding-left:16px;padding-right:16px;grid-template-columns:120px 1fr 120px}
-      .page-shell{padding-left:16px;padding-right:16px}
-      .menu-btn span.label,.account-btn span.label{display:none}
-      .brand-text{font-size:15px}
-      .hero-content{padding:28px 24px 28px}
-      .mega-grid{grid-template-columns:1fr}
-      .leader-banner{padding:26px 22px}
-      .leader-body{padding:18px}
-      .leader-tabs{gap:26px}
-      .leader-tab{font-size:16px}
-      .leader-list-card,.form-grid,.form-grid-3,.grid-2{grid-template-columns:1fr}
-    }
-  </style>
+  .leadership-list{display:grid; gap:18px}
+  .leader-list-card{
+    display:grid; grid-template-columns:180px 1fr;
+    gap:20px; padding:18px; border-radius:20px;
+    background:linear-gradient(180deg,#161c17,#121813);
+    border:1px solid rgba(224,185,79,.1); box-shadow:0 12px 34px rgba(0,0,0,.24);
+    cursor:pointer; transition:transform .2s ease, border-color .2s ease;
+  }
+  .leader-list-card:hover{transform:translateY(-2px);border-color:rgba(224,185,79,.2)}
+  .leader-list-card img{
+    width:100%; aspect-ratio:4/5; object-fit:cover; border-radius:14px;
+  }
+  .leader-list-role{
+    margin-bottom:8px; color:var(--gold); font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:.14em;
+  }
+  .leader-list-name{
+    margin:0 0 8px; font-size:30px; font-weight:900; letter-spacing:-.03em;
+  }
+  .leader-list-card p{margin:0; color:#c8d0c7; line-height:1.8; font-size:16px}
+
+  @keyframes fadeIn{
+    from{opacity:0; transform:translateY(6px)}
+    to{opacity:1; transform:none}
+  }
+
+  @media (max-width:1080px){
+    .mega-grid{grid-template-columns:1fr 1fr}
+  }
+  @media (max-width:980px){
+    .content-grid{grid-template-columns:1fr}
+    .leader-grid{grid-template-columns:1fr}
+    .leader-card-grid{grid-template-columns:1fr}
+  }
+  @media (max-width:760px){
+    .header-inner{padding-left:16px;padding-right:16px;grid-template-columns:120px 1fr 120px}
+    .page-shell{padding-left:16px;padding-right:16px}
+    .menu-btn span.label,.account-btn span.label{display:none}
+    .brand-text{font-size:15px}
+    .hero-content{padding:28px 24px 28px}
+    .mega-grid{grid-template-columns:1fr}
+    .leader-banner{padding:26px 22px}
+    .leader-body{padding:18px}
+    .leader-tabs{gap:26px}
+    .leader-tab{font-size:16px}
+    .leader-list-card,.form-grid,.form-grid-3,.grid-2{grid-template-columns:1fr}
+  }
+</style>
 </head>
 <body>
   <header class="site-header">
@@ -389,9 +432,9 @@
 
         <div class="mega-col">
           <h4>Leadership</h4>
-          <a href="#" data-page="provost-marshal-general">Provost Marshal General</a>
+          <a href="#" data-page="leadership-overview">Leadership Overview</a>
+          <a href="#" data-page="commanding-general">Commanding General</a>
           <a href="#" data-page="commanding-officer">Commanding Officer</a>
-          <a href="#" data-page="command-sergeant-major">Command Sergeant Major</a>
           <a href="#" data-page="battalion-leadership">Battalion Leadership</a>
         </div>
 
@@ -404,7 +447,7 @@
         <div class="mega-cta">
           <div class="mega-box" data-page="who-we-are"><span>Roleplay Notice</span><span>→</span></div>
           <div class="mega-box" data-page="organization"><span>Operations</span><span>→</span></div>
-          <div class="mega-box" data-page="battalion-leadership"><span>Leadership</span><span>→</span></div>
+          <div class="mega-box" data-page="leadership-overview"><span>Leadership</span><span>→</span></div>
           <div class="mega-box" data-page="login"><span>Account</span><span>→</span></div>
         </div>
       </div>
@@ -457,640 +500,634 @@
     <div id="leaderLayout" class="hidden"></div>
   </main>
 
-  <script>
-    const API_BASE = "https://the.chastiefola.workers.dev";
+<script>
+const API_BASE = "YOUR_WORKER_URL_HERE";
 
-    const SITE_DATA = {
-      whoWeAre: {
-        title: "Who We Are",
-        kicker: "Mission and purpose",
-        html: `
-          <div class="stack">
-            <div class="feature-block">
-              <h3>Command Overview</h3>
-              <p>
-                Army Corrections Command coordinates investigative, judicial, and command-support roleplay workflows.
-                The portal is designed to centralize command pages, protected operational forms, leadership information,
-                and internal staff tools while remaining clearly fictional.
-              </p>
-            </div>
-            <div class="grid-2">
-              <div class="feature-block">
-                <h3>Mission</h3>
-                <p>Provide a structured command portal for secure roleplay administration, documentation, and oversight.</p>
-              </div>
-              <div class="feature-block">
-                <h3>Core Focus</h3>
-                <p>Operational readiness, role-based access control, disciplined case handling, and smooth internal workflow.</p>
-              </div>
-            </div>
-          </div>
-        `
-      },
-      organization: {
-        title: "Organization",
-        kicker: "Command structure",
-        html: `
-          <div class="stack">
-            <div class="feature-block">
-              <h3>Army Corrections Command</h3>
-              <p>
-                The command operates with two major internal roleplay elements. The Criminal Investigation Division handles
-                protected investigative actions and Ban Request submission. The Judge Advocate General Corps handles legal review,
-                inquiry support, and related command processes.
-              </p>
-            </div>
-            <div class="grid-2">
-              <div class="feature-block">
-                <h3>Criminal Investigation Division</h3>
-                <p>CID handles sensitive investigative work, protected requests, and operational fact-gathering.</p>
-              </div>
-              <div class="feature-block">
-                <h3>Judge Advocate General Corps</h3>
-                <p>JAGC supports judicial review, advocacy, legal processing, and inquiry documentation.</p>
-              </div>
-            </div>
-          </div>
-        `
-      },
-      leaders: {
-        "provost-marshal-general": {
-          roleLabel: "Provost Marshal General",
-          name: "Name Placeholder",
-          rankLine: "Army Corrections Command",
-          image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=1200&q=80",
-          banner: "https://images.unsplash.com/photo-1516321497487-e288fb19713f?auto=format&fit=crop&w=1800&q=80",
-          bioTitle: "Biography",
-          bio: "Edit this biography in the SITE_DATA block. Replace the placeholder portrait, banner, role, rank line, and text with your own roleplay command information.",
-          news: [
-            {label:"Command Update", title:"Leadership note placeholder", meta:"Replace with internal leadership note or announcement."},
-            {label:"Operations", title:"Readiness update placeholder", meta:"Replace with fictional command operations update."}
-          ]
-        },
-        "commanding-officer": {
-          roleLabel: "Commanding Officer",
-          name: "Name Placeholder",
-          rankLine: "Army Corrections Command",
-          image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=1200&q=80",
-          banner: "https://images.unsplash.com/photo-1516321497487-e288fb19713f?auto=format&fit=crop&w=1800&q=80",
-          bioTitle: "Biography",
-          bio: "Edit this biography in the SITE_DATA block. Replace the placeholder portrait, banner, role, rank line, and text with your own roleplay command information.",
-          news: [
-            {label:"Announcement", title:"Commander message placeholder", meta:"Replace with fictional commander message."},
-            {label:"Internal", title:"Staffing note placeholder", meta:"Replace with fictional staffing or roleplay update."}
-          ]
-        },
-        "command-sergeant-major": {
-          roleLabel: "Command Sergeant Major",
-          name: "Name Placeholder",
-          rankLine: "Army Corrections Command",
-          image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=1200&q=80",
-          banner: "https://images.unsplash.com/photo-1516321497487-e288fb19713f?auto=format&fit=crop&w=1800&q=80",
-          bioTitle: "Biography",
-          bio: "Edit this biography in the SITE_DATA block. Replace the placeholder portrait, banner, role, rank line, and text with your own roleplay command information.",
-          news: [
-            {label:"Readiness", title:"Training notice placeholder", meta:"Replace with fictional readiness note."},
-            {label:"Personnel", title:"Command climate placeholder", meta:"Replace with fictional personnel message."}
-          ]
-        },
-        "battalion-leadership": {
-          roleLabel: "Battalion Leadership",
-          name: "Army Corrections Command",
-          banner: "https://images.unsplash.com/photo-1516321497487-e288fb19713f?auto=format&fit=crop&w=1800&q=80",
-          leaders: [
-            {
-              role: "Battalion Commander",
-              name: "Name Placeholder",
-              image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=1200&q=80",
-              bio: "Replace with the battalion command biography."
-            },
-            {
-              role: "Executive Officer",
-              name: "Name Placeholder",
-              image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=1200&q=80",
-              bio: "Replace with the executive officer biography."
-            }
-          ]
-        }
-      }
-    };
-
-    const state = {
-      token: localStorage.getItem("acc_token") || "",
-      me: null,
-      currentPage: "who-we-are",
-      queueType: "ban"
-    };
-
-    const HERO_PAGES = new Set(["who-we-are"]);
-    const LEADER_PAGES = new Set(["provost-marshal-general","commanding-officer","command-sergeant-major","battalion-leadership"]);
-    const $ = (id) => document.getElementById(id);
-
-    function escapeHtml(value){
-      return String(value ?? "")
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#39;");
-    }
-
-    async function api(path, options = {}){
-      const headers = Object.assign({ "Content-Type": "application/json" }, options.headers || {});
-      if (state.token) headers["Authorization"] = `Bearer ${state.token}`;
-      const res = await fetch(API_BASE + path, { ...options, headers });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data.error || "Request failed");
-      return data;
-    }
-
-    function openMenu(){ $("menuOverlay").classList.add("open"); $("menuIcon").textContent = "✕"; }
-    function closeMenu(){ $("menuOverlay").classList.remove("open"); $("menuIcon").textContent = "☰"; }
-
-    function setAuthUi(){
-      const loggedIn = !!state.me;
-      $("accountShortcutText").textContent = loggedIn ? "Account" : "Sign In";
-      $("internalMenuCol").classList.toggle("hidden", !loggedIn);
-      $("highCommandLink").classList.toggle("hidden", !(loggedIn && state.me && state.me.admin));
-
-      $("sideContent").innerHTML = loggedIn ? `
-        <div class="stack">
-          <div class="alert">
-            <div style="font-weight:900; margin-bottom:6px">${escapeHtml(state.me.rank || "Member")} ${escapeHtml(state.me.username)}</div>
-            <div class="small-note">Unit: ${escapeHtml(state.me.unit)}${state.me.position ? ` · ${escapeHtml(state.me.position)}` : ""}${state.me.admin ? " · Administrator" : ""}</div>
-          </div>
-          <div class="btn-row">
-            <button class="btn btn-primary" onclick="renderPage('internal-panel')">ACC Internal Panel</button>
-            ${state.me.admin ? `<button class="btn" onclick="renderPage('high-command')">High Command</button>` : ""}
-            <button class="btn" onclick="logout()">Sign Out</button>
+const SITE_DATA = {
+  whoWeAre: {
+    title: "Who We Are",
+    kicker: "Mission and purpose",
+    html: `
+      <div class="stack">
+        <div class="feature-block">
+          <h3>Command Overview</h3>
+          <p>
+            Army Corrections Command coordinates investigative, judicial, and command-support roleplay workflows.
+            The portal centralizes command pages, protected operational forms, leadership information, and internal staff tools while remaining clearly fictional.
+          </p>
+        </div>
+        <div class="grid-2">
+          <div class="feature-block">
+            <h3>Mission</h3>
+            <p>Provide a structured command portal for secure roleplay administration, documentation, and oversight.</p>
           </div>
           <div class="feature-block">
-            <h3>Access Rules</h3>
-            <p>CID may submit Ban Requests. CID and JAGC may submit Inquiry Orders. High Command tools are limited to administrator accounts.</p>
+            <h3>Core Focus</h3>
+            <p>Operational readiness, role-based access control, disciplined case handling, and smooth internal workflow.</p>
           </div>
         </div>
-      ` : `
-        <div class="stack">
+      </div>
+    `
+  },
+  organization: {
+    title: "Organization",
+    kicker: "Command structure",
+    html: `
+      <div class="stack">
+        <div class="feature-block">
+          <h3>Army Corrections Command</h3>
+          <p>
+            The command operates with two major internal roleplay elements. The Criminal Investigation Division handles protected investigative actions and Ban Request submission.
+            The Judge Advocate General Corps handles legal review, inquiry support, and related command processes.
+          </p>
+        </div>
+        <div class="grid-2">
           <div class="feature-block">
-            <h3>Public Access</h3>
-            <p>Visitors can view public command pages. Internal tools and command queues are protected behind sign-in.</p>
+            <h3>Criminal Investigation Division</h3>
+            <p>CID handles sensitive investigative work, protected requests, and operational fact-gathering.</p>
           </div>
-          <div class="btn-row">
-            <button class="btn btn-primary btn-block" onclick="renderPage('login')">Sign In</button>
-          </div>
-          <div class="small-note">
-            This portal intentionally presents itself as a fictional roleplay command site and should not be used to imitate any real government service.
-          </div>
-        </div>
-      `;
-    }
-
-    function syncLayouts(pageKey){
-      $("hero").classList.toggle("hidden", !HERO_PAGES.has(pageKey));
-      $("standardLayout").classList.toggle("hidden", LEADER_PAGES.has(pageKey));
-      $("leaderLayout").classList.toggle("hidden", !LEADER_PAGES.has(pageKey));
-    }
-
-    function renderPublicPage(key){
-      const page = ({
-        "who-we-are": SITE_DATA.whoWeAre,
-        "organization": SITE_DATA.organization
-      })[key] || SITE_DATA.whoWeAre;
-      $("pageTitle").textContent = page.title;
-      $("pageKicker").textContent = page.kicker;
-      $("mainContent").innerHTML = page.html;
-    }
-
-    function renderLeaderTabs(active){
-      return `
-        <div class="leader-tabs">
-          <div class="leader-tab ${active === "bio" ? "active" : ""}" data-leader-tab="bio">Bio</div>
-          <div class="leader-tab ${active === "news" ? "active" : ""}" data-leader-tab="news">News</div>
-        </div>
-      `;
-    }
-
-    function renderLeaderPage(key, tab = "bio"){
-      const page = SITE_DATA.leaders[key];
-      if (!page) return renderPublicPage("who-we-are");
-
-      if (key === "battalion-leadership") {
-        $("leaderLayout").innerHTML = `
-          <section class="leader-shell">
-            <div class="leader-banner" style="background-image:url('${escapeHtml(page.banner)}')">
-              <div class="leader-banner-content">
-                <div class="leader-insignia"><div class="leader-insignia-star"></div></div>
-                <div class="leader-super">${escapeHtml(page.roleLabel)}</div>
-                <h1 class="leader-name">${escapeHtml(page.name)}</h1>
-              </div>
-            </div>
-            ${renderLeaderTabs("bio")}
-            <div class="leader-body">
-              <div class="leadership-list">
-                ${page.leaders.map(item => `
-                  <article class="leader-list-card">
-                    <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}">
-                    <div>
-                      <div class="leader-list-role">${escapeHtml(item.role)}</div>
-                      <h3 class="leader-list-name">${escapeHtml(item.name)}</h3>
-                      <p>${escapeHtml(item.bio)}</p>
-                    </div>
-                  </article>
-                `).join("")}
-              </div>
-            </div>
-          </section>
-        `;
-        return;
-      }
-
-      $("leaderLayout").innerHTML = `
-        <section class="leader-shell">
-          <div class="leader-banner" style="background-image:url('${escapeHtml(page.banner)}')">
-            <div class="leader-banner-content">
-              <div class="leader-insignia"><div class="leader-insignia-star"></div></div>
-              <div class="leader-super">${escapeHtml(page.roleLabel)}</div>
-              <h1 class="leader-name">${escapeHtml(page.name)}</h1>
-            </div>
-          </div>
-          ${renderLeaderTabs(tab)}
-          <div class="leader-body">
-            <div class="leader-grid">
-              <aside class="portrait-card">
-                <img class="portrait-image" src="${escapeHtml(page.image)}" alt="${escapeHtml(page.name)}">
-                <div class="portrait-meta">
-                  <div class="portrait-role">${escapeHtml(page.roleLabel)}</div>
-                  <h2 class="portrait-name">${escapeHtml(page.name)}</h2>
-                  <div class="portrait-rank">${escapeHtml(page.rankLine || "")}</div>
-                </div>
-              </aside>
-              ${tab === "news" ? `
-                <section class="news-card">
-                  <h3>Latest Updates</h3>
-                  ${(page.news || []).map(item => `
-                    <div class="news-item">
-                      <div class="news-label">${escapeHtml(item.label)}</div>
-                      <div class="news-title">${escapeHtml(item.title)}</div>
-                      <div class="news-meta">${escapeHtml(item.meta)}</div>
-                    </div>
-                  `).join("")}
-                </section>
-              ` : `
-                <article class="bio-card">
-                  <h3>${escapeHtml(page.bioTitle || "Biography")}</h3>
-                  <p>${escapeHtml(page.bio)}</p>
-                </article>
-              `}
-            </div>
-          </div>
-        </section>
-      `;
-
-      $("leaderLayout").querySelectorAll("[data-leader-tab]").forEach(el => {
-        el.addEventListener("click", () => renderLeaderPage(key, el.getAttribute("data-leader-tab")));
-      });
-    }
-
-    function renderLogin(){
-      $("pageTitle").textContent = "Secure Access";
-      $("pageKicker").textContent = "Internal sign-in";
-      $("mainContent").innerHTML = `
-        <div class="stack form-shell">
-          <div>
-            <h3 style="margin:0 0 8px; font-size:34px; font-weight:900; letter-spacing:-.03em">Sign in</h3>
-            <p style="margin:0 0 22px; color:var(--muted); line-height:1.75">
-              Authorized roleplay personnel may sign in to access protected command pages, request forms, and High Command review functions.
-            </p>
-          </div>
-          <div class="field">
-            <label for="loginUsername">Username</label>
-            <input class="input" id="loginUsername" autocomplete="username" placeholder="Enter your username">
-          </div>
-          <div class="field">
-            <label for="loginPassword">Password</label>
-            <input class="input" id="loginPassword" type="password" autocomplete="current-password" placeholder="Enter your password">
-          </div>
-          <div class="btn-row">
-            <button class="btn btn-primary" onclick="login()">Sign In</button>
-            <button class="btn" onclick="renderPage('who-we-are')">Return</button>
-          </div>
-          <div class="small-note" id="loginMessage">Use an account configured in the worker secret JSON.</div>
-        </div>
-      `;
-    }
-
-    function renderInternalPanel(){
-      if (!state.me) return renderPage("login");
-      $("pageTitle").textContent = "ACC Internal Panel";
-      $("pageKicker").textContent = "Restricted command tools";
-      $("mainContent").innerHTML = `
-        <div class="stack">
           <div class="feature-block">
-            <h3>Operational Forms</h3>
-            <p>Select the appropriate protected workflow below. Availability is controlled by unit assignment and administrative role.</p>
-          </div>
-          <div class="grid-2">
-            ${state.me.unit === "CID" || state.me.admin ? `
-              <div class="feature-block">
-                <h3>Ban Request Form</h3>
-                <p>Protected request workflow for CID personnel. Requests enter the High Command queue and are assigned a 4-digit request ID.</p>
-                <div class="btn-row" style="margin-top:14px"><button class="btn btn-primary" onclick="renderBanForm()">Open Form</button></div>
-              </div>
-            ` : `
-              <div class="feature-block">
-                <h3>Ban Request Form</h3>
-                <p>This form is restricted to CID personnel only.</p>
-              </div>
-            `}
-            <div class="feature-block">
-              <h3>Inquiry Order Request</h3>
-              <p>Available to JAGC, CID, and administrators for protected inquiry workflow submission.</p>
-              <div class="btn-row" style="margin-top:14px"><button class="btn btn-primary" onclick="renderIOForm()">Open Form</button></div>
-            </div>
+            <h3>Judge Advocate General Corps</h3>
+            <p>JAGC supports judicial review, advocacy, legal processing, and inquiry documentation.</p>
           </div>
         </div>
-      `;
-    }
-
-    function renderBanForm(){
-      if (!state.me) return renderPage("login");
-      if (!(state.me.unit === "CID" || state.me.admin)) {
-        alert("Ban Request access is limited to CID.");
-        return renderInternalPanel();
-      }
-      $("pageTitle").textContent = "Ban Request Form";
-      $("pageKicker").textContent = "CID restricted workflow";
-      $("mainContent").innerHTML = `
-        <div class="form-shell stack">
-          <div class="feature-block">
-            <h3>Submission Guidance</h3>
-            <p>Evidence links are limited to YouTube, Medal, Imgur, or Gyazo URLs. All requests are logged and routed to the protected command queue.</p>
-          </div>
-          <div class="form-grid-3">
-            <div class="field"><label>Your Username and Paygrade</label><input class="input" id="ban_agent_user" placeholder="Major General VendettaPyrex"></div>
-            <div class="field"><label>Your Unit</label><input class="input" id="ban_agent_unit" placeholder="Criminal Investigation Division"></div>
-            <div class="field"><label>Your Position</label><input class="input" id="ban_agent_position" placeholder="Office of Special Investigations"></div>
-          </div>
-          <div class="divider"></div>
-          <div class="form-grid">
-            <div class="field"><label>Subject's Username and Paygrade</label><input class="input" id="ban_subject_user" placeholder="General CrusherRTL"></div>
-            <div class="field"><label>Reason</label><input class="input" id="ban_reason" placeholder="Hacking, bypassing, or related grounds"></div>
-          </div>
-          <div class="field"><label>Evidence Links</label><textarea class="textarea" id="ban_evidence" placeholder="Paste one or more evidence links"></textarea></div>
-          <div class="btn-row">
-            <button class="btn btn-primary" onclick="submitBan()">Submit Request</button>
-            <button class="btn" onclick="renderInternalPanel()">Back</button>
-          </div>
+      </div>
+    `
+  },
+  leadershipOverview: {
+    title: "Leadership Overview",
+    kicker: "Command leadership",
+    html: `
+      <div class="stack">
+        <div class="feature-block">
+          <h3>Senior Leadership</h3>
+          <p>Select a leader below to open a full biography page. Portraits, names, roles, and biographies can all be edited in the SITE_DATA block near the top of this file.</p>
         </div>
-      `;
-    }
-
-    function renderIOForm(){
-      if (!state.me) return renderPage("login");
-      $("pageTitle").textContent = "Inquiry Order Request";
-      $("pageKicker").textContent = "Protected workflow";
-      $("mainContent").innerHTML = `
-        <div class="form-shell stack">
-          <div class="feature-block">
-            <h3>Submission Guidance</h3>
-            <p>Evidence may be marked N/A when not required. Inquiry Orders are routed to High Command for approval or denial.</p>
-          </div>
-          <div class="form-grid-3">
-            <div class="field"><label>Your Username and Paygrade</label><input class="input" id="io_agent_user" placeholder="Major General VendettaPyrex"></div>
-            <div class="field"><label>Your Unit</label><input class="input" id="io_agent_unit" placeholder="Criminal Investigation Division"></div>
-            <div class="field"><label>Your Position</label><input class="input" id="io_agent_position" placeholder="Office of Special Investigations"></div>
-          </div>
-          <div class="divider"></div>
-          <div class="form-grid">
-            <div class="field"><label>Subject's Username and Paygrade</label><input class="input" id="io_subject_user" placeholder="General CrusherRTL"></div>
-            <div class="field"><label>Reason</label><input class="input" id="io_reason" placeholder="Needed for investigation, uncooperativeness with CID"></div>
-          </div>
-          <div class="field"><label>Evidence Links</label><textarea class="textarea" id="io_evidence" placeholder="YouTube / Medal / Imgur / Gyazo only, or N/A"></textarea></div>
-          <div class="field"><label>Link to IO Document</label><input class="input" id="io_document" placeholder="Paste the Inquiry Order document link"></div>
-          <div class="btn-row">
-            <button class="btn btn-primary" onclick="submitIO()">Submit Request</button>
-            <button class="btn" onclick="renderInternalPanel()">Back</button>
-          </div>
-        </div>
-      `;
-    }
-
-    async function renderHighCommand(){
-      if (!state.me || !state.me.admin) return renderPage("login");
-      $("pageTitle").textContent = "High Command Panel";
-      $("pageKicker").textContent = "Administrative review queue";
-      $("mainContent").innerHTML = `
-        <div class="stack">
-          <div class="btn-row">
-            <button class="btn ${state.queueType === "ban" ? "btn-primary" : ""}" onclick="loadQueue('ban')">Ban Request Completion</button>
-            <button class="btn ${state.queueType === "io" ? "btn-primary" : ""}" onclick="loadQueue('io')">IO Approval</button>
-          </div>
-          <div id="queueWrap" class="stack"></div>
-        </div>
-      `;
-      await loadQueue(state.queueType);
-    }
-
-    async function loadQueue(type){
-      state.queueType = type;
-      const wrap = $("queueWrap");
-      if (!wrap) return;
-      wrap.innerHTML = `<div class="alert">Loading ${type === "ban" ? "Ban Requests" : "Inquiry Orders"}...</div>`;
-      try{
-        const data = await api(`/requests?type=${encodeURIComponent(type)}`);
-        const items = data.items || [];
-        if (!items.length){
-          wrap.innerHTML = `<div class="feature-block"><h3>No pending requests</h3><p>There are currently no pending ${type === "ban" ? "Ban Requests" : "Inquiry Orders"}.</p></div>`;
-          return;
-        }
-        wrap.innerHTML = items.map(item => `
-          <article class="queue-item">
-            <div class="queue-top">
-              <div>
-                <div class="queue-id">Request ID ${escapeHtml(item.id)}</div>
-                <div class="queue-title">${type === "ban" ? "Ban Request" : "Inquiry Order Request"}</div>
-              </div>
-              <span class="status">Pending Review</span>
-            </div>
-            <div class="queue-meta">
-              <strong>Submitted by:</strong> ${escapeHtml(item.agent.user)}<br>
-              <strong>Unit:</strong> ${escapeHtml(item.agent.unit)}<br>
-              <strong>Position:</strong> ${escapeHtml(item.agent.position || "N/A")}
-            </div>
-            <div class="queue-meta">
-              <strong>Subject:</strong> ${escapeHtml(item.subject.user)}<br>
-              <strong>Reason:</strong> ${escapeHtml(item.subject.reason)}<br>
-              <strong>Evidence:</strong> ${escapeHtml(item.subject.evidence)}
-              ${item.subject.document ? `<br><strong>Document:</strong> ${escapeHtml(item.subject.document)}` : ""}
-            </div>
-            <div class="btn-row">
-              <button class="btn btn-primary" onclick="decideRequest('${type}','${escapeHtml(item.id)}','approve')">Approve</button>
-              <button class="btn btn-danger" onclick="decideRequest('${type}','${escapeHtml(item.id)}','deny')">Deny</button>
+        <div class="leader-card-grid">
+          <article class="leader-tile" data-page="commanding-general">
+            <div class="leader-tile-bg" style="background-image:url('https://cdn.discordapp.com/attachments/1449983915472195615/1483977783842705468/image.png?ex=69bc8d82&is=69bb3c02&hm=4cfe8106c5c885921f0f27604064d8a57780d645c868115e2f55a1773b699435&')"></div>
+            <div class="leader-tile-overlay"></div>
+            <div class="leader-tile-content">
+              <div class="leader-tile-role">Commanding General</div>
+              <h3 class="leader-tile-name">General CrusherRTL</h3>
+              <p class="leader-tile-copy">Senior command authority for Army Corrections Command.</p>
             </div>
           </article>
-        `).join("");
-      }catch(err){
-        wrap.innerHTML = `<div class="alert">${escapeHtml(err.message)}</div>`;
-      }
-    }
+          <article class="leader-tile" data-page="commanding-officer">
+            <div class="leader-tile-bg" style="background-image:url('https://cdn.discordapp.com/attachments/1449983915472195615/1483977511040848013/image.png?ex=69bc8d41&is=69bb3bc1&hm=3761eac8f6a07a53089a8ac6b5a4579d3fd2644acadf65732914bbb219717815&')"></div>
+            <div class="leader-tile-overlay"></div>
+            <div class="leader-tile-content">
+              <div class="leader-tile-role">Commanding Officer</div>
+              <h3 class="leader-tile-name">Major General VendettaPyrex</h3>
+              <p class="leader-tile-copy">Operational leader with investigative and judicial roots.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    `
+  },
+  leaders: {
+    "commanding-general": {
+      roleLabel: "Commanding General",
+      name: "General CrusherRTL",
+      rankLine: "Army Corrections Command",
+      image: "https://cdn.discordapp.com/attachments/1449983915472195615/1483977783842705468/image.png?ex=69bc8d82&is=69bb3c02&hm=4cfe8106c5c885921f0f27604064d8a57780d645c868115e2f55a1773b699435&",
+      banner: "https://images.unsplash.com/photo-1516321497487-e288fb19713f?auto=format&fit=crop&w=1800&q=80",
+      insigniaCount: 4,
+      bioTitle: "Biography",
+      bio: `Hailing from the prestigious 503rd Battalion under the Military Police Corps, General CrusherRTL has always made himself known around the corps for his toughness and dedication to his unit. CrusherRTL was deployed multiple times during his career, most notably during the Iraq and Kosovo Campaigns.`
+    },
+    "commanding-officer": {
+      roleLabel: "Commanding Officer",
+      name: "Major General VendettaPyrex",
+      rankLine: "Army Corrections Command",
+      image: "https://cdn.discordapp.com/attachments/1449983915472195615/1483977511040848013/image.png?ex=69bc8d41&is=69bb3bc1&hm=3761eac8f6a07a53089a8ac6b5a4579d3fd2644acadf65732914bbb219717815&",
+      banner: "https://images.unsplash.com/photo-1516321497487-e288fb19713f?auto=format&fit=crop&w=1800&q=80",
+      insigniaCount: 2,
+      bioTitle: "Biography",
+      bio: `Having roots from the Criminal Investigation Division, Major General VendettaPyrex served within multiple investigative units during his 5 year long career. Units that he has served in during his career are the Military Intelligence Command, Judge Advocate General Corps, and the 75th Rangers Regiment.
 
-    async function decideRequest(type, id, decision){
-      try{
-        await api("/requests/decide", { method:"POST", body: JSON.stringify({ type, id, decision }) });
-        await loadQueue(type);
-      }catch(err){
-        alert(err.message);
-      }
-    }
-
-    async function login(){
-      const username = $("loginUsername").value.trim();
-      const password = $("loginPassword").value;
-      const msg = $("loginMessage");
-      msg.textContent = "Signing in...";
-      try{
-        const data = await api("/auth/login", { method:"POST", body: JSON.stringify({ username, password }) });
-        state.token = data.token;
-        state.me = data.user;
-        localStorage.setItem("acc_token", state.token);
-        setAuthUi();
-        renderPage("internal-panel");
-      }catch(err){
-        msg.textContent = err.message || "Sign-in failed.";
-      }
-    }
-
-    function logout(){
-      state.token = "";
-      state.me = null;
-      localStorage.removeItem("acc_token");
-      setAuthUi();
-      renderPage("who-we-are");
-    }
-
-    function validateEvidenceLinks(raw, allowNA = false){
-      const value = String(raw || "").trim();
-      if (!value) return false;
-      if (allowNA && value.toUpperCase() === "N/A") return true;
-      const allowed = ["youtube.com","youtu.be","medal.tv","imgur.com","gyazo.com"];
-      const links = value.split(/\s+/).filter(Boolean);
-      if (!links.length) return false;
-      return links.every(link => {
-        try{
-          const url = new URL(link);
-          return allowed.some(domain => url.hostname === domain || url.hostname.endsWith("." + domain));
-        }catch{
-          return false;
-        }
-      });
-    }
-
-    async function submitBan(){
-      const payload = {
-        agent: {
-          user: $("ban_agent_user").value.trim(),
-          unit: $("ban_agent_unit").value.trim(),
-          position: $("ban_agent_position").value.trim()
+During his time served, Major General VendettaPyrex has distinguished himself by not only being a powerful leader, but by being able to uphold justice while maintaining his impartiality, which are the key traits for an individual serving the Army Corrections Command.`
+    },
+    "battalion-leadership": {
+      roleLabel: "Battalion Leadership",
+      name: "Army Corrections Command",
+      banner: "https://images.unsplash.com/photo-1516321497487-e288fb19713f?auto=format&fit=crop&w=1800&q=80",
+      leaders: [
+        {
+          page: "commanding-general",
+          role: "Commanding General",
+          name: "General CrusherRTL",
+          image: "https://cdn.discordapp.com/attachments/1449983915472195615/1483977783842705468/image.png?ex=69bc8d82&is=69bb3c02&hm=4cfe8106c5c885921f0f27604064d8a57780d645c868115e2f55a1773b699435&",
+          bio: "Senior command authority for Army Corrections Command."
         },
-        subject: {
-          user: $("ban_subject_user").value.trim(),
-          reason: $("ban_reason").value.trim(),
-          evidence: $("ban_evidence").value.trim()
+        {
+          page: "commanding-officer",
+          role: "Commanding Officer",
+          name: "Major General VendettaPyrex",
+          image: "https://cdn.discordapp.com/attachments/1449983915472195615/1483977511040848013/image.png?ex=69bc8d41&is=69bb3bc1&hm=3761eac8f6a07a53089a8ac6b5a4579d3fd2644acadf65732914bbb219717815&",
+          bio: "Operational leader with investigative, legal, and command experience."
         }
-      };
-      if (!payload.agent.user || !payload.agent.unit || !payload.agent.position || !payload.subject.user || !payload.subject.reason) {
-        return alert("Please complete all required fields.");
-      }
-      if (!validateEvidenceLinks(payload.subject.evidence)) {
-        return alert("Evidence links must be YouTube, Medal, Imgur, or Gyazo URLs.");
-      }
-      try{
-        const data = await api("/requests/ban", { method:"POST", body: JSON.stringify(payload) });
-        alert(`Ban Request submitted. Assigned ID: ${data.id}`);
-        renderInternalPanel();
-      }catch(err){
-        alert(err.message);
-      }
+      ]
     }
+  }
+};
 
-    async function submitIO(){
-      const payload = {
-        agent: {
-          user: $("io_agent_user").value.trim(),
-          unit: $("io_agent_unit").value.trim(),
-          position: $("io_agent_position").value.trim()
-        },
-        subject: {
-          user: $("io_subject_user").value.trim(),
-          reason: $("io_reason").value.trim(),
-          evidence: $("io_evidence").value.trim(),
-          document: $("io_document").value.trim()
-        }
-      };
-      if (!payload.agent.user || !payload.agent.unit || !payload.agent.position || !payload.subject.user || !payload.subject.reason || !payload.subject.document) {
-        return alert("Please complete all required fields.");
-      }
-      if (!validateEvidenceLinks(payload.subject.evidence, true)) {
-        return alert("Evidence must be valid YouTube, Medal, Imgur, or Gyazo URLs, or N/A.");
-      }
-      try{
-        const data = await api("/requests/io", { method:"POST", body: JSON.stringify(payload) });
-        alert(`Inquiry Order submitted. Assigned ID: ${data.id}`);
-        renderInternalPanel();
-      }catch(err){
-        alert(err.message);
-      }
+const state = {
+  token: localStorage.getItem("acc_token") || "",
+  me: null,
+  currentPage: "who-we-are",
+  queueType: "ban"
+};
+
+const HERO_PAGES = new Set(["who-we-are"]);
+const LEADER_PAGES = new Set(["commanding-general","commanding-officer","battalion-leadership"]);
+const $ = (id) => document.getElementById(id);
+
+function escapeHtml(value){
+  return String(value ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#39;");
+}
+
+async function api(path, options = {}){
+  const headers = Object.assign({ "Content-Type": "application/json" }, options.headers || {});
+  if (state.token) headers["Authorization"] = `Bearer ${state.token}`;
+  const res = await fetch(API_BASE + path, { ...options, headers });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || "Request failed");
+  return data;
+}
+
+function openMenu(){ $("menuOverlay").classList.add("open"); $("menuIcon").textContent = "✕"; }
+function closeMenu(){ $("menuOverlay").classList.remove("open"); $("menuIcon").textContent = "☰"; }
+
+function setAuthUi(){
+  const loggedIn = !!state.me;
+  $("accountShortcutText").textContent = loggedIn ? "Account" : "Sign In";
+  $("internalMenuCol").classList.toggle("hidden", !loggedIn);
+  $("highCommandLink").classList.toggle("hidden", !(loggedIn && state.me && state.me.admin));
+
+  $("sideContent").innerHTML = loggedIn ? `
+    <div class="stack">
+      <div class="alert">
+        <div style="font-weight:900; margin-bottom:6px">${escapeHtml(state.me.rank || "Member")} ${escapeHtml(state.me.username)}</div>
+        <div class="small-note">Unit: ${escapeHtml(state.me.unit)}${state.me.position ? ` · ${escapeHtml(state.me.position)}` : ""}${state.me.admin ? " · Administrator" : ""}</div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="renderPage('internal-panel')">ACC Internal Panel</button>
+        ${state.me.admin ? `<button class="btn" onclick="renderPage('high-command')">High Command</button>` : ""}
+        <button class="btn" onclick="logout()">Sign Out</button>
+      </div>
+      <div class="feature-block">
+        <h3>Access Rules</h3>
+        <p>CID may submit Ban Requests. CID and JAGC may submit Inquiry Orders. High Command tools are limited to administrator accounts.</p>
+      </div>
+    </div>
+  ` : `
+    <div class="stack">
+      <div class="feature-block">
+        <h3>Public Access</h3>
+        <p>Visitors can view public command pages. Internal tools and command queues are protected behind sign-in.</p>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary btn-block" onclick="renderPage('login')">Sign In</button>
+      </div>
+      <div class="small-note">
+        This portal intentionally presents itself as a fictional roleplay command site and should not be used to imitate any real government service.
+      </div>
+    </div>
+  `;
+}
+
+function syncLayouts(pageKey){
+  $("hero").classList.toggle("hidden", !HERO_PAGES.has(pageKey));
+  $("standardLayout").classList.toggle("hidden", LEADER_PAGES.has(pageKey));
+  $("leaderLayout").classList.toggle("hidden", !LEADER_PAGES.has(pageKey));
+}
+
+function renderPublicPage(key){
+  let page = SITE_DATA.whoWeAre;
+  if (key === "organization") page = SITE_DATA.organization;
+  if (key === "leadership-overview") page = SITE_DATA.leadershipOverview;
+  $("pageTitle").textContent = page.title;
+  $("pageKicker").textContent = page.kicker;
+  $("mainContent").innerHTML = page.html;
+}
+
+function renderInsignia(count){
+  return Array.from({length: Math.max(1, count || 1)}, () => `<span class="mini-star"></span>`).join("");
+}
+
+function renderLeaderPage(key){
+  const page = SITE_DATA.leaders[key];
+  if (!page) return renderPublicPage("who-we-are");
+
+  if (key === "battalion-leadership") {
+    $("leaderLayout").innerHTML = `
+      <section class="leader-shell">
+        <div class="leader-banner" style="background-image:url('${escapeHtml(page.banner)}')">
+          <div class="leader-banner-content">
+            <div class="leader-insignia"><div class="leader-insignia-inner">${renderInsignia(3)}</div></div>
+            <div class="leader-super">${escapeHtml(page.roleLabel)}</div>
+            <h1 class="leader-name">${escapeHtml(page.name)}</h1>
+          </div>
+        </div>
+        <div class="leader-tabs"><div class="leader-tab active">Leadership</div></div>
+        <div class="leader-body">
+          <div class="leadership-list">
+            ${page.leaders.map(item => `
+              <article class="leader-list-card" data-page="${escapeHtml(item.page)}">
+                <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}">
+                <div>
+                  <div class="leader-list-role">${escapeHtml(item.role)}</div>
+                  <h3 class="leader-list-name">${escapeHtml(item.name)}</h3>
+                  <p>${escapeHtml(item.bio)}</p>
+                </div>
+              </article>
+            `).join("")}
+          </div>
+        </div>
+      </section>
+    `;
+    return;
+  }
+
+  const paragraphs = String(page.bio || "").split(/\n\s*\n/).filter(Boolean).map(p => `<p>${escapeHtml(p)}</p>`).join("");
+
+  $("leaderLayout").innerHTML = `
+    <section class="leader-shell">
+      <div class="leader-banner" style="background-image:url('${escapeHtml(page.banner)}')">
+        <div class="leader-banner-content">
+          <div class="leader-insignia"><div class="leader-insignia-inner">${renderInsignia(page.insigniaCount)}</div></div>
+          <div class="leader-super">${escapeHtml(page.roleLabel)}</div>
+          <h1 class="leader-name">${escapeHtml(page.name)}</h1>
+        </div>
+      </div>
+      <div class="leader-tabs"><div class="leader-tab active">Bio</div></div>
+      <div class="leader-body">
+        <div class="leader-grid">
+          <aside class="portrait-card">
+            <img class="portrait-image" src="${escapeHtml(page.image)}" alt="${escapeHtml(page.name)}">
+            <div class="portrait-meta">
+              <div class="portrait-role">${escapeHtml(page.roleLabel)}</div>
+              <h2 class="portrait-name">${escapeHtml(page.name)}</h2>
+              <div class="portrait-rank">${escapeHtml(page.rankLine || "")}</div>
+            </div>
+          </aside>
+          <article class="bio-card">
+            <h3>${escapeHtml(page.bioTitle || "Biography")}</h3>
+            ${paragraphs}
+          </article>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function renderLogin(){
+  $("pageTitle").textContent = "Secure Access";
+  $("pageKicker").textContent = "Internal sign-in";
+  $("mainContent").innerHTML = `
+    <div class="stack form-shell">
+      <div>
+        <h3 style="margin:0 0 8px; font-size:34px; font-weight:900; letter-spacing:-.03em">Sign in</h3>
+        <p style="margin:0 0 22px; color:var(--muted); line-height:1.75">
+          Authorized roleplay personnel may sign in to access protected command pages, request forms, and High Command review functions.
+        </p>
+      </div>
+      <div class="field">
+        <label for="loginUsername">Username</label>
+        <input class="input" id="loginUsername" autocomplete="username" placeholder="Enter your username">
+      </div>
+      <div class="field">
+        <label for="loginPassword">Password</label>
+        <input class="input" id="loginPassword" type="password" autocomplete="current-password" placeholder="Enter your password">
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="login()">Sign In</button>
+        <button class="btn" onclick="renderPage('who-we-are')">Return</button>
+      </div>
+      <div class="small-note" id="loginMessage">Use an account configured in the worker secret JSON.</div>
+    </div>
+  `;
+}
+
+function renderInternalPanel(){
+  if (!state.me) return renderPage("login");
+  $("pageTitle").textContent = "ACC Internal Panel";
+  $("pageKicker").textContent = "Restricted command tools";
+  $("mainContent").innerHTML = `
+    <div class="stack">
+      <div class="feature-block">
+        <h3>Operational Forms</h3>
+        <p>Select the appropriate protected workflow below. Availability is controlled by unit assignment and administrative role.</p>
+      </div>
+      <div class="grid-2">
+        ${state.me.unit === "CID" || state.me.admin ? `
+          <div class="feature-block">
+            <h3>Ban Request Form</h3>
+            <p>Protected request workflow for CID personnel. Requests enter the High Command queue and are assigned a 4-digit request ID.</p>
+            <div class="btn-row" style="margin-top:14px"><button class="btn btn-primary" onclick="renderBanForm()">Open Form</button></div>
+          </div>
+        ` : `
+          <div class="feature-block">
+            <h3>Ban Request Form</h3>
+            <p>This form is restricted to CID personnel only.</p>
+          </div>
+        `}
+        <div class="feature-block">
+          <h3>Inquiry Order Request</h3>
+          <p>Available to JAGC, CID, and administrators for protected inquiry workflow submission.</p>
+          <div class="btn-row" style="margin-top:14px"><button class="btn btn-primary" onclick="renderIOForm()">Open Form</button></div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderBanForm(){
+  if (!state.me) return renderPage("login");
+  if (!(state.me.unit === "CID" || state.me.admin)) {
+    alert("Ban Request access is limited to CID.");
+    return renderInternalPanel();
+  }
+  $("pageTitle").textContent = "Ban Request Form";
+  $("pageKicker").textContent = "CID restricted workflow";
+  $("mainContent").innerHTML = `
+    <div class="form-shell stack">
+      <div class="feature-block">
+        <h3>Submission Guidance</h3>
+        <p>Evidence links are limited to YouTube, Medal, Imgur, or Gyazo URLs. All requests are logged and routed to the protected command queue.</p>
+      </div>
+      <div class="form-grid-3">
+        <div class="field"><label>Your Username and Paygrade</label><input class="input" id="ban_agent_user" placeholder="Major General VendettaPyrex"></div>
+        <div class="field"><label>Your Unit</label><input class="input" id="ban_agent_unit" placeholder="Criminal Investigation Division"></div>
+        <div class="field"><label>Your Position</label><input class="input" id="ban_agent_position" placeholder="Office of Special Investigations"></div>
+      </div>
+      <div class="divider"></div>
+      <div class="form-grid">
+        <div class="field"><label>Subject's Username and Paygrade</label><input class="input" id="ban_subject_user" placeholder="General CrusherRTL"></div>
+        <div class="field"><label>Reason</label><input class="input" id="ban_reason" placeholder="Hacking, bypassing, or related grounds"></div>
+      </div>
+      <div class="field"><label>Evidence Links</label><textarea class="textarea" id="ban_evidence" placeholder="Paste one or more evidence links"></textarea></div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="submitBan()">Submit Request</button>
+        <button class="btn" onclick="renderInternalPanel()">Back</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderIOForm(){
+  if (!state.me) return renderPage("login");
+  $("pageTitle").textContent = "Inquiry Order Request";
+  $("pageKicker").textContent = "Protected workflow";
+  $("mainContent").innerHTML = `
+    <div class="form-shell stack">
+      <div class="feature-block">
+        <h3>Submission Guidance</h3>
+        <p>Evidence may be marked N/A when not required. Inquiry Orders are routed to High Command for approval or denial.</p>
+      </div>
+      <div class="form-grid-3">
+        <div class="field"><label>Your Username and Paygrade</label><input class="input" id="io_agent_user" placeholder="Major General VendettaPyrex"></div>
+        <div class="field"><label>Your Unit</label><input class="input" id="io_agent_unit" placeholder="Criminal Investigation Division"></div>
+        <div class="field"><label>Your Position</label><input class="input" id="io_agent_position" placeholder="Office of Special Investigations"></div>
+      </div>
+      <div class="divider"></div>
+      <div class="form-grid">
+        <div class="field"><label>Subject's Username and Paygrade</label><input class="input" id="io_subject_user" placeholder="General CrusherRTL"></div>
+        <div class="field"><label>Reason</label><input class="input" id="io_reason" placeholder="Needed for investigation, uncooperativeness with CID"></div>
+      </div>
+      <div class="field"><label>Evidence Links</label><textarea class="textarea" id="io_evidence" placeholder="YouTube / Medal / Imgur / Gyazo only, or N/A"></textarea></div>
+      <div class="field"><label>Link to IO Document</label><input class="input" id="io_document" placeholder="Paste the Inquiry Order document link"></div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="submitIO()">Submit Request</button>
+        <button class="btn" onclick="renderInternalPanel()">Back</button>
+      </div>
+    </div>
+  `;
+}
+
+async function renderHighCommand(){
+  if (!state.me || !state.me.admin) return renderPage("login");
+  $("pageTitle").textContent = "High Command Panel";
+  $("pageKicker").textContent = "Administrative review queue";
+  $("mainContent").innerHTML = `
+    <div class="stack">
+      <div class="btn-row">
+        <button class="btn ${state.queueType === "ban" ? "btn-primary" : ""}" onclick="loadQueue('ban')">Ban Request Completion</button>
+        <button class="btn ${state.queueType === "io" ? "btn-primary" : ""}" onclick="loadQueue('io')">IO Approval</button>
+      </div>
+      <div id="queueWrap" class="stack"></div>
+    </div>
+  `;
+  await loadQueue(state.queueType);
+}
+
+async function loadQueue(type){
+  state.queueType = type;
+  const wrap = $("queueWrap");
+  if (!wrap) return;
+  wrap.innerHTML = `<div class="alert">Loading ${type === "ban" ? "Ban Requests" : "Inquiry Orders"}...</div>`;
+  try{
+    const data = await api(`/requests?type=${encodeURIComponent(type)}`);
+    const items = data.items || [];
+    if (!items.length){
+      wrap.innerHTML = `<div class="feature-block"><h3>No pending requests</h3><p>There are currently no pending ${type === "ban" ? "Ban Requests" : "Inquiry Orders"}.</p></div>`;
+      return;
     }
+    wrap.innerHTML = items.map(item => `
+      <article class="queue-item">
+        <div class="queue-top">
+          <div>
+            <div class="queue-id">Request ID ${escapeHtml(item.id)}</div>
+            <div class="queue-title">${type === "ban" ? "Ban Request" : "Inquiry Order Request"}</div>
+          </div>
+          <span class="status">Pending Review</span>
+        </div>
+        <div class="queue-meta">
+          <strong>Submitted by:</strong> ${escapeHtml(item.agent.user)}<br>
+          <strong>Unit:</strong> ${escapeHtml(item.agent.unit)}<br>
+          <strong>Position:</strong> ${escapeHtml(item.agent.position || "N/A")}
+        </div>
+        <div class="queue-meta">
+          <strong>Subject:</strong> ${escapeHtml(item.subject.user)}<br>
+          <strong>Reason:</strong> ${escapeHtml(item.subject.reason)}<br>
+          <strong>Evidence:</strong> ${escapeHtml(item.subject.evidence)}
+          ${item.subject.document ? `<br><strong>Document:</strong> ${escapeHtml(item.subject.document)}` : ""}
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="decideRequest('${type}','${escapeHtml(item.id)}','approve')">Approve</button>
+          <button class="btn btn-danger" onclick="decideRequest('${type}','${escapeHtml(item.id)}','deny')">Deny</button>
+        </div>
+      </article>
+    `).join("");
+  }catch(err){
+    wrap.innerHTML = `<div class="alert">${escapeHtml(err.message)}</div>`;
+  }
+}
 
-    function renderPage(pageKey){
-      state.currentPage = pageKey;
-      closeMenu();
-      syncLayouts(pageKey);
+async function decideRequest(type, id, decision){
+  try{
+    await api("/requests/decide", { method:"POST", body: JSON.stringify({ type, id, decision }) });
+    await loadQueue(type);
+  }catch(err){
+    alert(err.message);
+  }
+}
 
-      if (pageKey === "login") return renderLogin();
-      if (pageKey === "internal-panel") return renderInternalPanel();
-      if (pageKey === "high-command") return renderHighCommand();
-      if (LEADER_PAGES.has(pageKey)) return renderLeaderPage(pageKey, "bio");
-      return renderPublicPage(pageKey);
+async function login(){
+  const username = $("loginUsername").value.trim();
+  const password = $("loginPassword").value;
+  const msg = $("loginMessage");
+  msg.textContent = "Signing in...";
+  try{
+    const data = await api("/auth/login", { method:"POST", body: JSON.stringify({ username, password }) });
+    state.token = data.token;
+    state.me = data.user;
+    localStorage.setItem("acc_token", state.token);
+    setAuthUi();
+    renderPage("internal-panel");
+  }catch(err){
+    msg.textContent = err.message || "Sign-in failed.";
+  }
+}
+
+function logout(){
+  state.token = "";
+  state.me = null;
+  localStorage.removeItem("acc_token");
+  setAuthUi();
+  renderPage("who-we-are");
+}
+
+function validateEvidenceLinks(raw, allowNA = false){
+  const value = String(raw || "").trim();
+  if (!value) return false;
+  if (allowNA && value.toUpperCase() === "N/A") return true;
+  const allowed = ["youtube.com","youtu.be","medal.tv","imgur.com","gyazo.com"];
+  const links = value.split(/\s+/).filter(Boolean);
+  if (!links.length) return false;
+  return links.every(link => {
+    try{
+      const url = new URL(link);
+      return allowed.some(domain => url.hostname === domain || url.hostname.endsWith("." + domain));
+    }catch{
+      return false;
     }
+  });
+}
 
-    async function bootstrapAuth(){
-      if (!state.token) return;
-      try{
-        const data = await api("/auth/me");
-        state.me = data.user;
-      }catch{
-        localStorage.removeItem("acc_token");
-        state.token = "";
-        state.me = null;
-      }
+async function submitBan(){
+  const payload = {
+    agent: {
+      user: $("ban_agent_user").value.trim(),
+      unit: $("ban_agent_unit").value.trim(),
+      position: $("ban_agent_position").value.trim()
+    },
+    subject: {
+      user: $("ban_subject_user").value.trim(),
+      reason: $("ban_reason").value.trim(),
+      evidence: $("ban_evidence").value.trim()
     }
+  };
+  if (!payload.agent.user || !payload.agent.unit || !payload.agent.position || !payload.subject.user || !payload.subject.reason) {
+    return alert("Please complete all required fields.");
+  }
+  if (!validateEvidenceLinks(payload.subject.evidence)) {
+    return alert("Evidence links must be YouTube, Medal, Imgur, or Gyazo URLs.");
+  }
+  try{
+    const data = await api("/requests/ban", { method:"POST", body: JSON.stringify(payload) });
+    alert(`Ban Request submitted. Assigned ID: ${data.id}`);
+    renderInternalPanel();
+  }catch(err){
+    alert(err.message);
+  }
+}
 
-    document.addEventListener("click", (event) => {
-      const navLink = event.target.closest("[data-page]");
-      if (navLink){
-        event.preventDefault();
-        const target = navLink.getAttribute("data-page");
-        if ((target === "internal-panel" || target === "high-command") && !state.me) return renderPage("login");
-        if (target === "high-command" && !(state.me && state.me.admin)) return renderPage("login");
-        renderPage(target);
-      }
-    });
+async function submitIO(){
+  const payload = {
+    agent: {
+      user: $("io_agent_user").value.trim(),
+      unit: $("io_agent_unit").value.trim(),
+      position: $("io_agent_position").value.trim()
+    },
+    subject: {
+      user: $("io_subject_user").value.trim(),
+      reason: $("io_reason").value.trim(),
+      evidence: $("io_evidence").value.trim(),
+      document: $("io_document").value.trim()
+    }
+  };
+  if (!payload.agent.user || !payload.agent.unit || !payload.agent.position || !payload.subject.user || !payload.subject.reason || !payload.subject.document) {
+    return alert("Please complete all required fields.");
+  }
+  if (!validateEvidenceLinks(payload.subject.evidence, true)) {
+    return alert("Evidence must be valid YouTube, Medal, Imgur, or Gyazo URLs, or N/A.");
+  }
+  try{
+    const data = await api("/requests/io", { method:"POST", body: JSON.stringify(payload) });
+    alert(`Inquiry Order submitted. Assigned ID: ${data.id}`);
+    renderInternalPanel();
+  }catch(err){
+    alert(err.message);
+  }
+}
 
-    $("menuOpenBtn").addEventListener("click", openMenu);
-    $("menuCloseBtn").addEventListener("click", closeMenu);
-    $("menuOverlay").addEventListener("click", (event) => {
-      if (event.target === $("menuOverlay")) closeMenu();
-    });
-    $("accountShortcutBtn").addEventListener("click", () => {
-      renderPage(state.me ? "internal-panel" : "login");
-    });
+function renderPage(pageKey){
+  state.currentPage = pageKey;
+  closeMenu();
+  syncLayouts(pageKey);
 
-    (async function init(){
-      await bootstrapAuth();
-      setAuthUi();
-      renderPage("who-we-are");
-    })();
-  </script>
+  if (pageKey === "login") return renderLogin();
+  if (pageKey === "internal-panel") return renderInternalPanel();
+  if (pageKey === "high-command") return renderHighCommand();
+  if (LEADER_PAGES.has(pageKey)) return renderLeaderPage(pageKey);
+  return renderPublicPage(pageKey);
+}
+
+async function bootstrapAuth(){
+  if (!state.token) return;
+  try{
+    const data = await api("/auth/me");
+    state.me = data.user;
+  }catch{
+    localStorage.removeItem("acc_token");
+    state.token = "";
+    state.me = null;
+  }
+}
+
+document.addEventListener("click", (event) => {
+  const navLink = event.target.closest("[data-page]");
+  if (navLink){
+    event.preventDefault();
+    const target = navLink.getAttribute("data-page");
+    if ((target === "internal-panel" || target === "high-command") && !state.me) return renderPage("login");
+    if (target === "high-command" && !(state.me && state.me.admin)) return renderPage("login");
+    renderPage(target);
+  }
+});
+
+$("menuOpenBtn").addEventListener("click", openMenu);
+$("menuCloseBtn").addEventListener("click", closeMenu);
+$("menuOverlay").addEventListener("click", (event) => {
+  if (event.target === $("menuOverlay")) closeMenu();
+});
+$("accountShortcutBtn").addEventListener("click", () => {
+  renderPage(state.me ? "internal-panel" : "login");
+});
+
+(async function init(){
+  await bootstrapAuth();
+  setAuthUi();
+  renderPage("who-we-are");
+})();
+</script>
 </body>
 </html>
