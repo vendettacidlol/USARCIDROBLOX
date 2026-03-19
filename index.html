@@ -44,19 +44,41 @@
     position:sticky; top:0; z-index:80;
     backdrop-filter:blur(12px);
     background:linear-gradient(180deg, rgba(9,11,9,.95), rgba(9,11,9,.84));
-    border-bottom:1px solid rgba(224,185,79,.2);
-    transition:background .28s var(--ease), border-color .28s var(--ease);
+    border-bottom:1px solid rgba(224,185,79,.12);
+    transition:background .28s var(--ease), border-color .28s var(--ease), min-height .28s var(--ease), box-shadow .28s var(--ease);
+    overflow:hidden;
   }
+  .site-header::after{
+    content:"";
+    position:absolute; left:0; right:0; bottom:0; height:2px;
+    background:linear-gradient(90deg, rgba(224,185,79,0) 0%, rgba(224,185,79,.85) 18%, rgba(224,185,79,.45) 50%, rgba(224,185,79,.85) 82%, rgba(224,185,79,0) 100%);
+    box-shadow:0 0 18px rgba(224,185,79,.2);
+    transition:opacity .28s var(--ease), height .28s var(--ease);
+  }
+  .site-header.scrolled{
+    background:linear-gradient(180deg, rgba(9,11,9,.98), rgba(9,11,9,.9));
+    box-shadow:0 10px 26px rgba(0,0,0,.24);
+  }
+  .site-header.scrolled::after{
+    height:1px;
+    opacity:.92;
+  }
+
   .header-inner{
     max-width:var(--content);
     margin:0 auto;
     padding:0 22px;
-    min-height:76px;
+    min-height:82px;
     display:grid;
     grid-template-columns:160px 1fr 160px;
     align-items:center;
     gap:18px;
+    transition:min-height .28s var(--ease), padding .28s var(--ease), transform .28s var(--ease);
   }
+  .site-header.scrolled .header-inner{
+    min-height:64px;
+  }
+
   .menu-btn,.account-btn{
     appearance:none;border:0;background:none;color:var(--text);
     display:flex;align-items:center;gap:12px;cursor:pointer;
@@ -69,19 +91,42 @@
   .account-btn{justify-self:end}
   .menu-btn .icon{
     width:28px;text-align:center;font-size:28px;line-height:1;color:var(--gold);
-    transition:transform .25s var(--ease);
+    transition:transform .25s var(--ease), font-size .28s var(--ease);
   }
+  .site-header.scrolled .menu-btn .icon{font-size:24px}
+
   .brand{
     justify-self:center;
     display:flex;align-items:center;gap:12px;
     text-transform:uppercase;font-weight:900;letter-spacing:.06em;
+    transition:transform .28s var(--ease), gap .28s var(--ease);
   }
-  .brand-star{
-    width:22px;height:22px;border:2px solid var(--gold);
-    clip-path:polygon(50% 0%,61% 36%,98% 36%,68% 57%,79% 92%,50% 70%,21% 92%,32% 57%,2% 36%,39% 36%);
+  .site-header.scrolled .brand{gap:10px}
+  .brand-logo{
+    width:34px;
+    height:34px;
+    object-fit:contain;
+    filter:drop-shadow(0 0 6px rgba(224,185,79,.28));
+    transition:transform .28s var(--ease), filter .28s var(--ease), width .28s var(--ease), height .28s var(--ease);
   }
-  .brand-text{font-size:17px}
-  .brand-sub{display:block;margin-top:2px;font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--muted)}
+  .brand:hover .brand-logo{
+    transform:scale(1.06);
+    filter:drop-shadow(0 0 10px rgba(224,185,79,.42));
+  }
+  .site-header.scrolled .brand-logo{
+    width:28px;
+    height:28px;
+  }
+  .brand-text{
+    font-size:17px;
+    transition:font-size .28s var(--ease), letter-spacing .28s var(--ease);
+  }
+  .brand-sub{
+    display:block;margin-top:2px;font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--muted);
+    transition:font-size .28s var(--ease), margin-top .28s var(--ease), opacity .28s var(--ease);
+  }
+  .site-header.scrolled .brand-text{font-size:15px}
+  .site-header.scrolled .brand-sub{font-size:10px;margin-top:1px}
 
   .menu-overlay{
     position:fixed; inset:0; z-index:120; display:none;
@@ -97,7 +142,7 @@
   }
   .mega-top{
     max-width:var(--content); margin:0 auto; padding:0 22px;
-    min-height:76px; display:flex; align-items:center; justify-content:space-between;
+    min-height:82px; display:flex; align-items:center; justify-content:space-between;
   }
   .mega-grid{
     max-width:var(--content); margin:0 auto; padding:28px 22px 40px;
@@ -298,22 +343,26 @@
   }
   .leader-banner-content{position:relative; z-index:1; max-width:760px}
   .leader-insignia{
-    width:112px; height:112px; border-radius:8px; background:rgba(255,255,255,.96);
-    display:grid; place-items:center; margin-bottom:18px;
-    box-shadow:0 10px 30px rgba(0,0,0,.24);
+    width:auto;
+    height:auto;
+    background:none !important;
+    box-shadow:none !important;
+    margin-bottom:18px;
   }
   .leader-insignia-inner{
-    display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; width:72px;
+    display:flex; align-items:center; justify-content:flex-start; gap:8px; flex-wrap:wrap; width:auto;
   }
   .mini-star{
     width:18px; height:18px; border:2px solid var(--gold2);
     clip-path:polygon(50% 0%,61% 36%,98% 36%,68% 57%,79% 92%,50% 70%,21% 92%,32% 57%,2% 36%,39% 36%);
+    filter:drop-shadow(0 0 8px rgba(224,185,79,.28));
   }
   .leader-super{
     color:var(--gold); font-size:16px; font-weight:900; text-transform:uppercase; letter-spacing:.08em; margin-bottom:10px;
   }
   .leader-name{
     margin:0; font-size:clamp(44px,5vw,64px); line-height:1.02; font-weight:900; letter-spacing:-.05em; color:#fff;
+    text-shadow:0 6px 18px rgba(0,0,0,.28);
   }
   .leader-tabs{
     display:flex; justify-content:center; gap:46px;
@@ -354,26 +403,6 @@
   }
   .bio-card p:last-child{margin-bottom:0}
 
-  .leadership-list{display:grid; gap:18px}
-  .leader-list-card{
-    display:grid; grid-template-columns:180px 1fr;
-    gap:20px; padding:18px; border-radius:20px;
-    background:linear-gradient(180deg,#161c17,#121813);
-    border:1px solid rgba(224,185,79,.1); box-shadow:0 12px 34px rgba(0,0,0,.24);
-    cursor:pointer; transition:transform .24s var(--ease), border-color .24s var(--ease), box-shadow .24s var(--ease);
-  }
-  .leader-list-card:hover{transform:translateY(-3px);border-color:rgba(224,185,79,.2);box-shadow:0 18px 38px rgba(0,0,0,.28)}
-  .leader-list-card img{
-    width:100%; aspect-ratio:4/5; object-fit:cover; border-radius:14px;
-  }
-  .leader-list-role{
-    margin-bottom:8px; color:var(--gold); font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:.14em;
-  }
-  .leader-list-name{
-    margin:0 0 8px; font-size:30px; font-weight:900; letter-spacing:-.03em;
-  }
-  .leader-list-card p{margin:0; color:#c8d0c7; line-height:1.8; font-size:16px}
-
   @keyframes fadeUp{
     from{opacity:0; transform:translateY(10px)}
     to{opacity:1; transform:none}
@@ -406,12 +435,12 @@
     .leader-body{padding:18px}
     .leader-tabs{gap:26px}
     .leader-tab{font-size:16px}
-    .leader-list-card,.form-grid,.form-grid-3,.grid-2{grid-template-columns:1fr}
+    .form-grid,.form-grid-3,.grid-2,.leader-card-grid{grid-template-columns:1fr}
   }
 </style>
 </head>
 <body>
-  <header class="site-header">
+  <header class="site-header" id="siteHeader">
     <div class="header-inner">
       <button class="menu-btn" id="menuOpenBtn" type="button" aria-label="Open navigation">
         <span class="icon" id="menuIcon">☰</span>
@@ -419,10 +448,10 @@
       </button>
 
       <div class="brand">
-        <div class="brand-star"></div>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/3/33/Army-corrections-shoulder.svg" class="brand-logo" alt="Army Corrections Command logo">
         <div>
-          <div class="brand-text">United States Army</div>
-          <span class="brand-sub">Army Corrections Command</span>
+          <div class="brand-text">UNITED STATES ARMY</div>
+          <span class="brand-sub">ARMY CORRECTIONS COMMAND</span>
         </div>
       </div>
 
@@ -441,8 +470,11 @@
         </button>
 
         <div class="brand">
-          <div class="brand-star"></div>
-          <div class="brand-text">United States Army</div>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/3/33/Army-corrections-shoulder.svg" class="brand-logo" alt="Army Corrections Command logo">
+          <div>
+            <div class="brand-text">UNITED STATES ARMY</div>
+            <span class="brand-sub">ARMY CORRECTIONS COMMAND</span>
+          </div>
         </div>
 
         <div style="width:74px"></div>
@@ -624,27 +656,6 @@ const SITE_DATA = {
       bio: `Having roots from the Criminal Investigation Division, Major General VendettaPyrex served within multiple investigative units during his 5 year long career. Units that he has served in during his career are the Military Intelligence Command, Judge Advocate General Corps, and the 75th Rangers Regiment.
 
 During his time served, Major General VendettaPyrex has distinguished himself by not only being a powerful leader, but by being able to uphold justice while maintaining his impartiality, which are the key traits for an individual serving the Army Corrections Command.`
-    },
-    "battalion-leadership": {
-      roleLabel: "Battalion Leadership",
-      name: "Army Corrections Command",
-      banner: COMMAND_BG,
-      leaders: [
-        {
-          page: "commanding-general",
-          role: "Commanding General",
-          name: "General CrusherRTL",
-          image: "https://cdn.discordapp.com/attachments/1449983915472195615/1483977783842705468/image.png?ex=69bc8d82&is=69bb3c02&hm=4cfe8106c5c885921f0f27604064d8a57780d645c868115e2f55a1773b699435&",
-          bio: "Senior command authority for Army Corrections Command."
-        },
-        {
-          page: "commanding-officer",
-          role: "Commanding Officer",
-          name: "Major General VendettaPyrex",
-          image: "https://cdn.discordapp.com/attachments/1449983915472195615/1483977511040848013/image.png?ex=69bc8d41&is=69bb3bc1&hm=3761eac8f6a07a53089a8ac6b5a4579d3fd2644acadf65732914bbb219717815&",
-          bio: "Operational leader with investigative, legal, and command experience."
-        }
-      ]
     }
   }
 };
@@ -657,7 +668,7 @@ const state = {
 };
 
 const HERO_PAGES = new Set(["who-we-are"]);
-const LEADER_PAGES = new Set(["commanding-general","commanding-officer","battalion-leadership"]);
+const LEADER_PAGES = new Set(["commanding-general","commanding-officer"]);
 const $ = (id) => document.getElementById(id);
 
 function escapeHtml(value){
@@ -733,36 +744,6 @@ function renderInsignia(count){
 function renderLeaderPage(key){
   const page = SITE_DATA.leaders[key];
   if (!page) return renderPublicPage("who-we-are");
-
-  if (key === "battalion-leadership") {
-    $("leaderLayout").innerHTML = `
-      <section class="leader-shell">
-        <div class="leader-banner" style="background-image:url('${escapeHtml(page.banner)}')">
-          <div class="leader-banner-content">
-            <div class="leader-insignia"><div class="leader-insignia-inner">${renderInsignia(3)}</div></div>
-            <div class="leader-super">${escapeHtml(page.roleLabel)}</div>
-            <h1 class="leader-name">${escapeHtml(page.name)}</h1>
-          </div>
-        </div>
-        <div class="leader-tabs"><div class="leader-tab active">Leadership</div></div>
-        <div class="leader-body">
-          <div class="leadership-list">
-            ${page.leaders.map(item => `
-              <article class="leader-list-card" data-page="${escapeHtml(item.page)}">
-                <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}">
-                <div>
-                  <div class="leader-list-role">${escapeHtml(item.role)}</div>
-                  <h3 class="leader-list-name">${escapeHtml(item.name)}</h3>
-                  <p>${escapeHtml(item.bio)}</p>
-                </div>
-              </article>
-            `).join("")}
-          </div>
-        </div>
-      </section>
-    `;
-    return;
-  }
 
   const paragraphs = String(page.bio || "").split(/\n\s*\n/).filter(Boolean).map(p => `<p>${escapeHtml(p)}</p>`).join("");
 
@@ -1115,6 +1096,10 @@ document.addEventListener("click", (event) => {
     renderPage(target);
   }
 });
+
+window.addEventListener("scroll", () => {
+  document.getElementById("siteHeader").classList.toggle("scrolled", window.scrollY > 18);
+}, { passive: true });
 
 $("menuOpenBtn").addEventListener("click", openMenu);
 $("menuCloseBtn").addEventListener("click", closeMenu);
